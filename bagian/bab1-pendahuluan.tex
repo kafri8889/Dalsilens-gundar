@@ -11,10 +11,10 @@
 %dibahas dalam penelitian.
 
 \setlength{\parindent}{2em} Penglihatan merupakan indra utama pada manusia yang berperan dalam memproses informasi dari lingkungan eksternal.
-Beberapa penelitian menyebutkan bahwa sekitar 80\% ~\cite{bci_biomedical} informasi yang diterima dan diproses oleh otak manusia berasal dari indera penglihatan (sistem visual).
-Hal ini menunjukkan bahwa indra penglihatan berperan sangat penting untuk memahami lingkungan sekitar~\cite{chung2020visual}.
+Beberapa penelitian menyebutkan bahwa sekitar 80\% ~\parencite{bci_biomedical} informasi yang diterima dan diproses oleh otak manusia berasal dari indera penglihatan (sistem visual).
+Hal ini menunjukkan bahwa indra penglihatan berperan sangat penting untuk memahami lingkungan sekitar~\parencite{chung2020visual}.
 Namun, tidak semua orang memiliki kemampuan ini karena adanya Color Vision Deficiency (Defisiensi Penglihatan Warna) atau buta warna.
-Penderita buta warna (khususnya Protanopia dan Deuteranopia) sering kali mengalami kesulitan dalam membedakan warna tertentu seperti merah (Protanopia) dan hijau (Deuteranopia)~\cite{improving_discrimination}.
+Penderita buta warna (khususnya Protanopia dan Deuteranopia) sering kali mengalami kesulitan dalam membedakan warna tertentu seperti merah (Protanopia) dan hijau (Deuteranopia)~\parencite{improving_discrimination}.
 Kesulitan ini dapat mempengaruhi kemampuan individu untuk membedakan warna seperti lampu lalu lintas, kode warna pada perangkat elektronik, hingga cairan.
 
 % Alinea 2: Perkembangan teknologi yang digunakan
@@ -25,20 +25,20 @@ Seiring berkembangnya teknologi, telepon pintar (\textit{smartphone}) kini memil
 Melalui pemrosesan citra, kelemahan penglihatan warna visual dapat dikoreksi menggunakan algoritma khusus seperti \textit{LMS Daltonization}, algoritma ini bekerja dengan cara memanipulasi matriks warna untuk menggeser informasi warna yang hilang ke area yang masih dapat dilihat oleh penderita.
 Namun, memanipulasi warna pada setiap frame secara terus menerus memerlukan sumber daya komputasi (\textit{computational resources}) yang besar, sehingga dibutuhkan pemrosesan grafis yang efisien.
 Oleh karena itu, sistem operasi Android dipilih sebagai platform pengembangan.
-Selain mendominasi pasar perangkat seluler secara global dengan persentase sebesar 71.68\% pada tahun 2025~\cite{statcounter2025mobile}, Android menyediakan dukungan pustaka (\textit{library}) bawaan yaitu \textit{Color Matrix}.
+Selain mendominasi pasar perangkat seluler secara global dengan persentase sebesar 71.68\% pada tahun 2025~\parencite{statcounter2025mobile}, Android menyediakan dukungan pustaka (\textit{library}) bawaan yaitu \textit{Color Matrix}.
 Pustaka ini memungkinkan proses kalkulasi algoritma \textit{LMS Daltonization} pada tingkat piksel dieksekusi secara langsung melalui akselerasi perangkat keras (\textit{hardware acceleration}), salah satunya GPU (\textit{Graphical Processing Unit}), sehingga performa perangkat tetap stabil tanpa membebani CPU.
 Selain itu, kemampuan \textit{smartphone} dalam mengekstraksi nilai piksel dari tangkapan kamera juga membuka peluang penerapan metode komputasi pada ruang warna HSV (\textit{Hue, Saturation, Value}), yang memungkinkan sistem untuk mengklasifikasikan nama warna di lingkungan sekitar secara dinamis.
 
 %\setlength{\parindent}{2em} Seiring berkembangnya teknologi seluler, telepon pintar (smartphone) kini memiliki kemampuan komputasi yang tinggi untuk melakukan pemrosesan citra digital (Digital Image Processing) secara real-time.
 %Berdasarkan data \textit{StatCounter}, salah satu platform yang paling banyak digunakan di seluruh dunia adalah Android.
-%Sistem operasi Android mendominasi pasar perangkat mobile secara global dengan persentase sebesar 71.68\% pada tahun 2025~\cite{statcounter2025mobile}.
+%Sistem operasi Android mendominasi pasar perangkat mobile secara global dengan persentase sebesar 71.68\% pada tahun 2025~\parencite{statcounter2025mobile}.
 %Platform Android juga menyediakan pustaka bawaan untuk memanipulasi matriks warna, yaitu Color Matrix, yang memungkinkan modifikasi piksel pada citra secara efisien tanpa membebani kinerja perangkat.
 %Selain itu, kemampuan perangkat seluler dalam mengekstraksi nilai piksel dari tangkapan kamera juga memungkinkan penerapan metode komputasi pada ruang warna HSV (\textit{Hue, Saturation, Value}), yang memungkinkan sistem untuk mengklasifikasikan dan mengidentifikasi spektrum warna secara dinamis.
 
 % Alinea 3: Solusi terhadap permasalahan
 %Alinea ketiga menguraikan solusi terhadap permasalahan yang ada.
 
-\setlength{\parindent}{2em} Berbagai solusi untuk permasalahan ini sebenarnya sudah tersedia, salah satunya adalah kacamata kromatik yang dirancang secara khusus untuk menyaring panjang gelombang cahaya tertentu yang tumpang tindih antara warna merah dan hijau~\cite{patterson2022color}.
+\setlength{\parindent}{2em} Berbagai solusi untuk permasalahan ini sebenarnya sudah tersedia, salah satunya adalah kacamata kromatik yang dirancang secara khusus untuk menyaring panjang gelombang cahaya tertentu yang tumpang tindih antara warna merah dan hijau~\parencite{patterson2022color}.
 Namun, penggunaan kacamata kromatik masih memiliki beberapa keterbatasan, seperti harganya yang relatif tinggi dan ketersediaannya yang terbatas.
 
 \setlength{\parindent}{2em} Mengatasi keterbatasan tersebut, penelitian ini mengusulkan solusi alternatif dengan merancang dan mengimplementasikan sebuah aplikasi alat bantu visual berjudul ``Dalsilens: A Real-Time Mobile Assistive Tool for Dichromacy Using LMS Daltonization and HSV-Based Color Identification``.

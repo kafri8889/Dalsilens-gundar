@@ -5,12 +5,22 @@
 % ============================================================
 \documentclass[12pt, a4paper]{report}
 
+
 % ----- Package -----
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[
+  backend=biber,
+  style=authoryear,
+  sorting=nyt,
+  maxnames=99,
+  dashed=false,
+  uniquelist=false,
+]{biblatex}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{mathptmx}           % Times New Roman
 \usepackage[bahasa]{babel}
-\usepackage{natbib}
+%\usepackage{natbib}
 \usepackage{geometry}
 \usepackage{setspace}
 \usepackage{titlesec}
@@ -33,6 +43,123 @@
 \usepackage{color}
 
 
+% ----- Setup bibilograpi -----
+
+\addbibresource{bib/main.bib}
+
+% Hilangkan prefix otomatis "pages" dan "ISSN:"
+\DeclareFieldFormat{pages}{#1}
+\DeclareFieldFormat{issn}{#1}
+\DeclareFieldFormat{url}{\url{#1}}
+
+% ---- Bahasa Indonesia ----
+\DefineBibliographyStrings{english}{
+  and     = {dan},
+  urlfrom = {Diakses dari},
+  urlseen = {Diakses tanggal},
+}
+
+% ---- Spasi antar entri ----
+\renewcommand{\bibfont}{\singlespacing}
+\setlength{\bibitemsep}{\baselineskip}
+
+% ---- Hilangkan bold nama ----
+\renewcommand*{\mkbibnamefamily}[1]{#1}
+\renewcommand*{\mkbibnamegiven}[1]{#1}
+\renewcommand*{\mkbibnameprefix}[1]{#1}
+\renewcommand*{\mkbibnamesuffix}[1]{#1}
+
+% ---- Format nama: Lastname, Firstname ----
+\DeclareNameAlias{sortname}{family-given}
+\DeclareNameAlias{default}{family-given}
+
+%% ---- Pemisah nama: koma + "dan" ----
+%\renewcommand*{\multinamedelim}{\addcomma\space}
+%\renewcommand*{\finalnamedelim}{\addcomma\space dan\space}
+
+% Hilangkan koma sebelum "dan"
+\renewcommand*{\finalnamedelim}{\addspace dan\space}
+
+% Tambah koma antara nama dan tahun: (Man dan Olchawa, 2018)
+\renewcommand{\nameyeardelim}{\addcomma\space}
+
+% ---- Judul bold, hapus tanda kutip ----
+\DeclareFieldFormat*{title}{\textbf{#1}}
+
+% ---- Hapus "In:" ----
+\renewbibmacro{in:}{}
+
+% ---- URL tanpa prefix "URL:" ----
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareFieldFormat{urldate}{}
+
+% ===== ARTICLE =====
+\DeclareBibliographyDriver{article}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod\newline
+  \textbf{\printfield{journaltitle}}%
+  \iffieldundef{volume}{}{\addcomma\space Volume \printfield{volume}}%
+  \iffieldundef{number}{}{\addcomma\space Nomor \printfield{number}}%
+  \iffieldundef{pages}{}{\addcomma\space hlm.\addspace\printfield{pages}}%
+  \iffieldundef{issn}{}{\addperiod\space ISSN:\addspace\printfield{issn}}%
+  \iffieldundef{url}{}{%
+    \newline Diakses dari \printfield{url}%
+  }%
+  \finentry
+}
+
+% ===== BOOK =====
+\DeclareBibliographyDriver{book}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod
+  \iffieldundef{isbn}{}{\addspace ISBN \printfield{isbn}\addperiod}
+  \newline
+  \printlist{location}\addcolon\addspace\printlist{publisher}\addperiod
+  \finentry
+}
+
+% ===== ONLINE =====
+\DeclareBibliographyDriver{online}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod\newline
+  Diakses dari \printfield{url}\addperiod
+  \finentry
+}
+
+% ===== MISC =====
+\DeclareBibliographyDriver{misc}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod\newline
+  Diakses dari \printfield{url}\addperiod
+  \finentry
+}
+
+% ===== INPROCEEDINGS =====
+\DeclareBibliographyDriver{inproceedings}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod\newline
+  Dalam \textbf{\printfield{booktitle}}%
+  \iffieldundef{pages}{}{\addcomma\space hlm.\addspace\printfield{pages}}%
+  \addperiod
+  \finentry
+}
+
+% ===== INBOOK =====
+\DeclareBibliographyDriver{inbook}{%
+  \printnames{author}\addperiod\addspace
+  \printtext[parens]{\printfield{year}}\addperiod\addspace
+  \printfield{title}\addperiod\newline
+  Dalam \textbf{\printfield{booktitle}}%
+  \iffieldundef{volume}{}{\addcomma\space Volume \printfield{volume}}%
+  \iffieldundef{pages}{}{\addcomma\space hlm.\addspace\printfield{pages}}%
+  \addperiod
+  \finentry
+}
 
 
 
