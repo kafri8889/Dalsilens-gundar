@@ -1,0 +1,132 @@
+% ============================================================
+%  BAB 1 – PENDAHULUAN
+% ============================================================
+\chapter{PENDAHULUAN}
+\thispagestyle{chapterpage}
+
+\section{Latar Belakang}
+
+% Alinea 1: Masalah yang akan dibahas
+%Tuliskan latar belakang pada bagian ini. Alinea pertama menguraikan masalah yang akan
+%dibahas dalam penelitian.
+
+\setlength{\parindent}{2em} Penglihatan merupakan indra utama pada manusia yang berperan dalam memproses informasi dari lingkungan eksternal.
+Beberapa penelitian menyebutkan bahwa sekitar 80\% ~\cite{bci_biomedical} informasi yang diterima dan diproses oleh otak manusia berasal dari indera penglihatan (sistem visual).
+Hal ini menunjukkan bahwa indra penglihatan berperan sangat penting untuk memahami lingkungan sekitar~\cite{chung2020visual}.
+Namun, tidak semua orang memiliki kemampuan ini karena adanya Color Vision Deficiency (Defisiensi Penglihatan Warna) atau buta warna.
+Penderita buta warna (khususnya Protanopia dan Deuteranopia) sering kali mengalami kesulitan dalam membedakan warna tertentu seperti merah (Protanopia) dan hijau (Deuteranopia)~\cite{improving_discrimination}.
+Kesulitan ini dapat mempengaruhi kemampuan individu untuk membedakan warna seperti lampu lalu lintas, kode warna pada perangkat elektronik, hingga cairan.
+
+% Alinea 2: Perkembangan teknologi yang digunakan
+%Alinea kedua menguraikan perkembangan teknologi yang akan digunakan dalam penelitian.
+
+\setlength{\parindent}{2em} Untuk mengatasi keterbatasan identifikasi visual tersebut, penggunaan teknologi dapat menjadi alternatif solusi yang cukup efektif.
+Seiring berkembangnya teknologi, telepon pintar (\textit{smartphone}) kini memiliki kemampuan komputasi yang tinggi untuk melakukan pemrosesan citra digital (\textit{Digital Image Processing}) secara \textit{real-time}.
+Melalui pemrosesan citra, kelemahan penglihatan warna visual dapat dikoreksi menggunakan algoritma khusus seperti \textit{LMS Daltonization}, algoritma ini bekerja dengan cara memanipulasi matriks warna untuk menggeser informasi warna yang hilang ke area yang masih dapat dilihat oleh penderita.
+Namun, memanipulasi warna pada setiap frame secara terus menerus memerlukan sumber daya komputasi (\textit{computational resources}) yang besar, sehingga dibutuhkan pemrosesan grafis yang efisien.
+Oleh karena itu, sistem operasi Android dipilih sebagai platform pengembangan.
+Selain mendominasi pasar perangkat seluler secara global dengan persentase sebesar 71.68\% pada tahun 2025~\cite{statcounter2025mobile}, Android menyediakan dukungan pustaka (\textit{library}) bawaan yaitu \textit{Color Matrix}.
+Pustaka ini memungkinkan proses kalkulasi algoritma \textit{LMS Daltonization} pada tingkat piksel dieksekusi secara langsung melalui akselerasi perangkat keras (\textit{hardware acceleration}), salah satunya GPU (\textit{Graphical Processing Unit}), sehingga performa perangkat tetap stabil tanpa membebani CPU.
+Selain itu, kemampuan \textit{smartphone} dalam mengekstraksi nilai piksel dari tangkapan kamera juga membuka peluang penerapan metode komputasi pada ruang warna HSV (\textit{Hue, Saturation, Value}), yang memungkinkan sistem untuk mengklasifikasikan nama warna di lingkungan sekitar secara dinamis.
+
+%\setlength{\parindent}{2em} Seiring berkembangnya teknologi seluler, telepon pintar (smartphone) kini memiliki kemampuan komputasi yang tinggi untuk melakukan pemrosesan citra digital (Digital Image Processing) secara real-time.
+%Berdasarkan data \textit{StatCounter}, salah satu platform yang paling banyak digunakan di seluruh dunia adalah Android.
+%Sistem operasi Android mendominasi pasar perangkat mobile secara global dengan persentase sebesar 71.68\% pada tahun 2025~\cite{statcounter2025mobile}.
+%Platform Android juga menyediakan pustaka bawaan untuk memanipulasi matriks warna, yaitu Color Matrix, yang memungkinkan modifikasi piksel pada citra secara efisien tanpa membebani kinerja perangkat.
+%Selain itu, kemampuan perangkat seluler dalam mengekstraksi nilai piksel dari tangkapan kamera juga memungkinkan penerapan metode komputasi pada ruang warna HSV (\textit{Hue, Saturation, Value}), yang memungkinkan sistem untuk mengklasifikasikan dan mengidentifikasi spektrum warna secara dinamis.
+
+% Alinea 3: Solusi terhadap permasalahan
+%Alinea ketiga menguraikan solusi terhadap permasalahan yang ada.
+
+\setlength{\parindent}{2em} Berbagai solusi untuk permasalahan ini sebenarnya sudah tersedia, salah satunya adalah kacamata kromatik yang dirancang secara khusus untuk menyaring panjang gelombang cahaya tertentu yang tumpang tindih antara warna merah dan hijau~\cite{patterson2022color}.
+Namun, penggunaan kacamata kromatik masih memiliki beberapa keterbatasan, seperti harganya yang relatif tinggi dan ketersediaannya yang terbatas.
+
+\setlength{\parindent}{2em} Mengatasi keterbatasan tersebut, penelitian ini mengusulkan solusi alternatif dengan merancang dan mengimplementasikan sebuah aplikasi alat bantu visual berjudul ``Dalsilens: A Real-Time Mobile Assistive Tool for Dichromacy Using LMS Daltonization and HSV-Based Color Identification``.
+Aplikasi ini dirancang untuk membantu penyandang buta warna dalam membedakan warna sekaligus mengidentifikasi nama warna pada suatu objek dengan memanfaatkan kamera smartphone secara real-time.
+Solusi ini menggunakan algoritma LMS Daltonization untuk menggeser informasi warna yang hilang ke spektrum warna lain, serta pendekatan \textit{rule-based thresholding} pada ruang warna HSV untuk klasifikasi nama warna.
+Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menjadi alat bantu yang praktis, memiliki latensi rendah, serta lebih mudah dijangkau dibandingkan solusi optik konvensional.
+
+
+\section{Ruang Lingkup}
+
+% Batasan yang jelas dari persoalan yang dikaji
+\setlength{\parindent}{2em} Adapun ruang lingkup pada penulisan ini yaitu:
+\begin{enumerate}
+  \item Kondisi defisiensi penglihatan warna yang ditangani difokuskan pada tipe Dikromasi, yang mencakup \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru).
+  \item Penelitian ini tidak mencakup kondisi Monokromasi (buta warna total).
+  \item Akurasi dari fitur klasifikasi nama warna juga dipengaruhi oleh kondisi pencahayaan lingkungan sekitar.
+  \item Pengujian koreksi warna dilakukan menggunakan Pelat Ishihara, bukan uji klinis medis langsung terhadap pasien.
+\end{enumerate}
+
+
+\section{Tujuan Penelitian}
+% Hasil yang diharapkan – akan menjadi isi kesimpulan
+Tujuan dari penelitian ini adalah:
+\begin{enumerate}
+  \item Membedakan objek secara visual (dengan algoritma LMS Daltonization).
+  \item Membedakan objek secara tekstual (dengan deteksi nama warna HSV).
+\end{enumerate}
+
+\section{Metode Penelitian}
+\setlength{\parindent}{2em} Metode penelitian ini dilakukan melalui beberapa tahapan.
+Tahap pertama dimulai dengan perancangan arsitektur sistem untuk mengambil citra secara \textit{real-time}.
+Selanjutnya, algoritma \textit{LMS Daltonization} akan diimplementasikan untuk mengonversi ruang warna dan menyesuaikan piksel ke spektrum yang mudah dikenali oleh pengguna.
+Setelah itu, dilakukan ekstraksi warna dominan menggunakan ruang warna HSV dengan pendekatan \textit{rule-based thresholding} untuk mengklasifikasikan nama warna.
+Tahapan terakhir adalah pengujian sistem untuk mengevaluasi fungsionalitas dan performa aplikasi.
+
+\setlength{\parindent}{2em} Untuk mendukung seluruh tahap penelitian, perangkat keras (\textit{hardware}) dan perangkat lunak (\textit{software}) akan digunakan.
+Perangkat keras yang digunakan meliputi komputer atau laptop untuk pengembangan aplikasi, serta \textit{smartphone} berbasis Android sebagai alat untuk pengujian, khususnya untuk pemrosesan kamera secara langsung.
+Sementara itu, perangkat lunak yang digunakan meliputi Android Studio sebagai \textit{Integrated Development Environment} (IDE) untuk pengembangan aplikasi, serta pustaka bawaan seperti \textit{CameraX} dan \textit{ColorMatrix} untuk pengolahan grafis.
+
+Adapun rincian dari langkah-langkah penelitian di atas adalah sebagai berikut:
+\begin{enumerate}
+  \item Perancangan Arsitektur Sistem:
+  Tahapan ini berfokus pada perancangan alur kerja (\textit{workflow}) aplikasi agar mampu memproses citra secara \textit{real-time} dengan latensi yang rendah.
+  Komputasi sistem dibagi menjadi dua tahapan utama, yaitu pengambilan gambar dari komponen kamera dan manipulasi \textit{bitmap} menggunakan \textit{color matrix} yang dioptimalkan melalui akselerasi GPU.
+
+
+  \item Implementasi Algoritma LMS Daltonization:
+  Pada tahap ini akan diterapkan model matematika untuk mengonversi ruang warna RGB menjadi ruang warna LMS.
+  Sistem akan mensimulasikan defisiensi buta warna, menghitung informasi warna yang hilang, lalu menggeser (\textit{error shifting}) informasi warna tersebut ke spektrum warna lain yang kemudian diintegrasikan ke dalam matriks transformasi.
+
+  \item Ekstraksi Warna Dominan Berbasis HSV:
+  Tahap ini menjelaskan mekanisme pengambilan sampel piksel pada titik tengah layar.
+  Citra \textit{bitmap} diekstrak nilai rata-rata RGB-nya, dikonversi ke ruang warna HSV, lalu diklasifikasikan nama warnanya menggunakan metode \textit{rule-based thresholding}.
+
+  \item Skenario Pengujian Sistem:
+  Tahap terakhir adalah evaluasi untuk mengukur fungsionalitas dan performa aplikasi.
+  Pengujian dibagi menjadi tiga skenario yaitu uji validasi visual menggunakan pelat Ishihara, uji akurasi deteksi nama warna, dan uji kinerja komputasi \textit{real-time} pada perangkat.
+
+\end{enumerate}
+
+% Alinea 1: Langkah/tahapan penelitian secara kronologis
+%Langkah-langkah yang dilakukan dalam penelitian ini adalah
+%
+%% Alinea 2: Hardware dan software yang digunakan
+%Perangkat keras dan perangkat lunak yang digunakan dalam penelitian ini meliputi
+
+% Contoh penyertaan gambar diagram alur
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[width=0.7\textwidth]{gambar/diagram-alur}
+%  \caption{Diagram Alur Penelitian}
+%  \label{fig:diagram-alur}
+%\end{figure}
+
+\section{Sistematika Penulisan Ilmiah}
+\noindent\textbf{BAB I: PENDAHULUAN}\\
+Bab ini menjelaskan latar belakang masalah mengenai defisiensi penglihatan warna (dikromasi) dan keterbatasan solusi yang ada.
+Selain itu, dibahas juga rumusan masalah, batasan penelitian, tujuan, dan sistematika penulisan.\\
+\textbf{BAB II: LANDASAN TEORI}\\
+Bab ini berisi tinjauan pustaka dan teori yang mendukung penelitian, seperti konsep \textit{Color Vision Deficiency} (CVD), pengolahan citra digital, algoritma LMS Daltonization, ruang warna HSV, serta teknologi Android dan pustaka grafis yang digunakan.\\
+\textbf{BAB III: PERANCANGAN DAN IMPLEMENTASI}\\
+Bab ini menjelaskan tahapan penelitian, perangkat yang digunakan, serta perancangan sistem.
+Selain itu, dijelaskan juga alur implementasi penyesuaian warna, ekstraksi warna dominan, beserta hasil pengujian fungsionalitas dan performa pada aplikasi Dalsilens.\\
+\textbf{BAB IV: PENUTUP}\\
+Bab ini berisi kesimpulan dari hasil penelitian serta saran untuk pengembangan aplikasi Dalsilens ke depan.
+
+
+
+
+
+

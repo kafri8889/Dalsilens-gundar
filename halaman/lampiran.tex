@@ -1,0 +1,49 @@
+% ============================================================
+%  LAMPIRAN
+%  Pedoman: font 8pt, spasi 1
+%  Penomoran: L-1, L-2, …
+% ============================================================
+
+\phantomsection
+\chapter*{LAMPIRAN}
+\addcontentsline{toc}{chapter}{LAMPIRAN}
+\thispagestyle{chapterpage}
+
+% Counter halaman lampiran: L-1, L-2, dst.
+\renewcommand{\thepage}{L-\arabic{page}}
+\setcounter{page}{1}
+
+{\fontsize{8}{10}\selectfont\singlespacing
+
+% ---- Lampiran 1: Pernyataan Uji Coba ----
+\section*{Lampiran 1 – Pernyataan Uji Coba Aplikasi}
+
+% Isi lampiran 1 di sini
+\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+
+\newpage
+
+% ---- Lampiran 2: Listing Program ----
+\section*{Lampiran 2 – Listing Program}
+
+% Contoh listing kode
+\begin{verbatim}
+// Contoh kode program
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+\end{verbatim}
+
+\newpage
+
+% ---- Lampiran 3: Output Program ----
+\section*{Lampiran 3 – Output Program}
+
+% Gambar output atau teks output
+\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+
+% Tambahkan lampiran lain sesuai kebutuhan
+
+} % end fontsize

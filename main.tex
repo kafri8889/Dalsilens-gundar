@@ -1,0 +1,242 @@
+% ============================================================
+%  TEMPLATE PENULISAN ILMIAH
+%  Program Studi Informatika – Universitas Gunadarma
+%  Berdasarkan Buku Pedoman Penulisan Ilmiah 2025
+% ============================================================
+\documentclass[12pt, a4paper]{report}
+
+% ----- Package -----
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}           % Times New Roman
+\usepackage[bahasa]{babel}
+\usepackage{natbib}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{tocloft}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{indentfirst}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{afterpage}
+\usepackage{emptypage}          % halaman kosong tidak ada header/footer
+\usepackage{etoolbox}
+\usepackage[hidelinks, plainpages=false, hypertexnames=false]{hyperref}
+\usepackage{bookmark}
+\usepackage{color}
+
+
+
+
+
+% ----- Geometry (Margin) -----
+% Atas: 4cm | Bawah: 3cm | Kiri: 4cm | Kanan: 3cm
+\geometry{
+  a4paper,
+  top    = 4cm,
+  bottom = 3cm,
+  left   = 4cm,
+  right  = 3cm
+}
+
+% ----- Spasi 1.5 (isi utama) -----
+\setstretch{1.5}
+
+% ============================================================
+%  DATA MAHASISWA – ubah bagian ini saja
+% ============================================================
+\newcommand{\NamaMahasiswa}{Anaf Naufalian}
+\newcommand{\NPM}{50423155}
+\newcommand{\JudulPI}{Dalsilens: A Real-Time Mobile Assistive Tool for Dichromacy Using LMS Daltonization and HSV-Based Color Identification}
+\newcommand{\JudulPISatu}{Dalsilens: A Real-Time Mobile Assistive Tool for Dichromacy Using LMS Daltonization and HSV-Based Color Identification} % tanpa newline, untuk header dll
+\newcommand{\NamaPembimbing}{Dr. Bonang Waspadadi Ligar, S.Si., M.MSi.}
+\newcommand{\TanggalSidang}{01 Januari 2026}
+\newcommand{\TanggalLulus}{01 Januari 2026}
+\newcommand{\TanggalACC}{01 Januari 2026}
+\newcommand{\BulanTahun}{Januari 2026}
+\newcommand{\Tahun}{2026}
+\newcommand{\KataKunci}{katakunci1, katakunci2, katakunci3}
+\newcommand{\Keywords}{Color Vision Deficiency, Dichromacy, Daltonization, LMS Color Space, Real-Time Image Processing, Android}
+
+% ============================================================
+%  FORMAT JUDUL BAB & SUBBAB
+%  Bab  : 14pt, Bold, Kapital, Tengah
+%  Sub  : 12pt, Bold, Kapital awal kata, Kiri
+% ============================================================
+
+% -- Judul Bab (BAGIAN) --
+\titleformat{\chapter}[block]
+  {\centering\bfseries\fontsize{14}{16}\selectfont}
+  {\thechapter.}
+  {0.5em}
+  {\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{3\baselineskip}
+
+% -- Subbab --
+\titleformat{\section}[block]
+  {\bfseries\fontsize{12}{14}\selectfont}
+  {\thesection.}
+  {0.5em}
+  {}
+\titlespacing*{\section}{0pt}{2\baselineskip}{1\baselineskip}
+
+% -- Sub-subbab --
+\titleformat{\subsection}[block]
+  {\bfseries\fontsize{12}{14}\selectfont}
+  {\thesubsection.}
+  {0.5em}
+  {}
+\titlespacing*{\subsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+% Gunakan angka Arab (1, 2, 3 …) bukan Roman
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+% ============================================================
+%  CAPTION GAMBAR & TABEL
+%  Gambar : bawah tengah
+%  Tabel  : atas tengah
+% ============================================================
+\captionsetup[figure]{
+  labelfont=bf,
+  font=normalsize,
+  justification=centering,
+  position=below
+}
+\captionsetup[table]{
+  labelfont=bf,
+  font=normalsize,
+  justification=centering,
+  position=above
+}
+% Penomoran: Gambar 1.1, Tabel 2.3, dst.
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+
+% ============================================================
+%  HEADER & FOOTER
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+% Halaman biasa (bukan awal bab): nomor di pojok kanan atas
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% Awal bab: nomor di tengah bawah
+\fancypagestyle{chapterpage}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\AtBeginEnvironment{document}{}
+
+% ============================================================
+%  DAFTAR ISI / TABEL / GAMBAR – format TNR 12, single
+% ============================================================
+\renewcommand{\cfttoctitlefont}{\hfill\bfseries\fontsize{12}{14}\selectfont\MakeUppercase}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\bfseries\fontsize{12}{14}\selectfont\MakeUppercase}
+\renewcommand{\cftafterlottitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\bfseries\fontsize{12}{14}\selectfont\MakeUppercase}
+\renewcommand{\cftafterloftitle}{\hfill}
+
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{3\baselineskip}
+\setlength{\cftbeforechapskip}{0pt}
+
+% Bab di daftar isi: Bold, Kapital
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+
+% ============================================================
+%  HYPERREF (nonaktifkan warna link untuk cetak)
+% ============================================================
+\hypersetup{
+  colorlinks    = false,
+  hidelinks,
+  plainpages    = false,
+  hypertexnames = false,
+  bookmarksopen = true,       % <-- sidebar langsung terbuka
+  bookmarksnumbered = true,   % <-- tampilkan nomor bab
+}
+
+
+% ============================================================
+%  MULAI DOKUMEN
+% ============================================================
+\begin{document}
+
+% ============================================================
+%  BAGIAN AWAL – penomoran romawi kecil
+% ============================================================
+\pagenumbering{roman}
+\setcounter{page}{1}
+\include{halaman/judul}       % di dalam: \thispagestyle{empty} saja, tanpa addcontentsline
+\include{halaman/orisinalitas} % di dalam: \phantomsection lalu \addcontentsline lalu konten
+\include{halaman/pengesahan}
+\include{halaman/abstrak}
+\include{halaman/katapengantar}
+
+% ------ 6. DAFTAR ISI ------
+{
+  \singlespacing
+  \cleardoublepage
+  \pdfbookmark[0]{DAFTAR ISI}{bookmark-daftarisi}  % <-- tambah ini
+  \phantomsection
+  \addcontentsline{toc}{chapter}{DAFTAR ISI}
+  \tableofcontents
+  \newpage
+}
+
+
+% ------ 7. DAFTAR TABEL ------
+{
+  \singlespacing
+  \phantomsection
+  \addcontentsline{toc}{chapter}{DAFTAR TABEL}
+  \listoftables
+  \newpage
+}
+
+% ------ 8. DAFTAR GAMBAR ------
+{
+  \singlespacing
+  \phantomsection
+  \addcontentsline{toc}{chapter}{DAFTAR GAMBAR}
+  \listoffigures
+  \newpage
+}
+
+% ------ 9. DAFTAR LAMPIRAN ------
+\include{halaman/daftarlampiran}
+
+% ============================================================
+%  BAGIAN ISI – penomoran angka Arab
+% ============================================================
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\include{bagian/bab1-pendahuluan}
+\include{bagian/bab2-tinjauanpustaka}
+\include{bagian/bab3-pembahasan}
+\include{bagian/bab4-penutup}
+
+% ============================================================
+%  BAGIAN AKHIR
+% ============================================================
+\include{halaman/daftarpustaka}
+\include{halaman/lampiran}
+
+\bibliographystyle{plainnat}
+
+\end{document}
