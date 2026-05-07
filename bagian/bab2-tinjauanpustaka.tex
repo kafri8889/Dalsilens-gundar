@@ -1,31 +1,50 @@
 % ============================================================
 %  BAB 2 – LANDASAN TEORI
 % ============================================================
-\chapter{TINJAUAN PUSTAKA}
-\thispagestyle{chapterpage}
 
-% ============================================================
-\section{Tinjauan Studi / Penelitian Terkait}
-Ini tempat kamu naruh Related Work yang sudah kamu punya.
-Uraikan penelitian terdahulu yang relevan di sini.
+
+\chapter*{TINJAUAN PUSTAKA}
+\refstepcounter{chapter}
+\addcontentsline{toc}{chapter}{TINJAUAN PUSTAKA}
+\pdfbookmark[0]{TINJAUAN PUSTAKA}{tinjauan_pustaka}
+
+
+\section{Penelitian Terkait}
+Dalam beberapa tahun terakhir berbagai solusi berbasis teknologi telah banyak dikembangkan untuk membantu individu dengan \textit{Color Vision Deficiency} (CVD) untuk meningkatkan kemampuan dalam membedakan warna.
+Penelitian yang dilakukan oleh \textcite{Elrefaei2018} melakukan perbandingan empat algoritma koreksi warna berbasis \textit{smartphone}, termasuk algoritma \textit{LMS Daltonization}, yang dievaluasi menggunakan software simulator Vischeck dan Coblis.
+Namun, pengujian pada penelitian tersebut memiliki keterbatasan karena pemrosesan citra masih berbasis statis dengan metode unggah gambar secara manual dan tidak berjalan secara real-time.
+
+Selain itu, penelitian lain oleh \textcite{covisance} mengembangkan aplikasi seluler Covisance yang menerapkan metode LMS Daltonization secara real-time dan mengintegrasikan uji Farnsworth D-15 langsung di dalam aplikasi.
+Meskipun mampu menampilkan simulasi secara langsung, aplikasi tersebut masih menggunakan metode kalkulasi nilai warna secara manual, yang dapat membebani kinerja CPU dan sering menyebabkan frame-drop pada perangkat dengan resolusi kamera tinggi.
+
+Oleh karena itu, penelitian ini berfokus pada efisiensi komputasi visual secara realtime dengan cara memindahkan beban komputasi dari CPU ke GPU untuk menghindari proses sekuensial yang berat.
+Dengan memanfaatkan \textit{library} CameraX dan \textit{ColorMatrix}, Dalsilens dapat mempertahankan stabilitas koreksi warna pada pemrosean \textit{real-time}, sehingga dapat mengurangi masalah penurunan bingkai (\textit{frame drop}) dan latensi yang sering terjadi pada pemrosesan citra real-time.
 
 % ============================================================
 \section{Konsep Dasar Penglihatan dan Warna}
 
 \subsection{Color Vision Deficiency (CVD) dan Dikromasi}
-Jelaskan tentang buta warna, jenis-jenisnya (protanopia, deuteranopia, dll).
+\textit{Color Vision Deficiency} (CVD) atau buta warna adalah sebuah kondisi kelainan genetik yang memengaruhi kemampuan seseorang dalam membedakan panjang gelombang cahaya tertentu seperti merah, hijau, dan biru.
+Tipe paling umum dari kondisi ini adalah Dikromasi, yang terbagi menjadi \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru).
 
-\subsection{Ruang Warna RGB dan HSV}
-Jelaskan konsep RGB dan HSV, serta perbedaannya.
+\subsection{Ruang Warna Visual (RGB, LMS, dan HSV)}
+Umumnya pemrosesan citra digital menggunakan ruang warna RGB (\textit{Red, Green, Blue}).
+Namun, sistem penglihatan manusia memproses spektrum cahaya melalui sel kerucut mata yang direpresentasikan dalam ruang warna LMS (\textit{Long, Medium, Short}) \parencite{8289076}.
+Selain itu, terdapat ruang warna HSV (\textit{Hue, Saturation, Value}) yang efektif dalam pemisahan intensitas cahaya dari warna itu sendiri.
+Ruang warna ini membagi elemen visual menjadi tipe jenis warna (H), intensitas warna (S), dan tingkat kecerahan (V), sehingga cocok digunakan untuk klasifikasi warna.
 
 % ============================================================
 \section{Pengolahan Citra Digital (Digital Image Processing)}
 
 \subsection{Pemrosesan Citra Real-Time}
-Jelaskan konsep pengolahan citra secara langsung (real-time processing).
+Pengolahan citra digital merupakan teknik untuk memproses dan memodifikasi gambar digital dengan mengubah nilai piksel melalui proses komputasi.
+Pengolahan citra digital secara real-time mengharuskan sistem untuk terus menerus mengambil sample bingkai (\textit{frame}) dari perangkat keras kamera.
+Nilai piksel dari bingkai yang ditangkap tersebut kemudian diekstrak untuk diproses dan dianalisis sebelum ditampilkan kembali kepada pengguna secara real-time.
 
 \subsection{Algoritma LMS Daltonization}
-Jelaskan algoritma yang kamu pakai untuk koreksi warna.
+\textit{LMS Daltonization} adalah sebuah teknik pemrosesan gambar untuk memanipulasi warna pada citra, yang dapat membantu individu dengan buta warna supaya dapat membedakan warna tertentu.
+Secara garis besar metode ini dibagi menjadi beberapa tahap, tahap pertama yaitu mengonversi ruang warna RGB menjadi ruang warna LMS.
+Tahap kedua
 
 % ============================================================
 \section{Teknologi dan Perangkat Pengembang}

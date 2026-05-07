@@ -8,6 +8,8 @@
 
 % ----- Package -----
 \PassOptionsToPackage{hyphens}{url}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
 \usepackage[
   backend=biber,
   style=authoryear,
@@ -17,7 +19,6 @@
   uniquelist=false,
 ]{biblatex}
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage{mathptmx}           % Times New Roman
 \usepackage[bahasa]{babel}
 %\usepackage{natbib}
@@ -39,9 +40,11 @@
 \usepackage{emptypage}          % halaman kosong tidak ada header/footer
 \usepackage{etoolbox}
 \usepackage[hidelinks, plainpages=false, hypertexnames=false]{hyperref}
+\usepackage{hypcap}
 \usepackage{bookmark}
 \usepackage{color}
-
+\usepackage{enumitem}
+\usepackage{xstring}
 
 % ----- Setup bibilograpi -----
 
@@ -200,10 +203,10 @@
 
 % -- Judul Bab (BAGIAN) --
 \titleformat{\chapter}[display]
-  {\centering\bfseries\fontsize{14}{16}\selectfont}
-  {BAB \thechapter}
-  {0.5em}
-  {\MakeUppercase}
+{\centering\bfseries\fontsize{14}{16}\selectfont}
+{BAB \thechapter}
+{1ex}
+{\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{3\baselineskip}
 
 % -- Subbab --
@@ -288,14 +291,14 @@
 %  HYPERREF (nonaktifkan warna link untuk cetak)
 % ============================================================
 \hypersetup{
-  colorlinks    = false,
+  colorlinks        = false,
   hidelinks,
-  plainpages    = false,
-  hypertexnames = false,
-  bookmarksopen = true,       % <-- sidebar langsung terbuka
-  bookmarksnumbered = true,   % <-- tampilkan nomor bab
+  plainpages        = false,
+  hypertexnames     = false,
+  bookmarksopen     = true,
+  bookmarksnumbered = false,   % <-- false
+  bookmarksdepth    = 1,       % <-- hanya chapter level
 }
-
 
 % ============================================================
 %  MULAI DOKUMEN
@@ -364,6 +367,6 @@
 \include{halaman/daftarpustaka}
 \include{halaman/lampiran}
 
-\bibliographystyle{plainnat}
+%\bibliographystyle{plainnat}
 
 \end{document}
