@@ -1,59 +1,423 @@
 % ============================================================
-%  BAB 3 – PEMBAHASAN
+%  BAB 3 – PERANCANGAN DAN IMPLEMENTASI
 % ============================================================
 
 
-\chapter*{PEMBAHASAN}
+\chapter*{PERANCANGAN DAN IMPLEMENTASI}
 \refstepcounter{chapter}
-\addcontentsline{toc}{chapter}{PEMBAHASAN}
-\pdfbookmark[0]{PEMBAHASAN}{pembahasan}
+\addcontentsline{toc}{chapter}{PERANCANGAN DAN IMPLEMENTASI}
+\pdfbookmark[0]{PERANCANGAN DAN IMPLEMENTASI}{perancangan_implementasi}
 
-\section{Judul Subbagian Pertama}
 
-% Uraian tahapan kegiatan penelitian – kalimat informasi (bukan kalimat perintah)
-Tahapan pertama yang dilakukan dalam penelitian ini adalah \ldots\ldots\ldots\ldots
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+% ============================================================
+\section{Arsitektur Sistem}
 
-% Contoh penyertaan gambar
+Secara keseluruhan, sistem Dalsilens dirancang untuk memproses gambar dari kamera secara \textit{real-time} dengan latensi yang rendah.
+Supaya proses berjalan efisien, komputasi dibagi menjadi dua tahap utama, yaitu pengambilan gambar untuk deteksi warna, dan manipulasi warna pada level \textit{bitmap} menggunakan akselerasi GPU melalui \textit{Color Matrix}.
+
+\subsection{Pengambilan Gambar dan Identifikasi Warna}
+
+Tahap pertama adalah pengambilan gambar dari kamera sekaligus mengidentifikasi warna objek secara \textit{real-time}.
+Alur proses ini ditunjukkan pada Gambar~\ref{fig:flowchart-akuisisi}.
+
+Saat pengguna membuka aplikasi, sistem langsung menginisialisasi kamera menggunakan pustaka \textit{CameraX}.
+Kamera kemudian menangkap \textit{frame} secara terus-menerus dan mengirimkannya ke komponen \textit{ImageAnalysis}.
+Di sini, gambar dikonversi menjadi \textit{bitmap} agar bisa diproses lebih lanjut.
+
+Setelah \textit{bitmap} tersedia, sistem membuat sebuah area kecil di tengah layar yang disebut \textit{Region of Interest} (ROI), yaitu area yang ditandai oleh \textit{crosshair}.
+Piksel-piksel di dalam ROI diambil, dirata-ratakan, lalu hasilnya dikonversi ke ruang warna HSV untuk menentukan nama warna dominan.
+Hasilnya berupa \textit{bitmap} dan nama warna tersebut disimpan sebagai \textit{state}, yang akan memicu pembaruan tampilan secara otomatis.
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{gambar/gambar-31}
-  \caption{Keterangan Gambar 3.1}
-  \label{fig:gambar31}
+  % TODO: ganti dengan flowchart akuisisi (Figure 1 dari paper IEEE)
+  \includegraphics[width=0.6\textwidth]{gambar/flowchart-akuisisi}
+  \caption{Diagram Alur Pengambilan Gambar dan Identifikasi Warna}
+  \label{fig:flowchart-akuisisi}
 \end{figure}
 
-Seperti yang ditunjukkan pada Gambar~\ref{fig:gambar31}, \ldots\ldots\ldots\ldots\ldots
+\subsection{Proses Daltonisasi}
 
-\section{Judul Subbagian Kedua}
+Tahap kedua adalah proses daltonisasi yang berjalan setiap kali \textit{bitmap} diperbarui.
+Alur lengkapnya dapat dilihat pada Gambar~\ref{fig:flowchart-daltonisasi}.
 
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+Sistem pertama-tama mengecek apakah filter warna diaktifkan atau tidak.
+Jika tidak aktif, sistem menerapkan \textit{color matrix} identitas sehingga gambar tampil seperti aslinya.
+Jika filter aktif, sistem menerapkan matriks transformasi sesuai jenis buta warna yang dipilih (simulasi atau daltonisasi).
+Setelah matriks ditentukan, gambar dirender menggunakan \textit{Color Matrix Filter} yang berjalan di GPU, sehingga proses ini efisien dan tidak membebani CPU.
 
-\subsection{Judul Sub-Subbagian Pertama}
+\begin{figure}[H]
+  \centering
+  % TODO: ganti dengan flowchart daltonisasi (Figure 2 dari paper IEEE)
+  \includegraphics[width=1\textwidth]{gambar/flowchart-daltonisasi}
+  \caption{Diagram Alur Simulasi Buta Warna dan Proses Daltonisasi}
+  \label{fig:flowchart-daltonisasi}
+\end{figure}
 
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
 
-\subsection{Judul Sub-Subbagian Kedua}
+% ============================================================
+\section{Implementasi Algoritma \textit{LMS Daltonization}}
 
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+Algoritma \textit{LMS Daltonization} bekerja dengan cara mengonversi warna dari ruang warna RGB ke ruang warna LMS, mensimulasikan kondisi buta warna, lalu menggeser informasi warna yang hilang ke spektrum yang masih bisa dilihat.
+Berikut adalah tahapan implementasinya.
 
-\section{Hasil}
+\subsection{Konversi Ruang Warna RGB ke LMS}
 
-Hasil yang diperoleh dari penelitian ini adalah \ldots\ldots\ldots\ldots\ldots\ldots
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+Langkah pertama adalah mengonversi warna dari RGB ke LMS.
+Ruang warna LMS merepresentasikan cara kerja tiga jenis sel kerucut pada mata manusia, yaitu \textit{Long} (L), \textit{Medium} (M), dan \textit{Short} (S)~\parencite{8289076}.
+Berbeda dengan RGB yang berfokus pada perangkat layar, LMS lebih mencerminkan persepsi penglihatan manusia secara biologis.
 
-% Contoh tabel hasil
+Konversi ini dilakukan dengan mengalikan nilai piksel RGB dengan matriks konversi berikut~\parencite{Vienot1999DigitalVC}:
+
+\begin{equation}
+  \begin{pmatrix} L \\ M \\ S \end{pmatrix}
+  =
+  \begin{pmatrix}
+    17{,}8824 & 43{,}5161 & 4{,}11935 \\
+    3{,}4565  & 27{,}1554 & 3{,}86714 \\
+    0{,}02996 & 0{,}18431 & 1{,}46709
+  \end{pmatrix}
+  \begin{pmatrix} R \\ G \\ B \end{pmatrix}
+  \label{eq:rgb-to-lms}
+\end{equation}
+
+Setiap nilai L, M, dan S merupakan kombinasi dari ketiga kanal RGB, yang mencerminkan seberapa besar kontribusi masing-masing warna terhadap respons sel kerucut.
+
+\subsection{Simulasi Buta Warna}
+
+Setelah nilai LMS diperoleh, langkah berikutnya adalah mensimulasikan kondisi buta warna.
+Simulasi dilakukan dengan memodifikasi salah satu komponen LMS sesuai jenis defisiensinya.
+Pada kondisi ini, komponen yang terpengaruh tidak digunakan secara langsung, melainkan dihitung ulang dari dua komponen lainnya~\parencite{Vienot1999DigitalVC}.
+
+Berikut adalah matriks simulasi untuk masing-masing jenis buta warna:
+
+\noindent\textbf{\textit{Protanopia} (buta warna merah)}
+\begin{equation}
+  \begin{pmatrix} L_{\text{sim}} \\ M_{\text{sim}} \\ S_{\text{sim}} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    0 & 2{,}02344 & -2{,}52581 \\
+    0 & 1         & 0 \\
+    0 & 0         & 1
+  \end{pmatrix}
+  \begin{pmatrix} L \\ M \\ S \end{pmatrix}
+  \label{eq:sim-protanopia}
+\end{equation}
+
+\noindent\textbf{\textit{Deuteranopia} (buta warna hijau)}
+\begin{equation}
+  \begin{pmatrix} L_{\text{sim}} \\ M_{\text{sim}} \\ S_{\text{sim}} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    1         & 0 & 0 \\
+    0{,}494207 & 0 & 1{,}24827 \\
+    0         & 0 & 1
+  \end{pmatrix}
+  \begin{pmatrix} L \\ M \\ S \end{pmatrix}
+  \label{eq:sim-deuteranopia}
+\end{equation}
+
+\noindent\textbf{\textit{Tritanopia} (buta warna biru)}
+\begin{equation}
+  \begin{pmatrix} L_{\text{sim}} \\ M_{\text{sim}} \\ S_{\text{sim}} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    1          & 0         & 0 \\
+    0          & 1         & 0 \\
+    -0{,}395913 & 0{,}801109 & 0
+  \end{pmatrix}
+  \begin{pmatrix} L \\ M \\ S \end{pmatrix}
+  \label{eq:sim-tritanopia}
+\end{equation}
+
+Hasil dari tahap ini adalah nilai LMS yang merepresentasikan warna sebagaimana yang terlihat oleh penderita buta warna.
+
+\subsection{Proses Daltonisasi}
+
+Setelah simulasi dilakukan, langkah selanjutnya adalah menghitung informasi warna yang \textit{hilang} dan menggesernya ke kanal yang masih bisa dilihat.
+
+Pertama, nilai LMS hasil simulasi dikonversi kembali ke RGB menggunakan matriks invers berikut~\parencite{Vienot1999DigitalVC}:
+
+\begin{equation}
+  \begin{pmatrix} R_{\text{sim}} \\ G_{\text{sim}} \\ B_{\text{sim}} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    0{,}080944    & -0{,}130504   &  0{,}116721  \\
+    -0{,}0102485  &  0{,}0540194  & -0{,}113615 \\
+    -0{,}000365294 & -0{,}00412163 &  0{,}693513
+  \end{pmatrix}
+  \begin{pmatrix} L_{\text{sim}} \\ M_{\text{sim}} \\ S_{\text{sim}} \end{pmatrix}
+  \label{eq:lms-to-rgb}
+\end{equation}
+
+Kemudian nilai \textit{error} dihitung, yaitu selisih antara warna asli dan warna hasil simulasi:
+
+\begin{equation}
+  E_R = R - R_{\text{sim}}, \quad
+  E_G = G - G_{\text{sim}}, \quad
+  E_B = B - B_{\text{sim}}
+  \label{eq:error}
+\end{equation}
+
+Nilai \textit{error} ini merepresentasikan informasi warna yang tidak bisa dilihat oleh penderita buta warna.
+Agar informasi ini tidak hilang begitu saja, nilainya digeser ke kanal warna lain yang masih bisa dilihat, menggunakan matriks penggeseran yang berbeda untuk setiap jenis buta warna.
+
+Pada \textit{protanopia}, kanal merah tidak digunakan sehingga \textit{error}-nya dialihkan ke hijau dan biru~\parencite{tasnim2017}:
+
+\begin{equation}
+  \begin{pmatrix} R_{\text{shift}} \\ G_{\text{shift}} \\ B_{\text{shift}} \end{pmatrix}
+  =
+  \begin{pmatrix} 0{,}0 & 0{,}0 & 0{,}0 \\ 0{,}9 & 0{,}1 & 0{,}0 \\ 0{,}9 & 0{,}0 & 0{,}1 \end{pmatrix}
+  \begin{pmatrix} E_R \\ E_G \\ E_B \end{pmatrix}
+  \label{eq:shift-protanopia}
+\end{equation}
+
+Pada \textit{deuteranopia}, kanal hijau yang bermasalah sehingga \textit{error}-nya dialihkan ke merah dan biru~\parencite{muhammad2020analysis}:
+
+\begin{equation}
+  \begin{pmatrix} R_{\text{shift}} \\ G_{\text{shift}} \\ B_{\text{shift}} \end{pmatrix}
+  =
+  \begin{pmatrix} 1{,}0 & 0{,}7 & 0{,}0 \\ 0{,}0 & 0{,}0 & 0{,}0 \\ 0{,}0 & 0{,}7 & 1{,}0 \end{pmatrix}
+  \begin{pmatrix} E_R \\ E_G \\ E_B \end{pmatrix}
+  \label{eq:shift-deuteranopia}
+\end{equation}
+
+Pada \textit{tritanopia}, kanal biru yang bermasalah sehingga \textit{error}-nya dialihkan ke merah dan hijau~\parencite{schmitz_colorblindness}:
+
+\begin{equation}
+  \begin{pmatrix} R_{\text{shift}} \\ G_{\text{shift}} \\ B_{\text{shift}} \end{pmatrix}
+  =
+  \begin{pmatrix} 1{,}0 & 0{,}0 & 0{,}7 \\ 0{,}0 & 1{,}0 & 0{,}7 \\ 0{,}0 & 0{,}0 & 0{,}0 \end{pmatrix}
+  \begin{pmatrix} E_R \\ E_G \\ E_B \end{pmatrix}
+  \label{eq:shift-tritanopia}
+\end{equation}
+
+Terakhir, nilai \textit{shift} ditambahkan ke warna piksel asli untuk menghasilkan warna yang telah dikoreksi:
+
+\begin{equation}
+  R_{\text{dalton}} = R + R_{\text{shift}}, \quad
+  G_{\text{dalton}} = G + G_{\text{shift}}, \quad
+  B_{\text{dalton}} = B + B_{\text{shift}}
+  \label{eq:dalton-result}
+\end{equation}
+
+\subsection{Konstruksi Matriks Transformasi 4×5}
+
+Agar proses daltonisasi tidak perlu menghitung ulang setiap piksel satu per satu, seluruh transformasi pada persamaan~\ref{eq:dalton-result} diringkas menjadi sebuah matriks konstan berukuran $4 \times 5$.
+
+Caranya adalah dengan mengevaluasi fungsi transformasi $T$ terhadap tiga warna dasar: merah murni $(1, 0, 0)$, hijau murni $(0, 1, 0)$, dan biru murni $(0, 0, 1)$:
+
+\begin{equation}
+  T(1, 0, 0) = (r_R,\, r_G,\, r_B), \quad
+  T(0, 1, 0) = (g_R,\, g_G,\, g_B), \quad
+  T(0, 0, 1) = (b_R,\, b_G,\, b_B)
+  \label{eq:basis}
+\end{equation}
+
+Hasil dari ketiga evaluasi ini disusun menjadi matriks $M_{\text{dalton}}$ berikut, yang sekaligus mempertahankan nilai \textit{alpha} (transparansi) piksel di baris keempat:
+
+\begin{equation}
+  M_{\text{dalton}} =
+  \begin{pmatrix}
+    r_R & g_R & b_R & 0 & 0 \\
+    r_G & g_G & b_G & 0 & 0 \\
+    r_B & g_B & b_B & 0 & 0 \\
+    0   & 0   & 0   & 1 & 0
+  \end{pmatrix}
+  \label{eq:dalton-matrix}
+\end{equation}
+
+Matriks ini kemudian langsung dipakai oleh \textit{Color Matrix Filter} di GPU, sehingga koreksi warna bisa dirender pada setiap \textit{frame} secara efisien.
+
+
+% ============================================================
+\section{Implementasi Tingkat Keparahan (\textit{Severity Level})}
+
+Fitur \textit{severity level} memungkinkan pengguna mengatur seberapa kuat efek filter yang diterapkan, mulai dari 0,0 (tidak ada efek) hingga 1,0 (efek penuh).
+Karena tujuannya berbeda, cara penerapan \textit{severity} dibedakan antara mode simulasi dan mode daltonisasi.
+
+\subsection{Keparahan pada Mode Simulasi}
+
+Pada mode simulasi, \textit{severity} berfungsi untuk meniru tingkat keparahan kondisi buta warna, termasuk kondisi \textit{Anomalous Trichromacy} (buta warna parsial)~\parencite{physiologically_visualization}.
+Perhitungan dilakukan langsung di ruang warna LMS menggunakan interpolasi linear antara nilai LMS penglihatan normal dan nilai LMS defisiensi penuh:
+
+\begin{equation}
+  L_{\text{final}} = L_{\text{normal}} + (L_{\text{sim}} - L_{\text{normal}}) \times S
+\end{equation}
+\begin{equation}
+  M_{\text{final}} = M_{\text{normal}} + (M_{\text{sim}} - M_{\text{normal}}) \times S
+\end{equation}
+\begin{equation}
+  S_{\text{final}} = S_{\text{normal}} + (S_{\text{sim}} - S_{\text{normal}}) \times S
+  \label{eq:severity-sim}
+\end{equation}
+
+Ketika $S = 0$, hasil simulasi sama dengan penglihatan normal. Ketika $S = 1$, simulasi menampilkan kondisi defisiensi penuh.
+
+\subsection{Keparahan pada Mode Daltonisasi}
+
+Pada mode daltonisasi, \textit{severity} berfungsi untuk mengatur seberapa kuat kompensasi warna yang diberikan.
+Perhitungan dilakukan di ruang warna RGB dengan cara mengalikan nilai \textit{error shift} setiap kanal dengan nilai \textit{severity} sebelum ditambahkan ke piksel asli:
+
+\begin{equation}
+  R_{\text{dalton}} = R_{\text{asli}} + (\mathit{Shift}_R \times S)
+\end{equation}
+\begin{equation}
+  G_{\text{dalton}} = G_{\text{asli}} + (\mathit{Shift}_G \times S)
+\end{equation}
+\begin{equation}
+  B_{\text{dalton}} = B_{\text{asli}} + (\mathit{Shift}_B \times S)
+  \label{eq:severity-corr}
+\end{equation}
+
+Dengan cara ini, pengguna bisa menyesuaikan intensitas koreksi warna sesuai kebutuhan dan kenyamanan visual mereka.
+
+
+% ============================================================
+\section{Ekstraksi Warna Dominan Berbasis HSV}
+
+Fitur ini bertujuan untuk mendeteksi dan menampilkan nama warna dari objek yang dituju oleh \textit{crosshair} secara \textit{real-time}.
+Alur prosesnya ditunjukkan pada Gambar~\ref{fig:flowchart-hsv}.
+
+\begin{figure}[H]
+  \centering
+  % TODO: ganti dengan flowchart HSV (Figure 3 dari paper IEEE)
+  \includegraphics[width=0.55\textwidth]{gambar/gambar-31}
+  \caption{Diagram Alur Ekstraksi dan Klasifikasi Warna Secara \textit{Real-Time}}
+  \label{fig:flowchart-hsv}
+\end{figure}
+
+\subsection{Pengambilan \textit{Bitmap} dari Kamera}
+
+Setiap \textit{frame} dari kamera diambil oleh komponen \textit{ImageAnalysis} pada \textit{CameraX}, lalu dikonversi menjadi \textit{Bitmap}.
+Karena orientasi sensor kamera bisa berbeda-beda antar perangkat Android, nilai rotasi dari metadata \textit{frame} juga diperiksa.
+Jika rotasinya tidak nol, \textit{bitmap} dirotasi terlebih dahulu sebelum diproses.
+
+\subsection{Pengambilan Sampel Piksel}
+
+Warna tidak diambil dari satu piksel saja, karena satu piksel rentan terhadap \textit{noise} dan variasi cahaya.
+Sebagai gantinya, sistem mengambil sampel dari area kotak di sekitar titik tengah layar.
+
+Radius area sampling yang digunakan secara \textit{default} adalah $r = 5$, sehingga area yang disampling berukuran $11 \times 11 = 121$ piksel, yang dihitung dengan persamaan:
+
+\begin{equation}
+  N = (2r + 1) \times (2r + 1)
+  \label{eq:pixel-count}
+\end{equation}
+
+Agar koordinat piksel tidak keluar dari batas gambar, digunakan fungsi pembatas berikut:
+
+\begin{equation}
+  f(x) = \min(\max(x,\, 0),\, W-1), \quad
+  g(y) = \min(\max(y,\, 0),\, H-1)
+  \label{eq:bounding}
+\end{equation}
+
+Setiap piksel disimpan sebagai bilangan bulat 32-bit dalam format ARGB.
+Komponen warna diekstrak dengan operasi \textit{bit shift} dan \textit{masking}:
+
+\begin{equation}
+  B_{(x,y)} = \text{pixel} \;\&\; 255, \quad
+  G_{(x,y)} = (\text{pixel} \gg 8) \;\&\; 255, \quad
+  R_{(x,y)} = (\text{pixel} \gg 16) \;\&\; 255
+  \label{eq:bit-extract}
+\end{equation}
+
+Nilai rata-rata RGB dari seluruh piksel dalam area sampling kemudian dihitung:
+
+\begin{equation}
+  \bar{R} = \frac{1}{N}\sum_{i=1}^{N} R_i, \quad
+  \bar{G} = \frac{1}{N}\sum_{i=1}^{N} G_i, \quad
+  \bar{B} = \frac{1}{N}\sum_{i=1}^{N} B_i
+  \label{eq:avg-rgb}
+\end{equation}
+
+\subsection{Klasifikasi Nama Warna}
+
+Nilai rata-rata RGB tersebut kemudian dikonversi ke ruang warna HSV menggunakan fungsi bawaan Android \texttt{RGBToHSV()}.
+Hasilnya adalah tiga komponen: \textit{Hue} (H) sebagai jenis warna ($0°$–$360°$), \textit{Saturation} (S) sebagai intensitas warna (0–1), dan \textit{Value} (V) sebagai kecerahan (0–1).
+
+Nama warna ditentukan berdasarkan rentang nilai H, S, dan V menggunakan pendekatan \textit{threshold}.
+Nilai \textit{threshold} ini ditentukan melalui pengujian empiris pada dua kondisi pencahayaan: normal dan redup.
+Sebagai contoh, untuk warna merah, rata-rata Hue pada kondisi normal adalah $3{,}3°$ dan pada kondisi redup adalah $8{,}1°$.
+Standar deviasi dihitung menggunakan:
+
+\begin{equation}
+  \sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_i - \mu)^2}
+  \label{eq:std-dev}
+\end{equation}
+
+Rentang toleransi ditentukan dengan:
+
+\begin{equation}
+  \text{Rentang Toleransi} = \bar{H} \pm 2\sigma
+  \label{eq:tolerance}
+\end{equation}
+
+Dari hasil perhitungan, batas atas untuk warna merah ditetapkan pada $9{,}86°$ (mengambil batas kondisi terburuk).
+Proses yang sama diterapkan untuk semua warna lainnya, menghasilkan tabel \textit{threshold} pada Tabel~\ref{tab:hue-threshold} dan Tabel~\ref{tab:grayscale-threshold}.
+
 \begin{table}[H]
   \centering
-  \caption{Hasil Pengujian}
-  \label{tab:hasil}
-  \begin{tabular}{|c|l|c|c|}
+  \caption{Klasifikasi Warna Berdasarkan Rentang \textit{Hue}}
+  \label{tab:hue-threshold}
+  \begin{tabular}{|c|c|}
     \hline
-    No. & Skenario Uji & Hasil yang Diharapkan & Hasil Aktual \\
+    \textbf{Rentang \textit{Hue} (°)} & \textbf{Nama Warna} \\
     \hline
-    1   & Skenario 1  & Berhasil              & Berhasil     \\
-    2   & Skenario 2  & Berhasil              & Berhasil     \\
+    $H < 9{,}85$                       & Merah   \\
+    $9{,}85  \leq H < 26{,}98$         & Oranye  \\
+    $26{,}98 \leq H < 50{,}42$         & Kuning  \\
+    $50{,}42 \leq H < 122{,}50$        & Hijau   \\
+    $122{,}50 \leq H < 204{,}85$       & Cyan    \\
+    $204{,}85 \leq H < 224{,}57$       & Biru    \\
+    $224{,}57 \leq H < 319{,}37$       & Ungu    \\
+    $H \geq 319{,}37$                  & Merah   \\
     \hline
   \end{tabular}
 \end{table}
 
-Berdasarkan Tabel~\ref{tab:hasil}, \ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+Apabila nilai \textit{Saturation} rendah (warna tidak jenuh), klasifikasi tidak lagi menggunakan \textit{Hue} melainkan menggunakan \textit{Value} untuk menentukan apakah warna tersebut hitam, abu-abu, atau putih, seperti pada Tabel~\ref{tab:grayscale-threshold}.
+
+\begin{table}[H]
+  \centering
+  \caption{Klasifikasi Warna Netral Berdasarkan \textit{Saturation} dan \textit{Value}}
+  \label{tab:grayscale-threshold}
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Kondisi}  & \textbf{Rentang \textit{Value}} & \textbf{Nama Warna} \\
+    \hline
+    $S < 0{,}10$ & $V < 0{,}15$              & Hitam     \\
+    $S < 0{,}10$ & $0{,}15 \leq V < 0{,}40$  & Abu Gelap \\
+    $S < 0{,}10$ & $0{,}40 \leq V < 0{,}78$  & Abu-Abu   \\
+    $S < 0{,}10$ & $V \geq 0{,}78$           & Putih     \\
+    \hline
+  \end{tabular}
+\end{table}
+
+
+% ============================================================
+\section{Skenario Pengujian}
+
+Pengujian dilakukan untuk memastikan aplikasi Dalsilens berjalan sesuai tujuan penelitian.
+Ada tiga skenario pengujian yang digunakan.
+
+\subsection{Pengujian Koreksi Visual dengan Pelat Ishihara}
+
+Skenario ini bertujuan untuk mengukur seberapa efektif algoritma \textit{LMS Daltonization} dalam memulihkan kontras warna.
+Pengujian menggunakan \textit{Ishihara plates}, yaitu gambar standar yang umum digunakan untuk menguji kemampuan penglihatan warna.
+Sistem akan memproses gambar pelat Ishihara dalam tiga kondisi: penglihatan normal, simulasi buta warna (\textit{Protanopia}, \textit{Deuteranopia}, \textit{Tritanopia}), dan hasil setelah daltonisasi diterapkan.
+Keberhasilan diukur dengan melihat apakah angka atau pola yang tadinya tidak terlihat menjadi lebih jelas setelah dikoreksi.
+
+\subsection{Pengujian Akurasi Klasifikasi Nama Warna}
+
+Skenario ini mengevaluasi seberapa akurat fitur identifikasi nama warna bekerja di kondisi nyata.
+Pengujian dilakukan dengan mengarahkan kamera ke berbagai objek berwarna dalam dua kondisi pencahayaan: normal dan redup.
+Hasil nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya.
+Akurasi dihitung dari persentase deteksi yang benar dibandingkan total percobaan.
+
+\subsection{Pengujian Performa \textit{Real-Time}}
+
+Skenario ini memvalidasi efisiensi komputasi yang didorong akselerasi GPU.
+Performa diukur secara kuantitatif dengan menghitung rata-rata nilai \textit{Frame Per Second} (FPS) dan latensi pemrosesan saat sistem menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan.
+Selain itu, penggunaan memori (RAM) dan utilisasi CPU juga dipantau menggunakan \textit{Android Studio Profiler} untuk memastikan tidak ada \textit{lag} atau \textit{memory leak} selama aplikasi berjalan.

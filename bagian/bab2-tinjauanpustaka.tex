@@ -12,47 +12,128 @@
 \section{Penelitian Terkait}
 Dalam beberapa tahun terakhir berbagai solusi berbasis teknologi telah banyak dikembangkan untuk membantu individu dengan \textit{Color Vision Deficiency} (CVD) untuk meningkatkan kemampuan dalam membedakan warna.
 Penelitian yang dilakukan oleh \textcite{Elrefaei2018} melakukan perbandingan empat algoritma koreksi warna berbasis \textit{smartphone}, termasuk algoritma \textit{LMS Daltonization}, yang dievaluasi menggunakan software simulator Vischeck dan Coblis.
-Namun, pengujian pada penelitian tersebut memiliki keterbatasan karena pemrosesan citra masih berbasis statis dengan metode unggah gambar secara manual dan tidak berjalan secara real-time.
+Namun, pengujian pada penelitian tersebut memiliki keterbatasan karena pemrosesan citra masih berbasis statis dengan metode unggah gambar secara manual dan tidak berjalan secara \textit{real-time}.
 
-Selain itu, penelitian lain oleh \textcite{covisance} mengembangkan aplikasi seluler Covisance yang menerapkan metode LMS Daltonization secara real-time dan mengintegrasikan uji Farnsworth D-15 langsung di dalam aplikasi.
+Selain itu, penelitian lain oleh \textcite{covisance} mengembangkan aplikasi seluler Covisance yang menerapkan metode LMS Daltonization secara \textit{real-time} dan mengintegrasikan uji Farnsworth D-15 langsung di dalam aplikasi.
 Meskipun mampu menampilkan simulasi secara langsung, aplikasi tersebut masih menggunakan metode kalkulasi nilai warna secara manual, yang dapat membebani kinerja CPU dan sering menyebabkan frame-drop pada perangkat dengan resolusi kamera tinggi.
 
-Oleh karena itu, penelitian ini berfokus pada efisiensi komputasi visual secara realtime dengan cara memindahkan beban komputasi dari CPU ke GPU untuk menghindari proses sekuensial yang berat.
-Dengan memanfaatkan \textit{library} CameraX dan \textit{ColorMatrix}, Dalsilens dapat mempertahankan stabilitas koreksi warna pada pemrosean \textit{real-time}, sehingga dapat mengurangi masalah penurunan bingkai (\textit{frame drop}) dan latensi yang sering terjadi pada pemrosesan citra real-time.
+Oleh karena itu, penelitian ini berfokus pada efisiensi komputasi visual secara \textit{real-time} dengan cara memindahkan beban komputasi dari CPU ke GPU untuk menghindari proses sekuensial yang berat.
+Dengan memanfaatkan \textit{library} CameraX dan \textit{ColorMatrix}, Dalsilens dapat mempertahankan stabilitas koreksi warna pada pemrosean \textit{real-time}, sehingga dapat mengurangi masalah penurunan bingkai (\textit{frame drop}) dan latensi yang sering terjadi pada pemrosesan citra \textit{real-time}.
 
 % ============================================================
 \section{Konsep Dasar Penglihatan dan Warna}
 
-\subsection{Color Vision Deficiency (CVD) dan Dikromasi}
+\subsection{\textit{Color Vision Deficiency} (CVD) dan Dikromasi}
 \textit{Color Vision Deficiency} (CVD) atau buta warna adalah sebuah kondisi kelainan genetik yang memengaruhi kemampuan seseorang dalam membedakan panjang gelombang cahaya tertentu seperti merah, hijau, dan biru.
-Tipe paling umum dari kondisi ini adalah Dikromasi, yang terbagi menjadi \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru).
+Tipe paling umum dari kondisi ini adalah Dikromasi, yang terbagi menjadi \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru) \parencite{muhammad2020analysis}.
 
 \subsection{Ruang Warna Visual (RGB, LMS, dan HSV)}
 Umumnya pemrosesan citra digital menggunakan ruang warna RGB (\textit{Red, Green, Blue}).
 Namun, sistem penglihatan manusia memproses spektrum cahaya melalui sel kerucut mata yang direpresentasikan dalam ruang warna LMS (\textit{Long, Medium, Short}) \parencite{8289076}.
 Selain itu, terdapat ruang warna HSV (\textit{Hue, Saturation, Value}) yang efektif dalam pemisahan intensitas cahaya dari warna itu sendiri.
-Ruang warna ini membagi elemen visual menjadi tipe jenis warna (H), intensitas warna (S), dan tingkat kecerahan (V), sehingga cocok digunakan untuk klasifikasi warna.
+Ruang warna ini membagi elemen visual menjadi tipe jenis warna (H), intensitas warna (S), dan tingkat kecerahan (V), sehingga cocok digunakan untuk klasifikasi warna \parencite{Sirisathitkul31122025}.
 
 % ============================================================
-\section{Pengolahan Citra Digital (Digital Image Processing)}
+\section{Pengolahan Citra Digital (\textit{Digital Image Processing})}
 
-\subsection{Pemrosesan Citra Real-Time}
+\subsection{Pemrosesan Citra \textit{Real-Time}}
 Pengolahan citra digital merupakan teknik untuk memproses dan memodifikasi gambar digital dengan mengubah nilai piksel melalui proses komputasi.
-Pengolahan citra digital secara real-time mengharuskan sistem untuk terus menerus mengambil sample bingkai (\textit{frame}) dari perangkat keras kamera.
-Nilai piksel dari bingkai yang ditangkap tersebut kemudian diekstrak untuk diproses dan dianalisis sebelum ditampilkan kembali kepada pengguna secara real-time.
+Pengolahan citra digital secara \textit{real-time} mengharuskan sistem untuk terus menerus mengambil sample bingkai (\textit{frame}) dari perangkat keras kamera.
+Nilai piksel dari bingkai yang ditangkap tersebut kemudian diekstrak untuk diproses dan dianalisis sebelum ditampilkan kembali kepada pengguna secara \textit{real-time} \parencite{samyan2015}.
 
 \subsection{Algoritma LMS Daltonization}
-\textit{LMS Daltonization} adalah sebuah teknik pemrosesan gambar untuk memanipulasi warna pada citra, yang dapat membantu individu dengan buta warna supaya dapat membedakan warna tertentu.
-Secara garis besar metode ini dibagi menjadi beberapa tahap, tahap pertama yaitu mengonversi ruang warna RGB menjadi ruang warna LMS.
-Tahap kedua
+\textit{LMS Daltonization} adalah sebuah teknik pemrosesan gambar untuk memanipulasi warna pada citra, yang dapat membantu individu dengan buta warna supaya dapat membedakan warna tertentu \parencite{muhammad2020analysis}.
+Secara garis besar metode ini dibagi menjadi beberapa tahap, tahap pertama yaitu mengonversi ruang warna RGB menjadi ruang warna LMS \parencite{Elrefaei2018, covisance}.
+Tahap kedua adalah mensimulasikan buta warna (\textit{color blindness}), pada tahap ini salah satu sel komponen (L, M, atau S) dimodifikasi untuk dihitung ulang berdasarkan kombinasi dua komponen lainnya untuk menggambarkan warna apa yang sebenarnya tertangkap oleh mata individu yang mengalami buta warna.
+Tahap ketiga yaitu menghitung nilai \textit{error} (informasi warna yang hilang), hasil simulasi pada tahap sebelumnya kemudian dikonversi kembali dari ruang warna LMS ke ruang warna RGB.
+Sistem lalu menghitung selisih atau \textit{error} antara nilai RGB asli dengan nilai RGB hasil simulasi.
+Nilai \textit{error} ini merepresentasikan informasi warna yang tidak bisa dilihat oleh individu yang mengalami buta warna.
+Tahap terakhir yaitu membentuk citra baru (\textit{Daltonized}), nilai \textit{error} yang didapat dari tahap sebelumnya ditambahkan ke warna asli.
+Hasil yang didapat adalah citra baru yang telah disesuaikan sehingga individu dengan buta warna dapat melihat perbedaan warna tertentu, menjadi lebih mudah dikenali tanpa menghilangkan keseluruhan informasi warna pada citra asli.
 
 % ============================================================
 \section{Teknologi dan Perangkat Pengembang}
 
 \subsection{Sistem Operasi Android}
-Jelaskan Android sebagai platform.
+Android merupakan sebuah sistem operasi seluler yang bersifat terbuka (\textit{open-source}) dan dibangun di atas kernel Linux.
+Android juga dipilih karena memiliki ekosistem pengembangan yang matang serta didukung oleh komunitas pengembang yang besar~\parencite{techrepublic2023android,stackoverflow2025survey}
+Selain itu dominasi Android di pasar global juga sangat besar, di mana data \textit{StatCounter} mencatat bahwa platform ini menguasai pangsa pasar perangkat seluler sebesar 71,68\% secara global pada tahun 2025~\parencite{statcounter2025mobile}.
 
-\subsection{Pustaka Grafis Color Matrix dan Akselerasi Perangkat Keras}
-Jelaskan penggunaan Color Matrix dan hardware acceleration.
+
+Dalam konteks pengembangan aplikasi alat bantu visual \textit{real-time}, platform Android menawarkan berbagai keuntungan, terutama melalui ketersediaan \textit{Application Programming Interface} (API) yang luas untuk mengakses komponen perangkat keras seperti kamera menggunakan pustaka \textit{CameraX}.
+Dukungan ini sangat penting dalam membangun sistem bantu visual yang memerlukan proses tangkapan citra secara terus-menerus.
+
+
+\subsection{Pustaka Grafis \textit{Color Matrix} dan Akselerasi Perangkat Keras}
+\textit{Color Matrix} adalah sebuah pustaka grafis bawaan pada pemrograman Android yang difungsikan untuk memodifikasi representasi warna citra digital.
+Pustaka ini bekerja dengan menerapkan transformasi matematika melalui perkalian matriks berukuran $4\times5$ terhadap nilai \textit{Red, Green, Blue}, dan \textit{Alpha} (RGBA) pada setiap piksel.
+Dalam konteks pemrosesan visual dikromasi,pustaka ini cocok digunakan karena proses perhitungan pada algoritma \textit{LMS Daltonization} dapat diterapkan dalam bentuk operasi matriks warna \parencite{android_colormatrix}.
+
+Keunggulan utama dari penggunaan pustaka ini adalah dukungannya terhadap akselerasi perangkat keras (\textit{Hardware Acceleration}). Melalui fitur ini, beban manipulasi grafis tingkat piksel yang berat dialihkan dari \textit{Central Processing Unit} (CPU) ke \textit{Graphics Processing Unit} (GPU).
+Hal ini memberikan keuntungan berupa peningkatan efisiensi komputasi, sehingga aplikasi mampu merender koreksi warna secara \textit{real-time} tanpa mengalami \textit{frame-drop} atau latensi tinggi.
+Walaupun sangat efisien, keterbatasan dari pemanfaatan teknologi ini adalah performa yang pada akhirnya tetap bergantung pada kapabilitas \textit{chipset} grafis masing-masing perangkat, di mana komputasi bingkai (\textit{frame}) yang terlalu berat pada perangkat berspesifikasi rendah tetap memiliki potensi membuat perangkat menjadi lebih panas \parencite{android_hardware_accel}.
+
+
+\subsection{Bahasa Pemrograman}
+Pada penelitian ini, pengembangan perangkat lunak menggunakan bahasa Kotlin.
+Kotlin adalah bahasa pemrograman modern berorientasi objek yang dikembangkan oleh perusahaan JetBrains.
+Sejak tahun 2019, Google telah meresmikan Kotlin sebagai bahasa utama yang paling direkomendasikan untuk pengembangan aplikasi Android \parencite{android_kotlin_first}.
+
+Salah satu keunggulan bahasa Kotlin adalah fitur keamanan null (\textit{null safety}).
+Fitur ini berfungsi untuk mencegah terjadinya \textit{NullPointerException} (NPE) pada saat kompilasi, yang merupakan kesalahan paling sering terjadi jika menggunakan bahasa pemrograman Java.
+Sealin itu sintaks pada bahasa Kotlin, dirancang lebih ringkas untuk mengurangi kode yang berulang (\textit{boilerplate code}).
+Hal ini memungkinkan penulisan algoritma kompleks seperti penerapan manipulasi warna dan klasifikasi warna ditulis dengan kode yang lebih sedikit. \parencite{kotlin_android_overview}
+
+Pada penelitian ini Kotlin dipilih karena memiliki performa yang mumpuni.
+Bahasa ini hampir sepenuhnya memiliki interopabilitas dengan Java, yang berarti Kotlin dapat memanggil pustaka bawaan Java dan Android SDK (\textit{Software Development Kit}) secara mudah.
+
+
+\subsection{Metode Pengembangan Perangkat Lunak (SDLC)}
+Dalam merekayasa sebuah perangkat lunak, diperlukan sebuah metodologi yang dikenal sebagai \textit{Software Development Life Cycle} (SDLC).
+SDLC adalah kerangka kerja (\textit{framework}) yang digunakan untuk mengelola proses pengembangan perangkat lunak dari tahap perencanaan, analisis, perancangan, implementasi, pengujian, hingga pemeliharaan sistem.
+SDLC membantu proses pengembangan perangkat lunak menjadi lebih terstruktur karena setiap tahap dilakukan secara berurutan sesuai dengan fungsinya masing-masing.
+Dengan mengikuti tahapan tersebut, pengembang dapat lebih mudah merancang, membangun, menguji, dan memelihara perangkat lunak sehingga aplikasi yang dihasilkan dapat berjalan sesuai dengan kebutuhan pengguna \parencite{ibm_sdlc}.
+
+\subsection{Unified Modeling Language (UML)}
+\textit{Unified Modeling Language} (UML) merupakan bahasa pemodelan visual yang digunakan untuk menggambarkan, merancang, dan mendokumentasikan sistem perangkat lunak.
+UML membantu pengembang memahami struktur dan alur kerja sistem sebelum proses pengembangan dimulai.
+Dalam pengembangan perangkat lunak, UML menyediakan berbagai jenis diagram yang digunakan untuk menggambarkan struktur, fungsi, dan alur kerja sistem.
+
+\textbf{Use Case Diagram}
+
+\textit{Use Case Diagram} adalah diagram UML yang digunakan untuk menggambarkan interaksi antara aktor (pengguna atau sistem lain) dengan fitur-fitur yang tersedia pada sistem.
+Diagram ini menunjukkan fungsi-fungsi yang dapat dilakukan oleh pengguna tanpa menjelaskan proses atau detail teknis di dalam sistem.
+Dengan diagram ini, kebutuhan dan fungsi utama aplikasi dapat digambarkan dengan lebih jelas.
+
+\textbf{Activity Diagram}
+
+\textit{Activity Diagram} digunakan untuk menggambarkan alur aktivitas atau proses yang terjadi di dalam sistem.
+Diagram ini menunjukkan urutan langkah-langkah yang dilakukan mulai dari awal hingga akhir proses, termasuk percabangan keputusan yang mungkin terjadi.
+Diagram ini membantu dalam memahami bagaimana suatu fitur atau proses berjalan di dalam aplikasi.
+
+\textbf{Class Diagram}
+
+\textit{Class Diagram} merupakan diagram yang digunakan untuk menggambarkan struktur sistem berdasarkan kelas (\textit{class}), atribut, metode, dan hubungan antar kelas.
+Diagram ini memberikan gambaran tentang bagaimana komponen-komponen dalam sistem saling berhubungan.
+Dalam pengembangan perangkat lunak berorientasi objek, \textit{Class Diagram} sering digunakan sebagai referensi dalam proses implementasi kode program.
+
+\subsection{Pengujian dan Evaluasi Sistem}
+Tahap terakhir dalam pengembangan aplikasi Dalsilens adalah melakukan pengujian (\textit{testing}) untuk memastikan aplikasi dapat berjalan dengan baik dan sesuai dengan tujuan penelitian.
+Selain menguji koreksi warna dan performa aplikasi secara \textit{real-time}, penelitian ini juga menggunakan dua metode pengujian berikut:
+
+\textbf{Pengujian Fungsionalitas (\textit{Black Box Testing})}
+Pengujian \textit{Black Box} dilakukan untuk memeriksa apakah fitur-fitur pada aplikasi dapat berjalan sesuai dengan kebutuhan yang telah ditentukan.
+Pada metode ini, pengujian dilakukan dengan mencoba berbagai masukan (\textit{input}) dan melihat hasil yang diberikan oleh sistem tanpa memperhatikan kode program yang ada di dalamnya.
+Pengujian dilakukan pada fitur-fitur utama aplikasi seperti membuka kamera, mengganti mode simulasi dan daltonisasi, mengatur \textit{severity level}, serta menampilkan hasil klasifikasi warna.
+Aplikasi dinyatakan berhasil apabila setiap fitur dapat memberikan keluaran yang sesuai dengan hasil yang diharapkan. \parencite{dicoding_blackbox}
+
+\textbf{Pengujian Kebergunaan (\textit{System Usability Scale})}
+\textit{System Usability Scale} (SUS) merupakan metode yang digunakan untuk mengukur tingkat kebergunaan (\textit{usability}) suatu sistem berdasarkan persepsi pengguna.
+Metode ini dikembangkan oleh John Brooke pada tahun 1986 dan telah banyak digunakan untuk mengevaluasi kemudahan penggunaan berbagai jenis perangkat lunak.
+Melalui metode SUS, peneliti dapat mengetahui apakah suatu aplikasi mudah dipahami, mudah digunakan, dan dapat diterima oleh pengguna.
+
+Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 10 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
+Setelah selesai menggunakan aplikasi, responden mengisi kuesioner SUS yang terdiri dari 10 pernyataan dengan skala penilaian 1 sampai 5.
+Nilai yang diperoleh kemudian dihitung menggunakan metode perhitungan SUS untuk mendapatkan skor akhir yang menunjukkan tingkat kebergunaan dan penerimaan pengguna terhadap aplikasi yang dikembangkan. \parencite{guntur2024simamurat}
 
 % ============================================================

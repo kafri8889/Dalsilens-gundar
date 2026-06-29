@@ -10,15 +10,11 @@
 
 \section{Latar Belakang}
 
-% Alinea 1: Masalah yang akan dibahas
-%Tuliskan latar belakang pada bagian ini. Alinea pertama menguraikan masalah yang akan
-%dibahas dalam penelitian.
-
 \setlength{\parindent}{2em} Penglihatan merupakan indra utama pada manusia yang berperan dalam memproses informasi dari lingkungan eksternal.
 Beberapa penelitian menyebutkan bahwa sekitar 80\% ~\parencite{bci_biomedical} informasi yang diterima dan diproses oleh otak manusia berasal dari indera penglihatan (sistem visual).
 Hal ini menunjukkan bahwa indra penglihatan berperan sangat penting untuk memahami lingkungan sekitar~\parencite{chung2020visual}.
-Namun, tidak semua orang memiliki kemampuan ini karena adanya Color Vision Deficiency (Defisiensi Penglihatan Warna) atau buta warna.
-Penderita buta warna (khususnya Protanopia dan Deuteranopia) sering kali mengalami kesulitan dalam membedakan warna tertentu seperti merah (Protanopia) dan hijau (Deuteranopia)~\parencite{improving_discrimination}.
+Namun, tidak semua orang memiliki kemampuan ini karena adanya \textit{Color Vision Deficiency} (Defisiensi Penglihatan Warna) atau buta warna.
+Penderita buta warna (khususnya \textit{Protanopia} dan \textit{Deuteranopia}) sering kali mengalami kesulitan dalam membedakan warna tertentu seperti merah (\textit{Protanopia}) dan hijau (\textit{Deuteranopia})~\parencite{improving_discrimination}.
 Kesulitan ini dapat mempengaruhi kemampuan individu untuk membedakan warna seperti lampu lalu lintas, kode warna pada perangkat elektronik, hingga cairan.
 
 % Alinea 2: Perkembangan teknologi yang digunakan
@@ -30,7 +26,7 @@ Melalui pemrosesan citra, kelemahan penglihatan warna visual dapat dikoreksi men
 Namun, memanipulasi warna pada setiap frame secara terus menerus memerlukan sumber daya komputasi (\textit{computational resources}) yang besar, sehingga dibutuhkan pemrosesan grafis yang efisien.
 Oleh karena itu, sistem operasi Android dipilih sebagai platform pengembangan.
 Selain mendominasi pasar perangkat seluler secara global dengan persentase sebesar 71.68\% pada tahun 2025~\parencite{statcounter2025mobile}, Android menyediakan dukungan pustaka (\textit{library}) bawaan yaitu \textit{Color Matrix}.
-Pustaka ini memungkinkan proses kalkulasi algoritma \textit{LMS Daltonization} pada tingkat piksel dieksekusi secara langsung melalui akselerasi perangkat keras (\textit{hardware acceleration}), salah satunya GPU (\textit{Graphical Processing Unit}), sehingga performa perangkat tetap stabil tanpa membebani CPU.
+Pustaka ini memungkinkan proses kalkulasi algoritma \textit{LMS Daltonization} pada tingkat piksel dieksekusi secara langsung melalui akselerasi perangkat keras (\textit{hardware acceleration}), salah satunya \textit{Graphical Processing Unit} (GPU), sehingga performa perangkat tetap stabil tanpa membebani \textit{Central Processing Unit} (CPU).
 Selain itu, kemampuan \textit{smartphone} dalam mengekstraksi nilai piksel dari tangkapan kamera juga membuka peluang penerapan metode komputasi pada ruang warna HSV (\textit{Hue, Saturation, Value}), yang memungkinkan sistem untuk mengklasifikasikan nama warna di lingkungan sekitar secara dinamis.
 
 %\setlength{\parindent}{2em} Seiring berkembangnya teknologi seluler, telepon pintar (smartphone) kini memiliki kemampuan komputasi yang tinggi untuk melakukan pemrosesan citra digital (Digital Image Processing) secara real-time.
@@ -45,8 +41,8 @@ Selain itu, kemampuan \textit{smartphone} dalam mengekstraksi nilai piksel dari 
 \setlength{\parindent}{2em} Berbagai solusi untuk permasalahan ini sebenarnya sudah tersedia, salah satunya adalah kacamata kromatik yang dirancang secara khusus untuk menyaring panjang gelombang cahaya tertentu yang tumpang tindih antara warna merah dan hijau~\parencite{patterson2022color}.
 Namun, penggunaan kacamata kromatik masih memiliki beberapa keterbatasan, seperti harganya yang relatif tinggi dan ketersediaannya yang terbatas.
 
-\setlength{\parindent}{2em} Mengatasi keterbatasan tersebut, penelitian ini mengusulkan solusi alternatif dengan merancang dan mengimplementasikan sebuah aplikasi alat bantu visual berjudul ``Dalsilens: A Real-Time Mobile Assistive Tool for Dichromacy Using LMS Daltonization and HSV-Based Color Identification``.
-Aplikasi ini dirancang untuk membantu penyandang buta warna dalam membedakan warna sekaligus mengidentifikasi nama warna pada suatu objek dengan memanfaatkan kamera smartphone secara real-time.
+\setlength{\parindent}{2em} Mengatasi keterbatasan tersebut, penelitian ini mengusulkan solusi alternatif dengan merancang dan mengimplementasikan sebuah aplikasi alat bantu visual berjudul ``Dalsilens: Alat Bantu Mobile Real-Time untuk Penderita Dikromasi Menggunakan Daltonisasi LMS dan Identifikasi Warna Berbasis HSV``.
+Aplikasi ini dirancang untuk membantu penyandang buta warna dalam membedakan warna sekaligus mengidentifikasi nama warna pada suatu objek dengan memanfaatkan kamera smartphone secara \textit{real-time}.
 Solusi ini menggunakan algoritma LMS Daltonization untuk menggeser informasi warna yang hilang ke spektrum warna lain, serta pendekatan \textit{rule-based thresholding} pada ruang warna HSV untuk klasifikasi nama warna.
 Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menjadi alat bantu yang praktis, memiliki latensi rendah, serta lebih mudah dijangkau dibandingkan solusi optik konvensional.
 
@@ -56,6 +52,7 @@ Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menja
 % Batasan yang jelas dari persoalan yang dikaji
 \setlength{\parindent}{2em} Adapun ruang lingkup pada penulisan ini yaitu:
 \begin{enumerate}
+  \item Aplikasi dikembangkan untuk perangkat dengan sistem operasi Android menggunakan bahasa Kotlin.
   \item Kondisi defisiensi penglihatan warna yang ditangani difokuskan pada tipe Dikromasi, yang mencakup \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru).
   \item Penelitian ini tidak mencakup kondisi Monokromasi (buta warna total).
   \item Akurasi dari fitur klasifikasi nama warna juga dipengaruhi oleh kondisi pencahayaan lingkungan sekitar.
@@ -67,8 +64,9 @@ Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menja
 % Hasil yang diharapkan – akan menjadi isi kesimpulan
 Tujuan dari penelitian ini adalah:
 \begin{enumerate}
-  \item Membedakan objek secara visual (dengan algoritma LMS Daltonization).
-  \item Membedakan objek secara tekstual (dengan deteksi nama warna HSV).
+  \item Pengembangan prototipe aplikasi seluler Dalsilens berbasis Android sebagai alat bantu visual secara \textit{real-time} bagi penderita dikromasi.
+  \item Implementasi algoritma LMS Daltonization untuk membedakan objek secara visual.
+  \item Implementasi deteksi nama warna berbasis ruang warna HSV untuk membedakan objek secara tekstual.
 \end{enumerate}
 
 \section{Metode Penelitian}
