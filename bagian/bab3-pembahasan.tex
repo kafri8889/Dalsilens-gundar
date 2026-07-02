@@ -15,6 +15,137 @@
 Secara keseluruhan, sistem Dalsilens dirancang untuk memproses gambar dari kamera secara \textit{real-time} dengan latensi yang rendah.
 Supaya proses berjalan efisien, komputasi dibagi menjadi dua tahap utama, yaitu pengambilan gambar untuk deteksi warna, dan manipulasi warna pada level \textit{bitmap} menggunakan akselerasi GPU melalui \textit{Color Matrix}.
 
+\subsection{Perancangan UML}
+
+\subsubsection{\textit{Use Case Diagram}}
+
+\textit{Use case diagram} pada Gambar~\ref{fig:use-case} menggambarkan interaksi antara pengguna dengan fitur-fitur yang tersedia pada aplikasi Dalsilens.
+Terdapat satu aktor dalam sistem ini, yaitu pengguna (penderita buta warna) yang berinteraksi langsung dengan aplikasi.
+
+\begin{figure}[H]
+  \centering
+  % TODO: ganti dengan use case diagram yang sebenarnya
+  \includegraphics[width=0.8\textwidth]{gambar/use-case-diagram}
+  \caption{\textit{Use Case Diagram} Aplikasi Dalsilens}
+  \label{fig:use-case}
+\end{figure}
+
+Berikut adalah penjelasan dari masing-masing \textit{use case} yang tersedia:
+
+\begin{enumerate}
+  \item \textbf{Membuka Fitur Daltonisasi} \\
+  Dari halaman \textit{dashboard}, pengguna dapat masuk ke halaman kamera utama yang menjalankan fitur koreksi dan simulasi warna secara \textit{real-time}.
+  Sebelum masuk, sistem mengecek izin kamera. Jika belum diberikan, aplikasi meminta izin terlebih dahulu.
+
+  \item \textbf{Membuka Uji Klasifikasi Warna} \\
+  Pengguna juga dapat membuka halaman uji klasifikasi warna (\textit{Color Classification Test}) untuk menguji kemampuan sistem dalam mengenali nama warna dari tangkapan kamera.
+
+  \item \textbf{Mengaktifkan/Menonaktifkan Filter} \\
+  Pengguna dapat menghidupkan atau mematikan filter warna melalui tombol \textit{toggle} di layar kamera.
+  Saat filter dimatikan, gambar ditampilkan dalam kondisi asli tanpa efek apapun.
+
+  \item \textbf{Memilih Jenis Simulasi Buta Warna} \\
+  Pengguna dapat memilih jenis defisiensi yang ingin disimulasikan atau dikoreksi, yaitu \textit{Normal}, \textit{Protanopia}, \textit{Deuteranopia}, \textit{Tritanopia}, atau \textit{Custom}.
+  Pilihan ini dapat diakses di panel pengaturan (\textit{bottom sheet}).
+
+  \item \textbf{Mengaktifkan/Menonaktifkan Daltonisasi} \\
+  Pengguna dapat mengaktifkan mode daltonisasi melalui tombol khusus di layar atau \textit{switch} di panel pengaturan.
+  Saat aktif, sistem akan mensimulasikan kondisi buta warna dan menerapkan algoritma koreksi warna.
+
+  \item \textbf{Mengatur Tingkat Keparahan (\textit{Severity})} \\
+  Pengguna dapat menyesuaikan intensitas efek filter melalui \textit{slider} di panel pengaturan, dengan rentang nilai 0,0 hingga 1,0.
+
+  \item \textbf{Mengatur Ukuran Area Sampling} \\
+  Pengguna dapat mengubah radius area pengambilan sampel piksel untuk deteksi warna, yang memengaruhi seberapa luas area di sekitar \textit{crosshair} yang dianalisis.
+
+  \item \textbf{Mereset Filter ke Normal} \\
+  Pengguna dapat mereset semua pengaturan filter kembali ke kondisi \textit{Normal} (tanpa efek) menggunakan tombol reset di panel pengaturan.
+
+  \item \textbf{Melihat Nama Warna yang Terdeteksi} \\
+  Sistem secara otomatis menampilkan nama warna dari objek yang dituju oleh \textit{crosshair} di tengah layar secara \textit{real-time}.
+\end{enumerate}
+
+\subsubsection{\textit{Activity Diagram}}
+
+\textit{Activity diagram} digunakan untuk menggambarkan alur aktivitas yang terjadi di dalam sistem Dalsilens.
+Karena sistem memiliki dua alur komputasi utama, masing-masing digambarkan dalam diagram terpisah.
+
+Gambar~\ref{fig:activity-akuisisi} menunjukkan alur aktivitas pengambilan gambar dan identifikasi warna.
+Saat pengguna membuka \textit{CameraScreen}, sistem menginisialisasi kamera menggunakan \textit{CameraX} dan mulai menangkap \textit{frame} secara terus-menerus.
+Setiap \textit{frame} diteruskan ke \textit{ImageAnalysis}, dikonversi menjadi \textit{bitmap}, lalu dirotasi jika diperlukan sesuai orientasi sensor.
+Sistem kemudian mengambil rata-rata nilai RGB dari piksel di area tengah layar menggunakan kelas \texttt{ColorNames}, mengonversinya ke ruang warna HSV, dan mengklasifikasikannya menjadi nama warna yang ditampilkan di layar.
+
+\begin{figure}[H]
+  \centering
+  % TODO: ganti dengan activity diagram akuisisi yang sebenarnya
+  \includegraphics[width=0.8\textwidth]{gambar/activity_akuisisi_citra}
+  \caption{\textit{Activity Diagram} Pengambilan Gambar dan Identifikasi Warna}
+  \label{fig:activity-akuisisi}
+\end{figure}
+
+Gambar~\ref{fig:activity-daltonisasi} menunjukkan alur aktivitas proses daltonisasi.
+Setiap kali \textit{bitmap} diperbarui, sistem mengecek apakah filter diaktifkan oleh pengguna.
+Jika tidak aktif, gambar ditampilkan apa adanya.
+Jika aktif, sistem mengecek apakah mode daltonisasi dinyalakan.
+Jika ya, \texttt{ColorProcessor.getDaltonizationMatrix()} dipanggil untuk menghasilkan matriks koreksi.
+Jika tidak, \texttt{ColorProcessor.getDeficiencyMatrix()} dipanggil untuk menghasilkan matriks simulasi.
+Kedua fungsi ini mempertimbangkan jenis defisiensi yang dipilih dan nilai \textit{severity}.
+Matriks yang dihasilkan kemudian diterapkan ke gambar melalui \textit{Color Matrix Filter} yang dirender oleh GPU.
+
+\begin{figure}[H]
+  \centering
+  % TODO: ganti dengan activity diagram daltonisasi yang sebenarnya
+  \includegraphics[width=0.8\textwidth]{gambar/activity_daltonisasi}
+  \caption{\textit{Activity Diagram} Proses Daltonisasi}
+  \label{fig:activity-daltonisasi}
+\end{figure}
+
+\subsubsection{\textit{Class Diagram}}
+
+\textit{Class diagram} pada Gambar~\ref{fig:class_diagram} menggambarkan struktur kelas-kelas utama yang menyusun aplikasi Dalsilens beserta hubungan antar kelasnya.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{gambar/class_diagram}
+  \caption{\textit{Class Diagram} Aplikasi Dalsilens}
+  \label{fig:class_diagram}
+\end{figure}
+
+Berikut adalah penjelasan dari masing-masing kelas yang terlibat:
+
+\begin{enumerate}
+  \item \textbf{MainActivity} \\
+  Kelas utama yang menjadi titik masuk aplikasi, mewarisi \texttt{ComponentActivity} dari Jetpack.
+  Kelas ini bertanggung jawab memeriksa dan meminta izin kamera, serta mengatur navigasi antar layar melalui \texttt{NavHost}.
+  \texttt{MainActivity} menginisialisasi dua layar utama, yaitu \texttt{DashboardScreen} dan \texttt{CameraScreen}.
+
+  \item \textbf{DashboardScreen} \\
+  Fungsi \textit{composable} yang menampilkan halaman awal aplikasi.
+  Berisi dua tombol navigasi, yang pertama untuk masuk ke halaman kamera (\textit{fitur daltonisasi}) dan yang kedua untuk membuka halaman uji klasifikasi warna.
+
+  \item \textbf{CameraScreen} \\
+  Fungsi \textit{composable} yang merupakan layar utama dan terkompleks dalam aplikasi.
+  Kelas ini menyimpan seluruh \textit{state} yang dibutuhkan tampilan, di antaranya \texttt{processedBitmap}, \texttt{centerColorName}, \texttt{severity}, \texttt{sampleAreaSize}, \texttt{isFilterEnabled}, \texttt{isDaltonizationEnabled}, dan \texttt{selectedDeficiency}.
+  \texttt{CameraScreen} memanggil \texttt{ColorProcessor} untuk mendapatkan matriks transformasi, dan menggunakan \texttt{ColorNames} untuk mengidentifikasi nama warna secara \textit{real-time}.
+
+  \item \textbf{ColorProcessor} \\
+  Kelas berbentuk \textit{singleton} (\texttt{object} dalam Kotlin) yang memusatkan seluruh komputasi matematis terkait pemrosesan warna.
+  Menyediakan fungsi konversi RGB ke LMS (\texttt{rgbToLms}), simulasi buta warna (\texttt{simulateLms}), konversi balik LMS ke RGB (\texttt{lmsToRgb}), serta pembangkitan matriks 4$\times$5 untuk simulasi (\texttt{getDeficiencyMatrix}) dan daltonisasi (\texttt{getDaltonizationMatrix}).
+
+  \item \textbf{DeficiencyType} \\
+  Enumerasi yang mendefinisikan jenis-jenis defisiensi warna yang didukung oleh aplikasi, yaitu \texttt{NORMAL}, \texttt{PROTANOPIA}, \texttt{DEUTERANOPIA}, \texttt{TRITANOPIA}, dan \texttt{CUSTOM}.
+  Nilai ini digunakan oleh \texttt{ColorProcessor} untuk menentukan matriks transformasi yang tepat.
+
+  \item \textbf{ColorNames} \\
+  Kelas yang menangani seluruh proses identifikasi nama warna.
+  Menerima \textit{bitmap} dari kamera, mengambil sampel piksel di sekitar koordinat tengah (\texttt{getAverageColor}), mengonversinya ke ruang warna HSV, lalu mengklasifikasikan hasilnya menjadi nama warna (\texttt{getColorNameFromRGB}).
+  Kelas ini juga menyimpan daftar \texttt{ColorItem} yang dimuat dari berkas \texttt{color\_names.json}.
+
+  \item \textbf{ColorItem} \\
+  \textit{Data class} sederhana yang merepresentasikan satu entri warna dengan dua atribut yaitu \texttt{hex} (kode warna heksadesimal) dan \texttt{name} (nama warna).
+  Kelas ini digunakan oleh \texttt{ColorNames} sebagai elemen dari daftar referensi warna yang dimuat dari aset aplikasi.
+\end{enumerate}
+
 \subsection{Pengambilan Gambar dan Identifikasi Warna}
 
 Tahap pertama adalah pengambilan gambar dari kamera sekaligus mengidentifikasi warna objek secara \textit{real-time}.
@@ -67,7 +198,7 @@ Langkah pertama adalah mengonversi warna dari RGB ke LMS.
 Ruang warna LMS merepresentasikan cara kerja tiga jenis sel kerucut pada mata manusia, yaitu \textit{Long} (L), \textit{Medium} (M), dan \textit{Short} (S)~\parencite{8289076}.
 Berbeda dengan RGB yang berfokus pada perangkat layar, LMS lebih mencerminkan persepsi penglihatan manusia secara biologis.
 
-Konversi ini dilakukan dengan mengalikan nilai piksel RGB dengan matriks konversi berikut~\parencite{Vienot1999DigitalVC}:
+Konversi ini dilakukan dengan mengalikan nilai piksel RGB dengan matriks konversi berikut~\parencite{Vienot1999DigitalVC, muhammad2020analysis, tasnim2017}:
 
 \begin{equation}
   \begin{pmatrix} L \\ M \\ S \end{pmatrix}
@@ -87,7 +218,7 @@ Setiap nilai L, M, dan S merupakan kombinasi dari ketiga kanal RGB, yang mencerm
 
 Setelah nilai LMS diperoleh, langkah berikutnya adalah mensimulasikan kondisi buta warna.
 Simulasi dilakukan dengan memodifikasi salah satu komponen LMS sesuai jenis defisiensinya.
-Pada kondisi ini, komponen yang terpengaruh tidak digunakan secara langsung, melainkan dihitung ulang dari dua komponen lainnya~\parencite{Vienot1999DigitalVC}.
+Pada kondisi ini, komponen yang terpengaruh tidak digunakan secara langsung, melainkan dihitung ulang dari dua komponen lainnya~\parencite{Vienot1999DigitalVC, muhammad2020analysis, tasnim2017}.
 
 Berikut adalah matriks simulasi untuk masing-masing jenis buta warna:
 
@@ -136,7 +267,7 @@ Hasil dari tahap ini adalah nilai LMS yang merepresentasikan warna sebagaimana y
 
 Setelah simulasi dilakukan, langkah selanjutnya adalah menghitung informasi warna yang \textit{hilang} dan menggesernya ke kanal yang masih bisa dilihat.
 
-Pertama, nilai LMS hasil simulasi dikonversi kembali ke RGB menggunakan matriks invers berikut~\parencite{Vienot1999DigitalVC}:
+Pertama, nilai LMS hasil simulasi dikonversi kembali ke RGB menggunakan matriks invers berikut~\parencite{Vienot1999DigitalVC, muhammad2020analysis, tasnim2017}:
 
 \begin{equation}
   \begin{pmatrix} R_{\text{sim}} \\ G_{\text{sim}} \\ B_{\text{sim}} \end{pmatrix}
@@ -421,3 +552,11 @@ Akurasi dihitung dari persentase deteksi yang benar dibandingkan total percobaan
 Skenario ini memvalidasi efisiensi komputasi yang didorong akselerasi GPU.
 Performa diukur secara kuantitatif dengan menghitung rata-rata nilai \textit{Frame Per Second} (FPS) dan latensi pemrosesan saat sistem menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan.
 Selain itu, penggunaan memori (RAM) dan utilisasi CPU juga dipantau menggunakan \textit{Android Studio Profiler} untuk memastikan tidak ada \textit{lag} atau \textit{memory leak} selama aplikasi berjalan.
+
+\subsection{Pengujian Fungsionalitas (\textit{Black Box Testing})}
+
+% TODO: isi
+
+\subsection{Pengujian Kebergunaan (\textit{System Usability Scale})}
+
+% TODO: isi

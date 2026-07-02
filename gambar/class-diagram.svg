@@ -1,0 +1,120 @@
+<svg viewBox="0 0 800 710" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+<rect width="800" height="710" fill="white"/>
+
+<defs>
+  <marker id="open" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polyline points="0,0 9,3.5 0,7" fill="none" stroke="#444" stroke-width="1.2"/>
+  </marker>
+</defs>
+
+<!-- ===================== RELATIONSHIPS ===================== -->
+
+<!-- MainActivity → DashboardScreen (navigates to, dashed) -->
+<line x1="300" y1="145" x2="128" y2="185" stroke="#444" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#open)"/>
+
+<!-- MainActivity → CameraScreen (navigates to, dashed) -->
+<line x1="385" y1="145" x2="385" y2="185" stroke="#444" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#open)"/>
+
+<!-- CameraScreen → ColorProcessor (uses, dashed) -->
+<line x1="510" y1="270" x2="545" y2="260" stroke="#444" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#open)"/>
+
+<!-- ColorProcessor → DeficiencyType (uses, dashed) -->
+<line x1="662" y1="335" x2="652" y2="360" stroke="#444" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#open)"/>
+
+<!-- CameraScreen → ColorNames (association, solid) -->
+<line x1="385" y1="385" x2="375" y2="415" stroke="#444" stroke-width="1.2" marker-end="url(#open)"/>
+
+<!-- ColorNames → ColorItem (composition) -->
+<line x1="375" y1="551" x2="385" y2="580" stroke="#444" stroke-width="1.2" marker-end="url(#open)"/>
+<polygon points="375,551 369,561 375,571 381,561" fill="#444"/>
+
+<!-- ===================== CLASS BOXES ===================== -->
+
+<!-- 1. MainActivity: x=255, y=25, w=265 -->
+<rect x="255" y="25" width="265" height="48" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="387" y="41" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«Activity»</text>
+<text x="387" y="59" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">MainActivity</text>
+<rect x="255" y="73" width="265" height="44" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="263" y="89" font-size="10" fill="#222">- hasCameraPermission: Boolean</text>
+<text x="263" y="107" font-size="10" fill="#555">- requestPermissionLauncher</text>
+<rect x="255" y="117" width="265" height="28" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="263" y="133" font-size="10" fill="#222">+ onCreate(savedInstanceState: Bundle)</text>
+
+<!-- 2. DashboardScreen: x=15, y=185, w=215 -->
+<rect x="15" y="185" width="215" height="48" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="122" y="201" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«Composable»</text>
+<text x="122" y="219" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">DashboardScreen</text>
+<rect x="15" y="233" width="215" height="12" fill="white" stroke="#444" stroke-width="1.5"/>
+<rect x="15" y="245" width="215" height="28" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="23" y="261" font-size="10" fill="#222">+ DashboardScreen(onNav...)</text>
+
+<!-- 3. CameraScreen: x=255, y=185, w=255 -->
+<rect x="255" y="185" width="255" height="48" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="382" y="201" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«Composable»</text>
+<text x="382" y="219" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">CameraScreen</text>
+<rect x="255" y="233" width="255" height="124" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="263" y="249" font-size="10" fill="#222">- processedBitmap: Bitmap?</text>
+<text x="263" y="265" font-size="10" fill="#222">- centerColorName: String</text>
+<text x="263" y="281" font-size="10" fill="#222">- severity: Float</text>
+<text x="263" y="297" font-size="10" fill="#222">- sampleAreaSize: Int</text>
+<text x="263" y="313" font-size="10" fill="#222">- isFilterEnabled: Boolean</text>
+<text x="263" y="329" font-size="10" fill="#222">- isDaltonizationEnabled: Boolean</text>
+<text x="263" y="345" font-size="10" fill="#222">- selectedDeficiency: DeficiencyType</text>
+<rect x="255" y="357" width="255" height="28" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="263" y="373" font-size="10" fill="#222">+ updateMatrix()</text>
+
+<!-- 4. ColorProcessor: x=545, y=185, w=240 -->
+<rect x="545" y="185" width="240" height="48" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="665" y="201" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«object» (singleton)</text>
+<text x="665" y="219" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">ColorProcessor</text>
+<rect x="545" y="233" width="240" height="12" fill="white" stroke="#444" stroke-width="1.5"/>
+<rect x="545" y="245" width="240" height="92" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="553" y="261" font-size="10" fill="#222">+ rgbToLms(r,g,b): Triple</text>
+<text x="553" y="277" font-size="10" fill="#222">+ simulateLms(l,m,s,type): Triple</text>
+<text x="553" y="293" font-size="10" fill="#222">+ lmsToRgb(l,m,s): Triple</text>
+<text x="553" y="309" font-size="10" fill="#222">+ getDeficiencyMatrix(type,sev): FloatArray</text>
+<text x="553" y="325" font-size="10" fill="#222">+ getDaltonizationMatrix(type,sev): FloatArray</text>
+
+<!-- 5. DeficiencyType: x=545, y=360, w=220 -->
+<rect x="545" y="360" width="220" height="48" fill="#f4e6ff" stroke="#444" stroke-width="1.5"/>
+<text x="655" y="376" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«enumeration»</text>
+<text x="655" y="394" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">DeficiencyType</text>
+<rect x="545" y="408" width="220" height="92" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="553" y="424" font-size="10" fill="#222">NORMAL</text>
+<text x="553" y="440" font-size="10" fill="#222">PROTANOPIA</text>
+<text x="553" y="456" font-size="10" fill="#222">DEUTERANOPIA</text>
+<text x="553" y="472" font-size="10" fill="#222">TRITANOPIA</text>
+<text x="553" y="488" font-size="10" fill="#222">CUSTOM</text>
+
+<!-- 6. ColorNames: x=243, y=415, w=262 -->
+<rect x="243" y="415" width="262" height="32" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="374" y="436" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">ColorNames</text>
+<rect x="243" y="447" width="262" height="44" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="251" y="463" font-size="10" fill="#222">- context: Context</text>
+<text x="251" y="479" font-size="10" fill="#222">- colors: List&lt;ColorItem&gt;</text>
+<rect x="243" y="491" width="262" height="60" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="251" y="507" font-size="10" fill="#222">+ getAverageColor(bitmap, cx, cy, r): Triple</text>
+<text x="251" y="523" font-size="10" fill="#222">+ getColorNameFromRGB(r,g,b): String</text>
+<text x="251" y="539" font-size="10" fill="#222">+ getCenterColorName(bitmap, r): String</text>
+
+<!-- 7. ColorItem: x=283, y=590, w=185 -->
+<rect x="283" y="590" width="185" height="48" fill="#dbe8f7" stroke="#444" stroke-width="1.5"/>
+<text x="375" y="606" text-anchor="middle" font-size="9" fill="#555" font-style="italic">«data class»</text>
+<text x="375" y="624" text-anchor="middle" font-size="12" fill="#222" font-weight="bold">ColorItem</text>
+<rect x="283" y="638" width="185" height="44" fill="white" stroke="#444" stroke-width="1.5"/>
+<text x="291" y="654" font-size="10" fill="#222">- hex: String</text>
+<text x="291" y="670" font-size="10" fill="#222">- name: String</text>
+<rect x="283" y="682" width="185" height="12" fill="white" stroke="#444" stroke-width="1.5"/>
+
+<!-- ===================== LEGEND ===================== -->
+<rect x="15" y="560" width="215" height="105" rx="4" fill="white" stroke="#ccc" stroke-width="1"/>
+<text x="25" y="578" font-size="9" fill="#555" font-weight="bold">Notasi:</text>
+<line x1="25" y1="595" x2="62" y2="595" stroke="#444" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#open)"/>
+<text x="70" y="599" font-size="9" fill="#444">uses / navigates to</text>
+<line x1="25" y1="618" x2="62" y2="618" stroke="#444" stroke-width="1.2" marker-end="url(#open)"/>
+<text x="70" y="622" font-size="9" fill="#444">association (creates/uses)</text>
+<line x1="40" y1="645" x2="62" y2="645" stroke="#444" stroke-width="1.2" marker-end="url(#open)"/>
+<polygon points="40,645 34,635 40,625 46,635" fill="#444"/>
+<text x="70" y="649" font-size="9" fill="#444">composition (contains)</text>
+
+</svg>

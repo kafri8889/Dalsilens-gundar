@@ -1,0 +1,100 @@
+<svg viewBox="0 0 500 660" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif" font-size="11">
+
+  <rect width="500" height="660" fill="white"/>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#444"/>
+    </marker>
+  </defs>
+
+  <!-- START -->
+  <circle cx="250" cy="35" r="14" fill="#222"/>
+
+  <!-- Arrow: Start to Act1 -->
+  <line x1="250" y1="49" x2="250" y2="73" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 1: Inisialisasi Kamera -->
+  <rect x="120" y="75" width="260" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="99" text-anchor="middle" fill="#222">Inisialisasi Kamera (CameraX)</text>
+
+  <!-- Arrow: Act1 to Act2 -->
+  <line x1="250" y1="111" x2="250" y2="133" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 2: Tangkap Frame (loop returns here) -->
+  <rect x="120" y="135" width="260" height="36" rx="18" fill="#eef4ff" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="159" text-anchor="middle" fill="#222">Tangkap Frame dari Kamera</text>
+
+  <!-- Arrow: Act2 to Act3 -->
+  <line x1="250" y1="171" x2="250" y2="193" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 3: Konversi Bitmap -->
+  <rect x="120" y="195" width="260" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="219" text-anchor="middle" fill="#222">Konversi ImageProxy ke Bitmap</text>
+
+  <!-- Arrow: Act3 to Decision -->
+  <line x1="250" y1="231" x2="250" y2="251" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- DECISION: Perlu Rotasi? -->
+  <polygon points="250,251 297,278 250,305 203,278" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="282" text-anchor="middle" fill="#222">Perlu Rotasi?</text>
+
+  <!-- Tidak: straight down -->
+  <line x1="250" y1="305" x2="250" y2="335" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="255" y="324" font-size="10" fill="#666">Tidak</text>
+
+  <!-- Ya: right then Rotasi box then back down to merge -->
+  <line x1="297" y1="278" x2="360" y2="278" stroke="#444" stroke-width="1.5"/>
+  <text x="318" y="272" font-size="10" fill="#666">Ya</text>
+  <line x1="360" y1="278" x2="360" y2="258" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="305" y="230" width="118" height="30" rx="8" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="364" y="250" text-anchor="middle" fill="#222">Rotasi Bitmap</text>
+  <line x1="364" y1="260" x2="364" y2="335" stroke="#444" stroke-width="1.5"/>
+  <line x1="364" y1="335" x2="255" y2="335" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Merge node -->
+  <circle cx="250" cy="335" r="4" fill="#444"/>
+
+  <!-- Arrow: merge to Act4 -->
+  <line x1="250" y1="339" x2="250" y2="358" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 4: Ambil Sampel Piksel -->
+  <rect x="105" y="360" width="290" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="384" text-anchor="middle" fill="#222">Ambil Sampel Piksel Area ROI (radius r)</text>
+
+  <!-- Arrow -->
+  <line x1="250" y1="396" x2="250" y2="416" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 5: Rata-rata RGB -->
+  <rect x="120" y="418" width="260" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="442" text-anchor="middle" fill="#222">Hitung Rata-rata RGB</text>
+
+  <!-- Arrow -->
+  <line x1="250" y1="454" x2="250" y2="474" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 6: Konversi HSV -->
+  <rect x="120" y="476" width="260" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="500" text-anchor="middle" fill="#222">Konversi RGB ke HSV</text>
+
+  <!-- Arrow -->
+  <line x1="250" y1="512" x2="250" y2="532" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 7: Klasifikasi Nama Warna -->
+  <rect x="105" y="534" width="290" height="36" rx="18" fill="white" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="558" text-anchor="middle" fill="#222">Klasifikasi Nama Warna (HSV threshold)</text>
+
+  <!-- Arrow -->
+  <line x1="250" y1="570" x2="250" y2="590" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ACT 8: Update State -->
+  <rect x="105" y="592" width="290" height="42" rx="18" fill="#eef4ff" stroke="#444" stroke-width="1.5"/>
+  <text x="250" y="608" text-anchor="middle" fill="#222">Perbarui State</text>
+  <text x="250" y="625" text-anchor="middle" fill="#222">(processedBitmap + centerColorName ke UI)</text>
+
+  <!-- Loop arrow: left side back to Tangkap Frame -->
+  <line x1="105" y1="613" x2="55" y2="613" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="55" y1="613" x2="55" y2="153" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="55" y1="153" x2="118" y2="153" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="30" y="395" text-anchor="middle" font-size="10" fill="#888" transform="rotate(-90,30,395)">ulangi per frame</text>
+
+</svg>
