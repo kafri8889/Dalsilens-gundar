@@ -195,7 +195,7 @@ Berikut adalah tahapan implementasinya.
 \subsection{Konversi Ruang Warna RGB ke LMS}
 
 Langkah pertama adalah mengonversi warna dari RGB ke LMS.
-Ruang warna LMS merepresentasikan cara kerja tiga jenis sel kerucut pada mata manusia, yaitu \textit{Long} (L), \textit{Medium} (M), dan \textit{Short} (S)~\parencite{8289076}.
+Ruang warna LMS merepresentasikan cara kerja tiga jenis sel kerucut pada mata manusia, yaitu \textit{Long} (L), \textit{Medium} (M), dan \textit{Short} (S)~\parencite{tasnim2017}.
 Berbeda dengan RGB yang berfokus pada perangkat layar, LMS lebih mencerminkan persepsi penglihatan manusia secara biologis.
 
 Konversi ini dilakukan dengan mengalikan nilai piksel RGB dengan matriks konversi berikut~\parencite{Vienot1999DigitalVC, muhammad2020analysis, tasnim2017}:
@@ -413,7 +413,7 @@ Alur prosesnya ditunjukkan pada Gambar~\ref{fig:flowchart-hsv}.
 \begin{figure}[H]
   \centering
   % TODO: ganti dengan flowchart HSV (Figure 3 dari paper IEEE)
-  \includegraphics[width=0.55\textwidth]{gambar/gambar-31}
+  \includegraphics[width=0.55\textwidth]{gambar/flowchart-hsv}
   \caption{Diagram Alur Ekstraksi dan Klasifikasi Warna Secara \textit{Real-Time}}
   \label{fig:flowchart-hsv}
 \end{figure}
@@ -526,6 +526,14 @@ Apabila nilai \textit{Saturation} rendah (warna tidak jenuh), klasifikasi tidak 
   \end{tabular}
 \end{table}
 
+Meskipun nilai \textit{threshold} seperti $S < 0{,}10$ dan rentang \textit{Value} ditentukan berdasarkan hasil pengujian langsung, pengelompokannya tetap berdasarkan teori ruang warna HSV\@.
+Ruang warna HSV memisahkan informasi warna dan intensitas cahaya, berbeda dengan RGB yang menggabungkan keduanya dalam tiga komponen sekaligus~\parencite{tasnim2017}.
+Dengan pemisahan ini, parameter \textit{Saturation} (S) dan \textit{Value} (V) dapat dianalisis secara terpisah untuk mendeteksi warna netral tanpa harus mempertimbangkan \textit{Hue} (H).
+
+Pendekatan ini didasarkan pada karakteristik masing-masing komponen HSV.
+\textit{Saturation} menunjukkan tingkat kemurnian warna, di mana nilai S yang mendekati nol menandakan warna kehilangan pigmennya dan cenderung berubah menjadi abu-abu atau putih.
+Oleh karena itu, kondisi $S < 0{,}10$ digunakan sebagai indikator awal untuk mendeteksi warna akromatik~\parencite{Sirisathitkul31122025}.
+Setelah warna teridentifikasi sebagai akromatik, komponen \textit{Value} digunakan untuk membedakan tingkat gelap dan terang, karena V secara langsung menunjukkan tingkat kecerahan piksel, mulai dari hitam ($V = 0$) hingga putih atau warna paling terang ($V = 1$)~\parencite{Sirisathitkul31122025}.
 
 % ============================================================
 \section{Skenario Pengujian}
