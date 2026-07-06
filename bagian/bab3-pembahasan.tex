@@ -84,7 +84,6 @@ Terdapat satu aktor dalam sistem ini, yaitu pengguna (penderita buta warna) yang
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan use case diagram yang sebenarnya
   \includegraphics[width=0.8\textwidth]{gambar/use-case-diagram}
   \caption{\textit{Use Case Diagram} Aplikasi Dalsilens}
   \label{fig:use-case}
@@ -137,7 +136,6 @@ Sistem kemudian mengambil rata-rata nilai RGB dari piksel di area tengah layar m
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan activity diagram akuisisi yang sebenarnya
   \includegraphics[width=0.8\textwidth]{gambar/activity_akuisisi_citra}
   \caption{\textit{Activity Diagram} Pengambilan Gambar dan Identifikasi Warna}
   \label{fig:activity-akuisisi}
@@ -154,7 +152,6 @@ Matriks yang dihasilkan kemudian diterapkan ke gambar melalui \textit{Color Matr
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan activity diagram daltonisasi yang sebenarnya
   \includegraphics[width=0.8\textwidth]{gambar/activity_daltonisasi}
   \caption{\textit{Activity Diagram} Proses Daltonisasi}
   \label{fig:activity-daltonisasi}
@@ -221,7 +218,6 @@ Hasilnya berupa \textit{bitmap} dan nama warna tersebut disimpan sebagai \textit
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan flowchart akuisisi (Figure 1 dari paper IEEE)
   \includegraphics[width=0.6\textwidth]{gambar/flowchart-akuisisi}
   \caption{Diagram Alur Pengambilan Gambar dan Identifikasi Warna}
   \label{fig:flowchart-akuisisi}
@@ -239,7 +235,6 @@ Setelah matriks ditentukan, gambar dirender menggunakan \textit{Color Matrix Fil
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan flowchart daltonisasi (Figure 2 dari paper IEEE)
   \includegraphics[width=1\textwidth]{gambar/flowchart-daltonisasi}
   \caption{Diagram Alur Simulasi Buta Warna dan Proses Daltonisasi}
   \label{fig:flowchart-daltonisasi}
@@ -472,7 +467,6 @@ Alur prosesnya ditunjukkan pada Gambar~\ref{fig:flowchart-hsv}.
 
 \begin{figure}[H]
   \centering
-  % TODO: ganti dengan flowchart HSV (Figure 3 dari paper IEEE)
   \includegraphics[width=0.55\textwidth]{gambar/flowchart-hsv}
   \caption{Diagram Alur Ekstraksi dan Klasifikasi Warna Secara \textit{Real-Time}}
   \label{fig:flowchart-hsv}
@@ -618,7 +612,7 @@ Akurasi dihitung menggunakan persamaan berikut:
 Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:akurasi-normal} dan Tabel~\ref{tab:akurasi-redup}.
 
 \begin{longtable}{|c|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|c|}
-  \caption{Hasil Pengujian Klasifikasi Warna – Pencahayaan Normal}
+  \caption{Hasil Pengujian Klasifikasi Warna pada Pencahayaan Normal}
   \label{tab:akurasi-normal} \\
   \hline
   \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
@@ -631,20 +625,20 @@ Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:ak
   \endhead
   \hline
   \endfoot
-  1  & \textit{[OBJEK]} & Merah   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  2  & \textit{[OBJEK]} & Oranye  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  3  & \textit{[OBJEK]} & Kuning  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  4  & \textit{[OBJEK]} & Hijau   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  5  & \textit{[OBJEK]} & Cyan    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  6  & \textit{[OBJEK]} & Biru    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  7  & \textit{[OBJEK]} & Ungu    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  8  & \textit{[OBJEK]} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  9  & \textit{[OBJEK]} & Hitam   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  10 & \textit{[OBJEK]} & Abu-abu & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  1  & \textit{Tali} & Merah   & \textit{Merah} & \textit{Benar} \\ \hline
+  2  & \textit{Baju} & Oranye   & \textit{Oranye} & \textit{Benar} \\ \hline
+  3  & \textit{Baju} & Kuning  & \textit{Kuning} & \textit{Benar} \\ \hline
+  4  & \textit{Teko} & Hijau   & \textit{Hijau]} & \textit{Benar} \\ \hline
+  5  & \textit{Pembersih Keyboard} & Cyan    & \textit{Cyan} & \textit{Benar} \\ \hline
+  6  & \textit{Gantungan Kunci} & Biru    & \textit{Biru} & \textit{Benar} \\ \hline
+  7  & \textit{KTM} & Ungu    & \textit{Magneta} & \textit{Salah} \\ \hline
+  8  & \textit{Tumbler} & Putih   & \textit{Putih} & \textit{Benar} \\ \hline
+  9  & \textit{Celana} & Hitam   & \textit{Hitam} & \textit{Benar} \\ \hline
+  10 & \textit{Gagang jemuran} & Abu-abu & \textit{Abu-abu} & \textit{Benar} \\ \hline
 \end{longtable}
 
 \begin{longtable}{|c|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|c|}
-  \caption{Hasil Pengujian Klasifikasi Warna – Pencahayaan Redup}
+  \caption{Hasil Pengujian Klasifikasi Warna pada Pencahayaan Redup}
   \label{tab:akurasi-redup} \\
   \hline
   \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
@@ -657,22 +651,22 @@ Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:ak
   \endhead
   \hline
   \endfoot
-  1  & \textit{Topi} & Hijau Toska Gelap   & \textit{[Hijau]} & \textit{[Benar]} \\ \hline
-  2  & \textit{Baju]} & Hijau Toska Cerah   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  3  & \textit{Celana} & Biru Tua  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  4  & \textit{Tumbler} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  5  & \textit{Kursi} & Oranye Gelap    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  6  & \textit{Laptop} & Silver    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  7  & \textit{[OBJEK]} & Ungu    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  8  & \textit{[OBJEK]} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  9  & \textit{[OBJEK]} & Hitam   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
-  10 & \textit{[OBJEK]} & Abu-abu & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  1  & \textit{Tali} & Merah   & \textit{Merah} & \textit{Benar} \\ \hline
+  2  & \textit{Baju} & Oranye   & \textit{Oranye} & \textit{Benar} \\ \hline
+  3  & \textit{Baju} & Kuning  & \textit{Oranye} & \textit{Salah} \\ \hline
+  4  & \textit{Teko} & Hijau   & \textit{Hijau} & \textit{Benar} \\ \hline
+  5  & \textit{Pembersih Keyboard} & Cyan    & \textit{Biru} & \textit{Salah} \\ \hline
+  6  & \textit{Gantungan Kunci} & Biru    & \textit{Biru} & \textit{Benar} \\ \hline
+  7  & \textit{KTM} & Ungu    & \textit{Merah} & \textit{Salah} \\ \hline
+  8  & \textit{Tumbler} & Putih   & \textit{Abu-abu} & \textit{Salah} \\ \hline
+  9  & \textit{Celana} & Hitam   & \textit{Hitam} & \textit{Benar} \\ \hline
+  10 & \textit{Gagang jemuran} & Abu-abu & \textit{Kuning} & \textit{Salah} \\ \hline
 \end{longtable}
 
 Berdasarkan hasil pengujian, akurasi deteksi pada kondisi pencahayaan normal sebesar
-$\frac{\textit{[X]}}{10} \times 100\% = \textit{[X]}\%$,
+$\frac{9}{10} \times 100\% = 90\%$,
 dan pada kondisi pencahayaan redup sebesar
-$\frac{\textit{[Y]}}{10} \times 100\% = \textit{[Y]}\%$.
+$\frac{5}{10} \times 100\% = 50\%$.
 Penurunan akurasi pada kondisi redup terjadi karena nilai \textit{Value} (V) pada ruang warna HSV menurun secara signifikan sehingga piksel yang seharusnya terklasifikasi berwarna cenderung terdeteksi sebagai abu-abu atau hitam.
 
 \subsection{Pengujian Performa \textit{Real-Time}}
