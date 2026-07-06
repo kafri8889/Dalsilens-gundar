@@ -81,7 +81,7 @@ Sejak tahun 2019, Google telah meresmikan Kotlin sebagai bahasa utama yang palin
 
 Salah satu keunggulan bahasa Kotlin adalah fitur keamanan null (\textit{null safety}).
 Fitur ini berfungsi untuk mencegah terjadinya \textit{NullPointerException} (NPE) pada saat kompilasi, yang merupakan kesalahan paling sering terjadi jika menggunakan bahasa pemrograman Java.
-Sealin itu sintaks pada bahasa Kotlin, dirancang lebih ringkas untuk mengurangi kode yang berulang (\textit{boilerplate code}).
+Selain itu sintaks pada bahasa Kotlin dirancang lebih ringkas untuk mengurangi kode yang berulang (\textit{boilerplate code}).
 Hal ini memungkinkan penulisan algoritma kompleks seperti penerapan manipulasi warna dan klasifikasi warna ditulis dengan kode yang lebih sedikit. \parencite{kotlin_android_overview}
 
 Pada penelitian ini Kotlin dipilih karena memiliki performa yang mumpuni.
@@ -117,23 +117,34 @@ Diagram ini membantu dalam memahami bagaimana suatu fitur atau proses berjalan d
 Diagram ini memberikan gambaran tentang bagaimana komponen-komponen dalam sistem saling berhubungan.
 Dalam pengembangan perangkat lunak berorientasi objek, \textit{Class Diagram} sering digunakan sebagai referensi dalam proses implementasi kode program.
 
-\subsection{Pengujian dan Evaluasi Sistem}
-Tahap terakhir dalam pengembangan aplikasi Dalsilens adalah melakukan pengujian (\textit{testing}) untuk memastikan aplikasi dapat berjalan dengan baik dan sesuai dengan tujuan penelitian.
-Selain menguji koreksi warna dan performa aplikasi secara \textit{real-time}, penelitian ini juga menggunakan dua metode pengujian berikut:
+% ============================================================
+\section{Metode Pengujian Sistem}
 
-\textbf{Pengujian Fungsionalitas (\textit{Black Box Testing})}
+Tahap terakhir dalam pengembangan aplikasi Dalsilens adalah melakukan pengujian (\textit{testing}) untuk memastikan aplikasi dapat berjalan dengan baik dan sesuai dengan tujuan penelitian.
+Penelitian ini menggunakan empat metode pengujian yang mencakup aspek fungsionalitas, akurasi, performa, dan kebergunaan.
+
+\subsection{Pengujian Fungsionalitas (\textit{Black Box Testing})}
 Pengujian \textit{Black Box} dilakukan untuk memeriksa apakah fitur-fitur pada aplikasi dapat berjalan sesuai dengan kebutuhan yang telah ditentukan.
 Pada metode ini, pengujian dilakukan dengan mencoba berbagai masukan (\textit{input}) dan melihat hasil yang diberikan oleh sistem tanpa memperhatikan kode program yang ada di dalamnya.
 Pengujian dilakukan pada fitur-fitur utama aplikasi seperti membuka kamera, mengganti mode simulasi dan daltonisasi, mengatur \textit{severity level}, serta menampilkan hasil klasifikasi warna.
-Aplikasi dinyatakan berhasil apabila setiap fitur dapat memberikan keluaran yang sesuai dengan hasil yang diharapkan. \parencite{dicoding_blackbox}
+Aplikasi dinyatakan berhasil apabila setiap fitur dapat memberikan keluaran yang sesuai dengan hasil yang diharapkan~\parencite{dicoding_blackbox}.
 
-\textbf{Pengujian Kebergunaan (\textit{System Usability Scale})}
+\subsection{Pengujian Akurasi Klasifikasi Warna}
+Pengujian akurasi dilakukan untuk mengevaluasi kemampuan fitur identifikasi nama warna dalam mengenali warna objek nyata secara \textit{real-time}.
+Pengujian dilakukan dengan mengarahkan kamera ke berbagai objek berwarna dalam dua kondisi pencahayaan: normal dan redup.
+Hasil deteksi nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya untuk menghitung persentase akurasi.
+
+\subsection{Pengujian Performa \textit{Real-Time}}
+Pengujian performa dilakukan untuk memvalidasi efisiensi komputasi aplikasi saat menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan.
+Parameter yang diukur meliputi nilai \textit{Frame Per Second} (FPS), penggunaan memori (RAM), dan utilisasi CPU menggunakan \textit{Android Studio Profiler}.
+
+\subsection{Pengujian Kebergunaan (\textit{System Usability Scale})}
 \textit{System Usability Scale} (SUS) merupakan metode yang digunakan untuk mengukur tingkat kebergunaan (\textit{usability}) suatu sistem berdasarkan persepsi pengguna.
-Metode ini dikembangkan oleh John Brooke pada tahun 1986 dan telah banyak digunakan untuk mengevaluasi kemudahan penggunaan berbagai jenis perangkat lunak.
+Metode ini dikembangkan oleh John Brooke pada tahun 1995 dan telah banyak digunakan untuk mengevaluasi kemudahan penggunaan berbagai jenis perangkat lunak~\parencite{sus_original}.
 Melalui metode SUS, peneliti dapat mengetahui apakah suatu aplikasi mudah dipahami, mudah digunakan, dan dapat diterima oleh pengguna.
 
 Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 10 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
 Setelah selesai menggunakan aplikasi, responden mengisi kuesioner SUS yang terdiri dari 10 pernyataan dengan skala penilaian 1 sampai 5.
-Nilai yang diperoleh kemudian dihitung menggunakan metode perhitungan SUS untuk mendapatkan skor akhir yang menunjukkan tingkat kebergunaan dan penerimaan pengguna terhadap aplikasi yang dikembangkan. \parencite{guntur2024simamurat}
+Nilai yang diperoleh kemudian dihitung menggunakan metode perhitungan SUS untuk mendapatkan skor akhir yang menunjukkan tingkat kebergunaan dan penerimaan pengguna terhadap aplikasi yang dikembangkan~\parencite{guntur2024simamurat}.
 
 % ============================================================

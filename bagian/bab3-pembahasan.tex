@@ -10,6 +10,66 @@
 
 
 % ============================================================
+\section{Gambaran Umum Sistem}
+
+Dalsilens adalah aplikasi Android yang dirancang sebagai alat bantu visual bagi penderita dikromasi.
+Aplikasi ini menggabungkan dua fitur utama dalam satu antarmuka berbasis kamera secara \textit{real-time}, yaitu koreksi dan simulasi warna menggunakan algoritma \textit{LMS Daltonization}, serta identifikasi nama warna berbasis ruang warna HSV.
+Secara garis besar, alur kerja sistem dimulai dari pengambilan citra oleh kamera, pemrosesan piksel, transformasi warna, hingga tampilan hasil kepada pengguna, semua berjalan dalam satu siklus per \textit{frame} yang berulang terus-menerus selama aplikasi aktif.
+
+Gambar~\ref{fig:arsitektur-umum} menggambarkan hubungan antar komponen utama sistem Dalsilens.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{gambar/arsitektur-umum}
+  \caption{Gambaran Umum Arsitektur Sistem Dalsilens}
+  \label{fig:arsitektur-umum}
+\end{figure}
+
+Sistem terbagi menjadi tiga lapisan utama.
+Lapisan pertama adalah \textbf{lapisan akuisisi}, di mana \textit{library} CameraX menangkap \textit{frame} dari kamera secara berkelanjutan dan mengonversinya menjadi objek \textit{Bitmap}.
+Lapisan kedua adalah \textbf{lapisan pemrosesan}, di mana \texttt{ColorProcessor} menghitung matriks transformasi warna berdasarkan jenis defisiensi dan mode yang dipilih pengguna, sementara \texttt{ColorNames} mengekstrak nilai rata-rata piksel dan mengklasifikasikan nama warna melalui \textit{rule-based thresholding} pada ruang warna HSV.
+Lapisan ketiga adalah \textbf{lapisan tampilan}, di mana hasil transformasi diaplikasikan ke \textit{frame} menggunakan \texttt{ColorMatrix} yang diakselerasi GPU, dan nama warna ditampilkan secara \textit{overlay} di layar.
+
+\subsection{Metode Pengembangan Perangkat Lunak}
+
+Pengembangan aplikasi Dalsilens mengikuti model \textit{Waterfall} sebagai metodologi \textit{Software Development Life Cycle} (SDLC) yang dipilih.
+Model \textit{Waterfall} dipilih karena kebutuhan sistem sudah terdefinisi dengan jelas sejak awal penelitian, jenis defisiensi yang ditangani, platform target, algoritma yang digunakan, serta fitur-fitur yang harus ada.
+Sehingga tidak diperlukan iterasi perubahan kebutuhan di tengah proses pengembangan~\parencite{ibm_sdlc}.
+Setiap fase pada model ini diselesaikan secara berurutan sebelum melanjutkan ke fase berikutnya, sebagaimana digambarkan pada Gambar~\ref{fig:waterfall}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{gambar/waterfall}
+  \caption{Tahapan Model \textit{Waterfall} pada Pengembangan Dalsilens}
+  \label{fig:waterfall}
+\end{figure}
+
+Berikut adalah penerapan setiap fase \textit{Waterfall} pada pengembangan aplikasi Dalsilens.
+
+\begin{enumerate}
+  \item \textbf{Analisis Kebutuhan (\textit{Requirements Analysis})} \\
+  Pada fase ini dilakukan identifikasi masalah yang dihadapi penderita dikromasi serta analisis kebutuhan fungsional dan non-fungsional aplikasi.
+  Kebutuhan fungsional mencakup fitur simulasi dan koreksi tiga jenis dikromasi (\textit{Protanopia}, \textit{Deuteranopia}, \textit{Tritanopia}), fitur identifikasi nama warna secara \textit{real-time}, serta pengaturan \textit{severity} dan ukuran area \textit{sampling}.
+  Kebutuhan non-fungsional mencakup performa \textit{real-time} dengan latensi rendah dan kompatibilitas dengan perangkat Android.
+
+  \item \textbf{Perancangan Sistem (\textit{System Design})} \\
+  Fase ini menghasilkan rancangan arsitektur sistem dan diagram UML yang menjadi acuan implementasi.
+  Perancangan mencakup \textit{Use Case Diagram} untuk mendefinisikan interaksi pengguna, \textit{Activity Diagram} untuk menggambarkan alur proses akuisisi citra dan daltonisasi, serta \textit{Class Diagram} untuk mendefinisikan struktur komponen perangkat lunak dan hubungan antar kelas.
+
+  \item \textbf{Implementasi (\textit{Implementation})} \\
+  Pada fase ini seluruh komponen sistem dikodekan menggunakan bahasa Kotlin di lingkungan Android Studio.
+  Implementasi mencakup modul \texttt{ColorProcessor} untuk konversi ruang warna dan pembangkitan matriks transformasi, modul \texttt{ColorNames} untuk klasifikasi nama warna berbasis HSV, serta integrasi \textit{library} CameraX untuk akuisisi citra dan \texttt{ColorMatrix} untuk penerapan transformasi berbasis GPU.
+
+  \item \textbf{Pengujian (\textit{Testing})} \\
+  Fase pengujian dilakukan untuk memverifikasi bahwa seluruh fitur berjalan sesuai dengan kebutuhan yang telah ditentukan.
+  Pengujian mencakup empat aspek: pengujian fungsionalitas menggunakan metode \textit{Black Box Testing}, pengujian akurasi klasifikasi nama warna, pengujian performa \textit{real-time} menggunakan \textit{Android Studio Profiler}, dan pengujian kebergunaan menggunakan metode \textit{System Usability Scale} (SUS).
+
+  \item \textbf{Pemeliharaan (\textit{Maintenance})} \\
+  Meskipun aplikasi Dalsilens dikembangkan dalam konteks penelitian, fase pemeliharaan tetap diidentifikasi dalam bentuk saran pengembangan lanjutan.
+  Potensi pengembangan mencakup peningkatan akurasi klasifikasi warna menggunakan pendekatan \textit{machine learning}, penambahan dukungan tipe defisiensi \textit{anomalous trichromacy}, serta pengembangan fitur aksesibilitas tambahan.
+\end{enumerate}
+
+% ============================================================
 \section{Arsitektur Sistem}
 
 Secara keseluruhan, sistem Dalsilens dirancang untuk memproses gambar dari kamera secara \textit{real-time} dengan latensi yang rendah.
@@ -541,19 +601,79 @@ Setelah warna teridentifikasi sebagai akromatik, komponen \textit{Value} digunak
 Pengujian dilakukan untuk memastikan aplikasi Dalsilens berjalan sesuai tujuan penelitian.
 Ada tiga skenario pengujian yang digunakan.
 
-\subsection{Pengujian Koreksi Visual dengan Pelat Ishihara}
-
-Skenario ini bertujuan untuk mengukur seberapa efektif algoritma \textit{LMS Daltonization} dalam memulihkan kontras warna.
-Pengujian menggunakan \textit{Ishihara plates}, yaitu gambar standar yang umum digunakan untuk menguji kemampuan penglihatan warna.
-Sistem akan memproses gambar pelat Ishihara dalam tiga kondisi: penglihatan normal, simulasi buta warna (\textit{Protanopia}, \textit{Deuteranopia}, \textit{Tritanopia}), dan hasil setelah daltonisasi diterapkan.
-Keberhasilan diukur dengan melihat apakah angka atau pola yang tadinya tidak terlihat menjadi lebih jelas setelah dikoreksi.
-
 \subsection{Pengujian Akurasi Klasifikasi Nama Warna}
 
-Skenario ini mengevaluasi seberapa akurat fitur identifikasi nama warna bekerja di kondisi nyata.
-Pengujian dilakukan dengan mengarahkan kamera ke berbagai objek berwarna dalam dua kondisi pencahayaan: normal dan redup.
-Hasil nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya.
-Akurasi dihitung dari persentase deteksi yang benar dibandingkan total percobaan.
+Pengujian akurasi dilakukan untuk mengevaluasi kemampuan fitur identifikasi nama warna dalam mengenali warna objek nyata secara \textit{real-time}.
+Pengujian menggunakan objek fisik berwarna yang mewakili setiap kategori warna yang didukung aplikasi, yaitu merah, oranye, kuning, hijau, cyan, biru, ungu, putih, hitam, dan abu-abu.
+Setiap objek diuji dalam dua kondisi pencahayaan: \textbf{normal} (cahaya ruangan standar) dan \textbf{redup} (cahaya dikurangi menggunakan tirai).
+Hasil deteksi nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya.
+Deteksi dinyatakan \textbf{Benar} apabila nama warna yang ditampilkan sesuai dengan kategori warna objek uji, dan \textbf{Salah} apabila tidak sesuai.
+Akurasi dihitung menggunakan persamaan berikut:
+
+\begin{equation}
+  \text{Akurasi} = \frac{\text{Jumlah Deteksi Benar}}{\text{Total Pengujian}} \times 100\%
+  \label{eq:akurasi}
+\end{equation}
+
+Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:akurasi-normal} dan Tabel~\ref{tab:akurasi-redup}.
+
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|c|}
+  \caption{Hasil Pengujian Klasifikasi Warna – Pencahayaan Normal}
+  \label{tab:akurasi-normal} \\
+  \hline
+  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  \hline
+  \endfirsthead
+  \multicolumn{5}{r}{\textit{(lanjutan)}} \\
+  \hline
+  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  1  & \textit{[OBJEK]} & Merah   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  2  & \textit{[OBJEK]} & Oranye  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  3  & \textit{[OBJEK]} & Kuning  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  4  & \textit{[OBJEK]} & Hijau   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  5  & \textit{[OBJEK]} & Cyan    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  6  & \textit{[OBJEK]} & Biru    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  7  & \textit{[OBJEK]} & Ungu    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  8  & \textit{[OBJEK]} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  9  & \textit{[OBJEK]} & Hitam   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  10 & \textit{[OBJEK]} & Abu-abu & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|c|}
+  \caption{Hasil Pengujian Klasifikasi Warna – Pencahayaan Redup}
+  \label{tab:akurasi-redup} \\
+  \hline
+  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  \hline
+  \endfirsthead
+  \multicolumn{5}{r}{\textit{(lanjutan)}} \\
+  \hline
+  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  1  & \textit{Topi} & Hijau Toska Gelap   & \textit{[Hijau]} & \textit{[Benar]} \\ \hline
+  2  & \textit{Baju]} & Hijau Toska Cerah   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  3  & \textit{Celana} & Biru Tua  & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  4  & \textit{Tumbler} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  5  & \textit{Kursi} & Oranye Gelap    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  6  & \textit{Laptop} & Silver    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  7  & \textit{[OBJEK]} & Ungu    & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  8  & \textit{[OBJEK]} & Putih   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  9  & \textit{[OBJEK]} & Hitam   & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+  10 & \textit{[OBJEK]} & Abu-abu & \textit{[HASIL]} & \textit{[B/S]} \\ \hline
+\end{longtable}
+
+Berdasarkan hasil pengujian, akurasi deteksi pada kondisi pencahayaan normal sebesar
+$\frac{\textit{[X]}}{10} \times 100\% = \textit{[X]}\%$,
+dan pada kondisi pencahayaan redup sebesar
+$\frac{\textit{[Y]}}{10} \times 100\% = \textit{[Y]}\%$.
+Penurunan akurasi pada kondisi redup terjadi karena nilai \textit{Value} (V) pada ruang warna HSV menurun secara signifikan sehingga piksel yang seharusnya terklasifikasi berwarna cenderung terdeteksi sebagai abu-abu atau hitam.
 
 \subsection{Pengujian Performa \textit{Real-Time}}
 
@@ -563,8 +683,203 @@ Selain itu, penggunaan memori (RAM) dan utilisasi CPU juga dipantau menggunakan 
 
 \subsection{Pengujian Fungsionalitas (\textit{Black Box Testing})}
 
-% TODO: isi
+Pengujian fungsionalitas dilakukan menggunakan metode \textit{Black Box Testing}, yaitu pengujian yang berfokus pada perilaku sistem dari sudut pandang pengguna tanpa memperhatikan detail implementasi internal~\parencite{dicoding_blackbox}.
+Setiap fitur diuji dengan memberikan masukan tertentu dan memverifikasi apakah keluaran yang dihasilkan sesuai dengan yang diharapkan.
+Hasil pengujian dicatat sebagai \textbf{Berhasil} jika keluaran sesuai ekspektasi, dan \textbf{Gagal} jika tidak.
+
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{3.5cm}|c|}
+  \caption{Hasil Pengujian \textit{Black Box Testing} Aplikasi Dalsilens}
+  \label{tab:blackbox} \\
+  \hline
+  \textbf{No.} & \textbf{Skenario} & \textbf{Masukan} & \textbf{Ekspektasi} & \textbf{Hasil} \\
+  \hline
+  \endfirsthead
+  \multicolumn{5}{r}{\textit{(lanjutan)}} \\
+  \hline
+  \textbf{No.} & \textbf{Skenario} & \textbf{Masukan} & \textbf{Ekspektasi} & \textbf{Hasil} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  1 &
+  Membuka aplikasi &
+  Aplikasi dijalankan &
+  Halaman \textit{dashboard} tampil dengan dua tombol navigasi &
+  Berhasil \\
+  \hline
+  2 &
+  Membuka fitur kamera saat izin belum diberikan &
+  Tap tombol ``Go to Camera'' &
+  Sistem meminta izin kamera kepada pengguna &
+  Berhasil \\
+  \hline
+  3 &
+  Membuka fitur kamera saat izin sudah diberikan &
+  Tap tombol ``Go to Camera'' &
+  Aplikasi berpindah ke \textit{CameraScreen} dan kamera aktif &
+  Berhasil \\
+  \hline
+  4 &
+  Membuka fitur uji klasifikasi warna &
+  Tap tombol ``Color Classification Test'' &
+  Aplikasi berpindah ke halaman uji klasifikasi warna &
+  Berhasil \\
+  \hline
+  5 &
+  Mengaktifkan filter warna &
+  Tap tombol \textit{toggle} filter &
+  Filter aktif, tampilan kamera berubah sesuai jenis defisiensi yang dipilih &
+  Berhasil \\
+  \hline
+  6 &
+  Menonaktifkan filter warna &
+  Tap tombol \textit{toggle} filter saat aktif &
+  Filter nonaktif, tampilan kamera kembali ke kondisi asli &
+  Berhasil \\
+  \hline
+  7 &
+  Mengaktifkan mode daltonisasi &
+  Tap \textit{switch} daltonisasi &
+  Mode beralih dari simulasi ke koreksi warna (daltonisasi) &
+  Berhasil \\
+  \hline
+  8 &
+  Memilih jenis simulasi \textit{Protanopia} &
+  Pilih ``Protanopia'' di panel pengaturan &
+  Filter berubah mensimulasikan kondisi buta warna merah &
+  Berhasil \\
+  \hline
+  9 &
+  Memilih jenis simulasi \textit{Deuteranopia} &
+  Pilih ``Deuteranopia'' di panel pengaturan &
+  Filter berubah mensimulasikan kondisi buta warna hijau &
+  Berhasil \\
+  \hline
+  10 &
+  Memilih jenis simulasi \textit{Tritanopia} &
+  Pilih ``Tritanopia'' di panel pengaturan &
+  Filter berubah mensimulasikan kondisi buta warna biru &
+  Berhasil \\
+  \hline
+  11 &
+  Mengatur \textit{severity} ke nilai maksimum &
+  Geser \textit{slider severity} ke 1,0 &
+  Intensitas efek filter mencapai maksimum &
+  Berhasil \\
+  \hline
+  12 &
+  Mengatur \textit{severity} ke nilai minimum &
+  Geser \textit{slider severity} ke 0,0 &
+  Intensitas efek filter menjadi nol (tidak ada efek) &
+  Berhasil \\
+  \hline
+  13 &
+  Mereset filter ke kondisi normal &
+  Tap tombol reset di panel pengaturan &
+  Semua pengaturan kembali ke \textit{Normal} tanpa efek &
+  Berhasil \\
+  \hline
+  14 &
+  Mengubah ukuran area \textit{sampling} &
+  Ubah nilai radius \textit{sampling} di panel pengaturan &
+  Area piksel yang disampling berubah sesuai nilai radius baru &
+  Berhasil \\
+  \hline
+  15 &
+  Deteksi nama warna secara \textit{real-time} &
+  Arahkan kamera ke objek berwarna &
+  Nama warna ditampilkan di layar secara otomatis dan berubah mengikuti objek &
+  Berhasil \\
+  \hline
+\end{longtable}
 
 \subsection{Pengujian Kebergunaan (\textit{System Usability Scale})}
 
-% TODO: isi
+\textit{System Usability Scale} (SUS) adalah kuesioner standar yang dikembangkan oleh Brooke~\parencite{sus_original} untuk mengukur tingkat kebergunaan (\textit{usability}) suatu sistem secara cepat dan efisien.
+Kuesioner SUS terdiri dari 10 pernyataan dengan skala \textit{Likert} 1 hingga 5, di mana 1 berarti \textit{Sangat Tidak Setuju} dan 5 berarti \textit{Sangat Setuju}.
+Pernyataan bernomor ganjil bersifat positif, sedangkan pernyataan bernomor genap bersifat negatif~\parencite{sus}.
+
+Skor SUS dihitung menggunakan persamaan berikut~\parencite{sus_original}:
+
+\begin{equation}
+  \text{Skor SUS} = \left(\sum_{i \in \text{ganjil}}(x_i - 1) + \sum_{j \in \text{genap}}(5 - x_j)\right) \times 2{,}5
+  \label{eq:sus}
+\end{equation}
+
+\noindent di mana $x_i$ adalah nilai jawaban responden untuk pernyataan ke-$i$.
+Hasil skor berada pada rentang 0 hingga 100.
+Interpretasi skor SUS mengacu pada klasifikasi yang ditunjukkan pada Tabel~\ref{tab:sus-interpretasi}.
+
+\begin{table}[H]
+  \centering
+  \caption{Klasifikasi Skor \textit{System Usability Scale}}
+  \label{tab:sus-interpretasi}
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Rentang Skor} & \textbf{Nilai} & \textbf{Kategori} \\
+    \hline
+    $> 80{,}3$ & A & \textit{Excellent} \\
+    \hline
+    $68 - 80{,}3$ & B & \textit{Good} \\
+    \hline
+    $57 - 68$ & C & \textit{OK} \\
+    \hline
+    $< 57$ & D & \textit{Poor} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Pengujian dilakukan terhadap \textit{[N]} responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
+Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
+
+\begin{table}[H]
+  \centering
+  \caption{Data Responden Pengujian SUS}
+  \label{tab:sus-responden}
+  \begin{tabular}{|c|l|c|c|}
+    \hline
+    \textbf{No.} & \textbf{Nama} & \textbf{Usia} & \textbf{Jenis Kelamin} \\
+    \hline
+    1  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    2  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    3  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    4  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    5  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    6  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    7  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    8  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    9  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    10 & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+  \end{tabular}
+\end{table}
+
+Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS disajikan pada Tabel~\ref{tab:sus-jawaban}.
+
+\begin{table}[H]
+  \centering
+  \caption{Rekapitulasi Jawaban Responden Kuesioner SUS}
+  \label{tab:sus-jawaban}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{No.} & \textbf{P1} & \textbf{P2} & \textbf{P3} & \textbf{P4} &
+    \textbf{P5} & \textbf{P6} & \textbf{P7} & \textbf{P8} & \textbf{P9} &
+    \textbf{P10} & \textbf{Skor SUS} \\
+    \hline
+    1  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    2  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    3  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    4  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    5  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    6  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    7  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    8  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    9  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    10 & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
+    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{\textit{[..]}} \\
+    \hline
+  \end{tabular}}
+\end{table}
+
+Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar \textit{[SKOR]}.
+Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori \textit{[KATEGORI]}, yang berarti aplikasi Dalsilens dinilai \textit{[KATEGORI]} oleh responden dari sisi kebergunaan.

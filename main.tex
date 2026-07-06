@@ -48,6 +48,39 @@
 \usepackage{enumitem}
 \usepackage{xstring}
 \usepackage{amsmath}            % persamaan matriks (bmatrix, pmatrix, dll.)
+\usepackage{longtable}          % tabel multi-halaman
+\usepackage{array}              % >{\raggedright\arraybackslash} di kolom tabel
+\usepackage{listings}           % listing kode program
+
+% ----- Setup listings (kode program) -----
+\lstdefinelanguage{Kotlin}{
+  keywords={fun, val, var, if, else, when, return, object, class, enum, data, null,
+             true, false, override, private, public, internal, companion, import,
+             package, in, for, while, do, is, as, by, this, super, constructor,
+             FloatArray, Float, Int, String, Triple, Boolean, Unit},
+  keywordstyle=\bfseries,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\itshape,
+  stringstyle=\ttfamily,
+  morestring=[b]",
+  sensitive=true
+}
+\lstset{
+  language=Kotlin,
+  basicstyle=\ttfamily\fontsize{9}{11}\selectfont,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=8pt,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  frame=single,
+  captionpos=b,
+  xleftmargin=1.5em,
+  framexleftmargin=1.5em,
+  showstringspaces=false,
+}
 
 % ----- Setup bibilograpi -----
 

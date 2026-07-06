@@ -11,24 +11,58 @@
 
 \section{Kesimpulan}
 
-% Jawaban dari tujuan penelitian (subbagian 1.3) + hasil ujicoba dari bagian 3
 Berdasarkan hasil penelitian dan pembahasan yang telah dilakukan, diperoleh kesimpulan
 sebagai berikut.
 \begin{enumerate}
-  \item Kesimpulan pertama yang menjawab tujuan pertama penelitian.
-  \item Kesimpulan kedua yang menjawab tujuan kedua penelitian.
-  \item Kesimpulan ketiga yang menjawab tujuan ketiga penelitian.
+  \item Prototipe aplikasi Dalsilens berhasil dikembangkan sebagai alat bantu visual
+        berbasis Android secara \textit{real-time}.
+        Aplikasi mampu mengakuisisi citra dari kamera menggunakan CameraX,
+        memproses setiap \textit{frame} secara langsung, dan menampilkan hasil
+        transformasi warna tanpa jeda yang berarti bagi pengguna.
+        Pengujian fungsionalitas menggunakan metode \textit{Black Box Testing}
+        terhadap 15 skenario menunjukkan seluruh fitur berjalan sesuai ekspektasi
+        dengan hasil \textbf{Berhasil} pada semua skenario.
+
+  \item Algoritma \textit{LMS Daltonization} berhasil diimplementasikan untuk
+        membantu penderita dikromasi membedakan objek secara visual.
+        Matriks transformasi warna dihitung melalui tiga tahap konversi ruang warna:
+        RGB $\rightarrow$ LMS $\rightarrow$ simulasi defisiensi $\rightarrow$ RGB,
+        kemudian diaplikasikan ke \textit{frame} kamera menggunakan
+        \textit{ColorMatrix} Android yang diakselerasi GPU.
+        Fitur ini mendukung tiga jenis dikromasi, yaitu \textit{Protanopia},
+        \textit{Deuteranopia}, dan \textit{Tritanopia}, dengan parameter
+        \textit{severity} yang dapat disesuaikan.
+
+  \item Fitur deteksi nama warna berbasis ruang warna HSV berhasil
+        diimplementasikan untuk membantu pengguna membedakan objek secara tekstual.
+        Klasifikasi dilakukan menggunakan pendekatan \textit{rule-based thresholding}
+        yang membagi ruang warna menjadi 10 kategori: tujuh warna kromatik
+        (merah, oranye, kuning, hijau, cyan, biru, ungu) dan tiga warna akromatik
+        (putih, abu-abu, hitam).
+        Hasil pengujian akurasi pada kondisi pencahayaan normal mencapai
+        \textit{[X]}\% dan pada kondisi pencahayaan redup mencapai \textit{[Y]}\%.
 \end{enumerate}
 
 \section{Saran}
 
-% Ditujukan kepada pihak terkait untuk pengembangan selanjutnya
-% Hindari kalimat negatif – gunakan kalimat yang membangun
 Berdasarkan penelitian yang telah dilakukan, saran untuk pengembangan selanjutnya
 adalah sebagai berikut.
 \begin{enumerate}
-  \item Aplikasi ini masih dapat dikembangkan dengan menambahkan fitur
-        \ldots\ldots\ldots\ldots
-  \item Penelitian selanjutnya dapat menggunakan metode yang lebih mutakhir seperti
-        \ldots\ldots\ldots\ldots
+  \item Fitur klasifikasi nama warna saat ini menggunakan pendekatan
+        \textit{rule-based thresholding} dengan nilai batas yang ditentukan secara
+        empiris.
+        Pengembangan selanjutnya dapat menggunakan pendekatan \textit{machine
+        learning} berbasis data untuk meningkatkan akurasi deteksi, terutama pada
+        kondisi pencahayaan yang berubah-ubah.
+
+  \item Aplikasi saat ini hanya mendukung tiga jenis dikromasi (buta warna total
+        pada satu kanal).
+        Pengembangan berikutnya dapat mencakup tipe anomalous trichromacy seperti
+        \textit{Protanomaly} dan \textit{Deuteranomaly} yang jumlah penderitanya
+        lebih banyak di populasi umum.
+
+  \item Antarmuka pengguna dapat dikembangkan dengan menambahkan mode
+        \textit{accessibility} yang lebih lengkap, seperti umpan balik suara
+        (\textit{text-to-speech}) untuk nama warna yang terdeteksi, sehingga
+        aplikasi dapat digunakan oleh pengguna dengan keterbatasan visual ganda.
 \end{enumerate}

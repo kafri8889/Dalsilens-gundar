@@ -47,6 +47,15 @@ Solusi ini menggunakan algoritma LMS Daltonization untuk menggeser informasi war
 Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menjadi alat bantu yang praktis, memiliki latensi rendah, serta lebih mudah dijangkau dibandingkan solusi optik konvensional.
 
 
+\section{Rumusan Masalah}
+
+Berdasarkan latar belakang yang telah diuraikan, rumusan masalah dalam penelitian ini adalah sebagai berikut.
+\begin{enumerate}
+  \item Bagaimana merancang dan mengimplementasikan aplikasi Android yang dapat membantu penderita dikromasi membedakan warna secara visual menggunakan algoritma \textit{LMS Daltonization} secara \textit{real-time}?
+  \item Bagaimana mengimplementasikan fitur deteksi nama warna berbasis ruang warna HSV yang mampu mengklasifikasikan warna objek di lingkungan sekitar secara otomatis?
+  \item Bagaimana tingkat fungsionalitas, akurasi, performa, dan kebergunaan aplikasi Dalsilens berdasarkan hasil pengujian?
+\end{enumerate}
+
 \section{Ruang Lingkup}
 
 % Batasan yang jelas dari persoalan yang dikaji
@@ -56,7 +65,7 @@ Dengan pendekatan berbasis perangkat lunak ini, Dalsilens diharapkan dapat menja
   \item Kondisi defisiensi penglihatan warna yang ditangani difokuskan pada tipe Dikromasi, yang mencakup \textit{Protanopia} (buta warna merah), \textit{Deuteranopia} (buta warna hijau), dan \textit{Tritanopia} (buta warna biru).
   \item Penelitian ini tidak mencakup kondisi Monokromasi (buta warna total).
   \item Akurasi dari fitur klasifikasi nama warna juga dipengaruhi oleh kondisi pencahayaan lingkungan sekitar.
-  \item Pengujian koreksi warna dilakukan menggunakan Pelat Ishihara, bukan uji klinis medis langsung terhadap pasien.
+  \item Pengujian koreksi warna dilakukan secara fungsional menggunakan metode \textit{Black Box Testing}, bukan uji klinis medis langsung terhadap pasien.
 \end{enumerate}
 
 
@@ -97,7 +106,7 @@ Adapun rincian dari langkah-langkah penelitian di atas adalah sebagai berikut:
 
   \item Skenario Pengujian Sistem:
   Tahap terakhir adalah evaluasi untuk mengukur fungsionalitas dan performa aplikasi.
-  Pengujian dibagi menjadi tiga skenario yaitu uji validasi visual menggunakan pelat Ishihara, uji akurasi deteksi nama warna, dan uji kinerja komputasi \textit{real-time} pada perangkat.
+  Pengujian dibagi menjadi empat skenario yaitu pengujian fungsionalitas menggunakan metode \textit{Black Box Testing}, uji akurasi deteksi nama warna, uji kinerja komputasi \textit{real-time} pada perangkat, dan uji kebergunaan menggunakan metode \textit{System Usability Scale} (SUS).
 
 \end{enumerate}
 
@@ -121,7 +130,7 @@ Adapun rincian dari langkah-langkah penelitian di atas adalah sebagai berikut:
   \item \textbf{BAB I: PENDAHULUAN}\\
   Bab ini menjelaskan latar belakang masalah mengenai defisiensi penglihatan warna
   (dikromasi) dan keterbatasan solusi yang ada.
-  Selain itu, dibahas juga rumusan masalah, batasan penelitian, tujuan, dan sistematika penulisan.
+  Selain itu, dibahas juga rumusan masalah, ruang lingkup penelitian, tujuan, metode penelitian, dan sistematika penulisan.
 
   \item \textbf{BAB II: LANDASAN TEORI}\\
   Bab ini berisi tinjauan pustaka dan teori yang mendukung penelitian, seperti konsep
