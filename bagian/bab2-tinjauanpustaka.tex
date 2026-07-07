@@ -64,7 +64,7 @@ Dalam konteks pengembangan aplikasi alat bantu visual \textit{real-time}, platfo
 Dukungan ini sangat penting dalam membangun sistem bantu visual yang memerlukan proses tangkapan citra secara terus-menerus.
 
 
-\subsection{Pustaka Grafis \textit{Color Matrix} dan Akselerasi Perangkat Keras}
+\subsection{Pustaka Grafis \textit{Color Matrix} dan Akselerasi Perangkat Keras}\label{subsec:colormatrix-gpu}
 \textit{Color Matrix} adalah sebuah pustaka grafis bawaan pada pemrograman Android yang difungsikan untuk memodifikasi representasi warna citra digital.
 Pustaka ini bekerja dengan menerapkan transformasi matematika melalui perkalian matriks berukuran $4\times5$ terhadap nilai \textit{Red, Green, Blue}, dan \textit{Alpha} (RGBA) pada setiap piksel.
 Dalam konteks pemrosesan visual dikromasi,pustaka ini cocok digunakan karena proses perhitungan pada algoritma \textit{LMS Daltonization} dapat diterapkan dalam bentuk operasi matriks warna \parencite{android_colormatrix}.

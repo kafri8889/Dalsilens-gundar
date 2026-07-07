@@ -31,54 +31,49 @@
 \begin{lstlisting}[caption={Entry point aplikasi dan konfigurasi navigasi antar layar}, label={lst:mainactivity}]
 class MainActivity : ComponentActivity() {
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) { hasCameraPermission = true }
-        else Toast.makeText(this,
-            "Camera permission is required", Toast.LENGTH_SHORT).show()
-    }
+  private val requestPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted: Boolean ->
+    if (isGranted) hasCameraPermission = true
+    else Toast.makeText(this, "Camera permission is required",
+      Toast.LENGTH_SHORT).show()
+  }
 
-    private var hasCameraPermission by mutableStateOf(false)
+  private var hasCameraPermission by mutableStateOf(false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        hasCameraPermission = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
+  // Navigasi ke layar tujuan, minta izin kamera dulu jika belum diberikan
+  private fun goToScreen(nav: NavHostController, route: String) {
+    if (hasCameraPermission) nav.navigate(route)
+    else requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+  }
 
-        setContent {
-            DaltonLensTheme {
-                val navController = rememberNavController()
-                NavHost(navController = navController,
-                        startDestination = "dashboard") {
-                    composable("dashboard") {
-                        DashboardScreen(
-                            onNavigateToCamera = {
-                                if (hasCameraPermission)
-                                    navController.navigate("camera")
-                                else
-                                    requestPermissionLauncher
-                                        .launch(Manifest.permission.CAMERA)
-                            },
-                            onNavigateToColorClassification = {
-                                if (hasCameraPermission)
-                                    navController.navigate("color_classification")
-                                else
-                                    requestPermissionLauncher
-                                        .launch(Manifest.permission.CAMERA)
-                            }
-                        )
-                    }
-                    composable("camera") { CameraScreen() }
-                    composable("color_classification") {
-                        ColorClassificationTestScreen()
-                    }
-                }
-            }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    hasCameraPermission = ContextCompat.checkSelfPermission(
+      this, Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+
+    setContent {
+      DaltonLensTheme {
+        val navController = rememberNavController()
+        NavHost(navController, startDestination = "dashboard") {
+          composable("dashboard") {
+            DashboardScreen(
+              onNavigateToCamera = { goToScreen(navController, "camera") },
+              onNavigateToColorClassification = {
+                goToScreen(navController, "color_classification")
+              }
+            )
+          }
+          composable("camera") { CameraScreen() }
+          composable("color_classification") {
+            ColorClassificationTestScreen()
+          }
         }
+      }
     }
+  }
 }
 \end{lstlisting}
 
@@ -86,93 +81,87 @@ class MainActivity : ComponentActivity() {
 
 \begin{lstlisting}[caption={Implementasi konversi ruang warna RGB--LMS dan pembangkitan matriks transformasi defisiensi serta daltonisasi}, label={lst:colorprocessor}]
 enum class DeficiencyType(val displayName: String) {
-    Normal("Normal"), Protanopia("Protanopia"),
-    Deuteranopia("Deuteranopia"), Tritanopia("Tritanopia"), Custom("Custom")
+  Normal("Normal"), Protanopia("Protanopia"),
+  Deuteranopia("Deuteranopia"), Tritanopia("Tritanopia"), Custom("Custom")
 }
 
 object ColorProcessor {
 
-    // Konversi RGB ke LMS menggunakan matriks Hunt-Pointer-Estevez
-    fun rgbToLms(r: Float, g: Float, b: Float): Triple<Float, Float, Float> {
-        val l = 17.8824f * r + 43.5161f * g + 4.11935f * b
-        val m =  3.4565f * r + 27.1554f * g + 3.86714f * b
-        val s = 0.02996f * r + 0.18431f * g + 1.46709f * b
-        return Triple(l, m, s)
-    }
+  // Konversi RGB ke LMS menggunakan matriks Hunt-Pointer-Estevez
+  fun rgbToLms(r: Float, g: Float, b: Float): Triple<Float, Float, Float> {
+    val l = 17.8824f * r + 43.5161f * g + 4.11935f * b
+    val m =  3.4565f * r + 27.1554f * g + 3.86714f * b
+    val s = 0.02996f * r + 0.18431f * g + 1.46709f * b
+    return Triple(l, m, s)
+  }
 
-    // Simulasi defisiensi warna dalam ruang LMS
-    fun simulateLms(l: Float, m: Float, s: Float,
-                    deficiency: DeficiencyType): Triple<Float, Float, Float> {
-        return when (deficiency) {
-            DeficiencyType.Protanopia   ->
-                Triple(2.02344f * m - 2.52581f * s, m, s)
-            DeficiencyType.Deuteranopia ->
-                Triple(l, 0.494207f * l + 1.24827f * s, s)
-            DeficiencyType.Tritanopia   ->
-                Triple(l, m, -0.395913f * l + 0.801109f * m)
-            else -> Triple(l, m, s)
-        }
+  // Simulasi defisiensi warna dalam ruang LMS
+  fun simulateLms(l: Float, m: Float, s: Float,
+      deficiency: DeficiencyType): Triple<Float, Float, Float> {
+    return when (deficiency) {
+      DeficiencyType.Protanopia   -> Triple(2.02344f*m - 2.52581f*s, m, s)
+      DeficiencyType.Deuteranopia -> Triple(l, 0.494207f*l + 1.24827f*s, s)
+      DeficiencyType.Tritanopia   -> Triple(l, m, -0.395913f*l + 0.801109f*m)
+      else -> Triple(l, m, s)
     }
+  }
 
-    // Konversi balik LMS ke RGB (invers matriks Hunt-Pointer-Estevez)
-    fun lmsToRgb(l: Float, m: Float, s: Float): Triple<Float, Float, Float> {
-        val r =  0.080944f    * l - 0.130504f   * m + 0.116721f  * s
-        val g = -0.0102485f   * l + 0.0540194f  * m - 0.113615f  * s
-        val b = -0.000365294f * l - 0.00412163f * m + 0.693513f  * s
-        return Triple(r, g, b)
-    }
+  // Konversi balik LMS ke RGB (invers matriks Hunt-Pointer-Estevez)
+  fun lmsToRgb(l: Float, m: Float, s: Float): Triple<Float, Float, Float> {
+    val r =  0.080944f    * l - 0.130504f   * m + 0.116721f  * s
+    val g = -0.0102485f   * l + 0.0540194f  * m - 0.113615f  * s
+    val b = -0.000365294f * l - 0.00412163f * m + 0.693513f  * s
+    return Triple(r, g, b)
+  }
 
-    // Bangun matriks 4x5 untuk simulasi defisiensi warna
-    fun getDeficiencyMatrix(deficiency: DeficiencyType,
-                            severity: Float = 1.0f): FloatArray? {
-        if (deficiency == DeficiencyType.Custom) return null
-        if (deficiency == DeficiencyType.Normal || severity <= 0.0f) {
-            return floatArrayOf(1f,0f,0f,0f,0f, 0f,1f,0f,0f,0f,
-                                0f,0f,1f,0f,0f, 0f,0f,0f,1f,0f)
-        }
-        fun transform(r: Float, g: Float, b: Float): Triple<Float,Float,Float> {
-            val (lN,mN,sN) = rgbToLms(r, g, b)
-            val (lD,mD,sD) = simulateLms(lN, mN, sN, deficiency)
-            return lmsToRgb(lN+(lD-lN)*severity, mN+(mD-mN)*severity,
-                            sN+(sD-sN)*severity)
-        }
-        val (rR,rG,rB) = transform(1f,0f,0f)
-        val (gR,gG,gB) = transform(0f,1f,0f)
-        val (bR,bG,bB) = transform(0f,0f,1f)
-        return floatArrayOf(rR,gR,bR,0f,0f, rG,gG,bG,0f,0f,
-                            rB,gB,bB,0f,0f, 0f,0f,0f,1f,0f)
+  // Bangun matriks 4x5 untuk simulasi defisiensi warna
+  fun getDeficiencyMatrix(deficiency: DeficiencyType,
+      severity: Float = 1.0f): FloatArray? {
+    if (deficiency == DeficiencyType.Custom) return null
+    if (deficiency == DeficiencyType.Normal || severity <= 0.0f) {
+      return floatArrayOf(1f,0f,0f,0f,0f, 0f,1f,0f,0f,0f,
+        0f,0f,1f,0f,0f, 0f,0f,0f,1f,0f)
     }
+    fun transform(r: Float, g: Float, b: Float): Triple<Float,Float,Float> {
+      val (lN,mN,sN) = rgbToLms(r, g, b)
+      val (lD,mD,sD) = simulateLms(lN, mN, sN, deficiency)
+      return lmsToRgb(lN+(lD-lN)*severity, mN+(mD-mN)*severity,
+        sN+(sD-sN)*severity)
+    }
+    val (rR,rG,rB) = transform(1f,0f,0f)
+    val (gR,gG,gB) = transform(0f,1f,0f)
+    val (bR,bG,bB) = transform(0f,0f,1f)
+    return floatArrayOf(rR,gR,bR,0f,0f, rG,gG,bG,0f,0f,
+      rB,gB,bB,0f,0f, 0f,0f,0f,1f,0f)
+  }
 
-    // Bangun matriks 4x5 untuk koreksi daltonisasi
-    fun getDaltonizationMatrix(deficiency: DeficiencyType,
-                               severity: Float = 1.0f): FloatArray? {
-        if (deficiency == DeficiencyType.Custom ||
-            deficiency == DeficiencyType.Normal) {
-            return floatArrayOf(1f,0f,0f,0f,0f, 0f,1f,0f,0f,0f,
-                                0f,0f,1f,0f,0f, 0f,0f,0f,1f,0f)
-        }
-        fun transform(rA: Float, gA: Float, bA: Float): Triple<Float,Float,Float> {
-            val (l,m,s)   = rgbToLms(rA, gA, bA)
-            val (lS,mS,sS)= simulateLms(l, m, s, deficiency)
-            val (rS,gS,bS)= lmsToRgb(lS, mS, sS)
-            val (eR,eG,eB)= Triple(rA-rS, gA-gS, bA-bS)
-            val (sR,sG,sB) = when (deficiency) {
-                DeficiencyType.Protanopia   ->
-                    Triple(0f, .9f*eR+.1f*eG, .9f*eR+.1f*eB)
-                DeficiencyType.Deuteranopia ->
-                    Triple(eR+.7f*eG, 0f, .7f*eG+eB)
-                DeficiencyType.Tritanopia   ->
-                    Triple(eR+.7f*eB, eG+.7f*eB, 0f)
-                else -> Triple(0f, 0f, 0f)
-            }
-            return Triple(rA+sR*severity, gA+sG*severity, bA+sB*severity)
-        }
-        val (rR,rG,rB) = transform(1f,0f,0f)
-        val (gR,gG,gB) = transform(0f,1f,0f)
-        val (bR,bG,bB) = transform(0f,0f,1f)
-        return floatArrayOf(rR,gR,bR,0f,0f, rG,gG,bG,0f,0f,
-                            rB,gB,bB,0f,0f, 0f,0f,0f,1f,0f)
+  // Bangun matriks 4x5 untuk koreksi daltonisasi
+  fun getDaltonizationMatrix(deficiency: DeficiencyType,
+      severity: Float = 1.0f): FloatArray? {
+    if (deficiency == DeficiencyType.Custom ||
+        deficiency == DeficiencyType.Normal) {
+      return floatArrayOf(1f,0f,0f,0f,0f, 0f,1f,0f,0f,0f,
+        0f,0f,1f,0f,0f, 0f,0f,0f,1f,0f)
     }
+    fun transform(rA: Float, gA: Float, bA: Float): Triple<Float,Float,Float> {
+      val (l,m,s)    = rgbToLms(rA, gA, bA)
+      val (lS,mS,sS) = simulateLms(l, m, s, deficiency)
+      val (rS,gS,bS) = lmsToRgb(lS, mS, sS)
+      val (eR,eG,eB) = Triple(rA-rS, gA-gS, bA-bS)
+      val (sR,sG,sB) = when (deficiency) {
+        DeficiencyType.Protanopia   -> Triple(0f, .9f*eR+.1f*eG, .9f*eR+.1f*eB)
+        DeficiencyType.Deuteranopia -> Triple(eR+.7f*eG, 0f, .7f*eG+eB)
+        DeficiencyType.Tritanopia   -> Triple(eR+.7f*eB, eG+.7f*eB, 0f)
+        else -> Triple(0f, 0f, 0f)
+      }
+      return Triple(rA+sR*severity, gA+sG*severity, bA+sB*severity)
+    }
+    val (rR,rG,rB) = transform(1f,0f,0f)
+    val (gR,gG,gB) = transform(0f,1f,0f)
+    val (bR,bG,bB) = transform(0f,0f,1f)
+    return floatArrayOf(rR,gR,bR,0f,0f, rG,gG,bG,0f,0f,
+      rB,gB,bB,0f,0f, 0f,0f,0f,1f,0f)
+  }
 }
 \end{lstlisting}
 
@@ -181,62 +170,62 @@ object ColorProcessor {
 \begin{lstlisting}[caption={Implementasi klasifikasi nama warna berbasis ruang warna HSV dengan pendekatan \textit{rule-based thresholding}}, label={lst:colornames}]
 class ColorNames(private val context: Context) {
 
-    // Rata-rata piksel dalam area radius x radius di sekitar titik pusat
-    fun getAverageColor(bitmap: Bitmap, centerX: Int, centerY: Int,
-                        radius: Int = 5): Triple<Int, Int, Int> {
-        var r = 0L; var g = 0L; var b = 0L; var count = 0
-        for (dx in -radius..radius) {
-            for (dy in -radius..radius) {
-                val x = (centerX + dx).coerceIn(0, bitmap.width - 1)
-                val y = (centerY + dy).coerceIn(0, bitmap.height - 1)
-                val pixel = bitmap.getPixel(x, y)
-                r += (pixel shr 16) and 0xFF
-                g += (pixel shr 8)  and 0xFF
-                b +=  pixel         and 0xFF
-                count++
-            }
-        }
-        return Triple((r/count).toInt(), (g/count).toInt(), (b/count).toInt())
+  // Rata-rata piksel dalam area radius x radius di sekitar titik pusat
+  fun getAverageColor(bitmap: Bitmap, centerX: Int, centerY: Int,
+      radius: Int = 5): Triple<Int, Int, Int> {
+    var r = 0L; var g = 0L; var b = 0L; var count = 0
+    for (dx in -radius..radius) {
+      for (dy in -radius..radius) {
+        val x = (centerX + dx).coerceIn(0, bitmap.width - 1)
+        val y = (centerY + dy).coerceIn(0, bitmap.height - 1)
+        val pixel = bitmap.getPixel(x, y)
+        r += (pixel shr 16) and 0xFF
+        g += (pixel shr 8)  and 0xFF
+        b +=  pixel         and 0xFF
+        count++
+      }
     }
+    return Triple((r/count).toInt(), (g/count).toInt(), (b/count).toInt())
+  }
 
-    // Klasifikasi nama warna dari nilai RGB menggunakan ruang warna HSV
-    fun getColorNameFromRGB(r: Int, g: Int, b: Int): String {
-        val hsv = FloatArray(3)
-        android.graphics.Color.RGBToHSV(r, g, b, hsv)
-        val h = hsv[0]  // Hue        : 0.0 - 360.0
-        val s = hsv[1]  // Saturation : 0.0 - 1.0
-        val v = hsv[2]  // Value      : 0.0 - 1.0
+  // Klasifikasi nama warna dari nilai RGB menggunakan ruang warna HSV
+  fun getColorNameFromRGB(r: Int, g: Int, b: Int): String {
+    val hsv = FloatArray(3)
+    android.graphics.Color.RGBToHSV(r, g, b, hsv)
+    val h = hsv[0]  // Hue        : 0.0 - 360.0
+    val s = hsv[1]  // Saturation : 0.0 - 1.0
+    val v = hsv[2]  // Value      : 0.0 - 1.0
 
-        // Deteksi warna akromatik (hitam, abu-abu, putih) berdasarkan saturasi
-        if (s < 0.10f) {
-            return when {
-                v < 0.15f -> "Black"
-                v < 0.40f -> "Dark Gray"
-                v < 0.78f -> "Gray"
-                else      -> "White"
-            }
-        }
-        if (v < 0.08f) return "Black"          // terlalu gelap
-        if (s < 0.18f && v > 0.72f) return "White"  // hampir putih
-
-        // Klasifikasi warna kromatik berdasarkan nilai Hue
-        return when {
-            h < 9.85f   -> "Red"
-            h < 26.98f  -> "Orange"
-            h < 50.42f  -> "Yellow"
-            h < 122.50f -> "Green"
-            h < 204.85f -> "Cyan"
-            h < 224.57f -> "Blue"
-            h < 319.37f -> "Purple"
-            else        -> "Red"
-        }
+    // Deteksi warna akromatik (hitam, abu-abu, putih) berdasarkan saturasi
+    if (s < 0.10f) {
+      return when {
+        v < 0.15f -> "Black"
+        v < 0.40f -> "Dark Gray"
+        v < 0.78f -> "Gray"
+        else      -> "White"
+      }
     }
+    if (v < 0.08f) return "Black"               // terlalu gelap
+    if (s < 0.18f && v > 0.72f) return "White"  // hampir putih
 
-    fun getCenterColorName(bitmap: Bitmap, radius: Int = 5): String {
-        val (r, g, b) = getAverageColor(bitmap,
-            bitmap.width / 2, bitmap.height / 2, radius)
-        return getColorNameFromRGB(r, g, b)
+    // Klasifikasi warna kromatik berdasarkan nilai Hue
+    return when {
+      h < 9.85f   -> "Red"
+      h < 26.98f  -> "Orange"
+      h < 50.42f  -> "Yellow"
+      h < 122.50f -> "Green"
+      h < 204.85f -> "Cyan"
+      h < 224.57f -> "Blue"
+      h < 319.37f -> "Purple"
+      else        -> "Red"
     }
+  }
+
+  fun getCenterColorName(bitmap: Bitmap, radius: Int = 5): String {
+    val (r, g, b) = getAverageColor(bitmap,
+      bitmap.width / 2, bitmap.height / 2, radius)
+    return getColorNameFromRGB(r, g, b)
+  }
 }
 
 data class ColorItem(val hex: String, val name: String)
@@ -245,68 +234,68 @@ data class ColorItem(val hex: String, val name: String)
 \subsection*{D. CameraScreen.kt (bagian akuisisi citra)}
 
 \begin{lstlisting}[caption={Inisialisasi CameraX dan loop analisis frame secara \textit{real-time}}, label={lst:camerascreen}]
+// Rotasi bitmap sesuai orientasi sensor kamera
+fun rotateIfNeeded(bitmap: Bitmap, rotation: Int): Bitmap {
+  if (rotation == 0) return bitmap
+  val matrix = Matrix().apply { postRotate(rotation.toFloat()) }
+  return Bitmap.createBitmap(bitmap, 0, 0,
+    bitmap.width, bitmap.height, matrix, true)
+}
+
+// Analisis satu frame: rotasi, deteksi warna, lalu update state
+fun analyzeFrame(imageProxy: ImageProxy) {
+  try {
+    val bitmap = imageProxy.toBitmap()
+    val rotation = imageProxy.imageInfo.rotationDegrees
+    val finalBitmap = rotateIfNeeded(bitmap, rotation)
+
+    centerColorName = colorNames
+      .getCenterColorName(finalBitmap, sampleAreaSize)
+    processedBitmap = finalBitmap
+  } catch (e: Exception) {
+    Log.e("CameraScreen", "Error processing frame", e)
+  } finally {
+    imageProxy.close()
+  }
+}
+
 // Inisialisasi CameraX dan pipeline ImageAnalysis
 LaunchedEffect(Unit) {
-    val cameraProvider = context.getCameraProvider()
-    val resolutionSelector = ResolutionSelector.Builder()
-        .setAspectRatioStrategy(
-            AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
-        .build()
+  val cameraProvider = context.getCameraProvider()
+  val resolutionSelector = ResolutionSelector.Builder()
+    .setAspectRatioStrategy(RATIO_16_9_FALLBACK_AUTO_STRATEGY)
+    .build()
 
-    val preview = Preview.Builder()
-        .setResolutionSelector(resolutionSelector).build()
-        .also { it.setSurfaceProvider(previewView.surfaceProvider) }
+  val preview = Preview.Builder()
+    .setResolutionSelector(resolutionSelector).build()
+    .also { it.setSurfaceProvider(previewView.surfaceProvider) }
 
-    val imageAnalysis = ImageAnalysis.Builder()
-        .setResolutionSelector(resolutionSelector)
-        .setBackpressureStrategy(
-            ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-        .build().also {
-            it.setAnalyzer(analysisExecutor) { imageProxy ->
-                try {
-                    val bitmap = imageProxy.toBitmap()
-                    val rotation = imageProxy.imageInfo.rotationDegrees
-                    val finalBitmap = if (rotation != 0) {
-                        val matrix = Matrix().apply {
-                            postRotate(rotation.toFloat())
-                        }
-                        Bitmap.createBitmap(bitmap, 0, 0,
-                            bitmap.width, bitmap.height, matrix, true)
-                    } else bitmap
+  val imageAnalysis = ImageAnalysis.Builder()
+    .setResolutionSelector(resolutionSelector)
+    .setBackpressureStrategy(STRATEGY_KEEP_ONLY_LATEST)
+    .build()
+    .also { it.setAnalyzer(analysisExecutor, ::analyzeFrame) }
 
-                    // Deteksi nama warna dari piksel tengah frame
-                    centerColorName = colorNames
-                        .getCenterColorName(finalBitmap, sampleAreaSize)
-                    processedBitmap = finalBitmap
-                } catch (e: Exception) {
-                    Log.e("CameraScreen", "Error processing frame", e)
-                } finally {
-                    imageProxy.close()
-                }
-            }
-        }
-
-    cameraProvider.unbindAll()
-    cameraProvider.bindToLifecycle(
-        lifecycleOwner,
-        CameraSelector.DEFAULT_BACK_CAMERA,
-        preview,
-        imageAnalysis
-    )
+  cameraProvider.unbindAll()
+  cameraProvider.bindToLifecycle(
+    lifecycleOwner,
+    CameraSelector.DEFAULT_BACK_CAMERA,
+    preview,
+    imageAnalysis
+  )
 }
 
 // Terapkan ColorFilter dari matriks transformasi ke bitmap hasil kamera
 if (isFilterEnabled) {
-    processedBitmap?.let { bitmap ->
-        Image(
-            bitmap = bitmap.asImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            colorFilter = ColorFilter.colorMatrix(
-                ColorMatrix(matrixArray))
-        )
-    }
+  processedBitmap?.let { bitmap ->
+    Image(
+      bitmap = bitmap.asImageBitmap(),
+      contentDescription = null,
+      modifier = Modifier.fillMaxSize(),
+      contentScale = ContentScale.Crop,
+      colorFilter = ColorFilter.colorMatrix(ColorMatrix(matrixArray))
+    )
+  }
 }
 \end{lstlisting}
 
@@ -315,28 +304,26 @@ if (isFilterEnabled) {
 \begin{lstlisting}[caption={Implementasi halaman utama (\textit{dashboard}) dengan navigasi ke fitur kamera dan uji klasifikasi warna}, label={lst:dashboard}]
 @Composable
 fun DashboardScreen(
-    onNavigateToCamera: () -> Unit,
-    onNavigateToColorClassification: () -> Unit
+  onNavigateToCamera: () -> Unit,
+  onNavigateToColorClassification: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Dashboard")
-            Button(
-                onClick = onNavigateToCamera,
-                modifier = Modifier.padding(top = 16.dp)
-            ) { Text(text = "Go to Camera") }
-            Button(
-                onClick = onNavigateToColorClassification,
-                modifier = Modifier.padding(top = 8.dp)
-            ) { Text(text = "Color Classification Test") }
-        }
+  Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Column(
+      modifier = Modifier.fillMaxSize().padding(innerPadding),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      Text(text = "Dashboard")
+      Button(
+        onClick = onNavigateToCamera,
+        modifier = Modifier.padding(top = 16.dp)
+      ) { Text(text = "Go to Camera") }
+      Button(
+        onClick = onNavigateToColorClassification,
+        modifier = Modifier.padding(top = 8.dp)
+      ) { Text(text = "Color Classification Test") }
     }
+  }
 }
 \end{lstlisting}
 
@@ -345,8 +332,47 @@ fun DashboardScreen(
 % ---- Lampiran 3: Output Program ----
 \section*{Lampiran 3 – Output Program}
 
-% Gambar output atau teks output
-\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+\begin{center}
+  \includegraphics[width=0.4\textwidth]{gambar/ss_dashboard.jpg}\\[0.2em]
+  \textit{Gambar L-3.1. Halaman \textit{Dashboard}}
+\end{center}
+
+\vspace{0.8cm}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{gambar/ss_normal.jpg}\\[0.2em]
+  \textit{Gambar L-3.2. Tampilan Mode \textit{Normal}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{gambar/ss_daltonization.jpg}\\[0.2em]
+  \textit{Gambar L-3.3. Tampilan Mode Daltonisasi}
+\end{minipage}
+
+\vspace{0.8cm}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{gambar/ss_protanopia.jpg}\\[0.2em]
+  \textit{Gambar L-3.4. Tampilan Simulasi \textit{Protanopia}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{gambar/ss_deuteranopia.jpg}\\[0.2em]
+  \textit{Gambar L-3.5. Tampilan Simulasi \textit{Deuteranopia}}
+\end{minipage}
+
+\vspace{0.8cm}
+
+\begin{center}
+  \includegraphics[width=0.48\textwidth]{gambar/ss_tritanopia.jpg}\\[0.2em]
+  \textit{Gambar L-3.6. Tampilan Simulasi \textit{Tritanopia}}
+\end{center}
 
 % Tambahkan lampiran lain sesuai kebutuhan
 

@@ -41,6 +41,24 @@ sebagai berikut.
         (putih, abu-abu, hitam).
         Hasil pengujian akurasi pada kondisi pencahayaan normal mencapai
         90\% dan pada kondisi pencahayaan redup mencapai 50\%.
+
+  \item Pengujian performa \textit{real-time} menunjukkan bahwa aplikasi Dalsilens
+        mampu mempertahankan rata-rata 57,2 FPS dengan latensi pemrosesan rata-rata
+        17,5 ms per \textit{frame} saat transformasi \textit{color matrix} dan
+        klasifikasi warna berjalan bersamaan.
+        Penggunaan memori (RAM) tercatat rata-rata sebesar 218,54 MB tanpa
+        menunjukkan tren kenaikan yang konsisten antar iterasi, sehingga tidak
+        ditemukan indikasi \textit{memory leak}.
+        Utilisasi CPU rata-rata hanya sebesar 19,21\% dari kapasitas total
+        perangkat, membuktikan bahwa pemindahan beban komputasi dari CPU ke GPU
+        melalui \textit{ColorMatrix} berjalan efektif.
+
+  \item Pengujian kebergunaan menggunakan metode \textit{System Usability Scale}
+        (SUS) terhadap 15 responden menghasilkan rata-rata skor sebesar 67,17,
+        yang termasuk dalam kategori C (\textit{OK}) menurut klasifikasi SUS.
+        Hasil ini menunjukkan bahwa aplikasi Dalsilens dinilai cukup baik dan
+        dapat diterima oleh pengguna dari sisi kemudahan dan kenyamanan
+        penggunaan, meskipun masih terdapat ruang untuk perbaikan lebih lanjut.
 \end{enumerate}
 
 \section{Saran}

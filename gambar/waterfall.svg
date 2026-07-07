@@ -1,0 +1,53 @@
+<svg viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+
+  <rect width="680" height="420" fill="#f8f9fa" rx="8"/>
+  <text x="340" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">Model Waterfall — Pengembangan Dalsilens</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#546e7a"/>
+    </marker>
+  </defs>
+
+  <!-- Phase 1: Analisis -->
+  <rect x="30"  y="60"  width="580" height="56" rx="6" fill="#1565C0"/>
+  <text x="50"  y="85"  font-size="12" font-weight="bold" fill="white">1. Analisis Kebutuhan</text>
+  <text x="50"  y="103" font-size="10" fill="#BBDEFB">Identifikasi masalah buta warna · Kebutuhan fungsional dan non-fungsional · Platform Android · Tiga tipe dikromasi</text>
+
+  <line x1="310" y1="116" x2="310" y2="132" stroke="#546e7a" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="310" y1="116" x2="356" y2="116" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="356" y1="116" x2="356" y2="134" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- Phase 2: Perancangan -->
+  <rect x="56"  y="136" width="528" height="56" rx="6" fill="#6A1B9A"/>
+  <text x="76"  y="161" font-size="12" font-weight="bold" fill="white">2. Perancangan Sistem</text>
+  <text x="76"  y="179" font-size="10" fill="#E1BEE7">Use Case Diagram · Activity Diagram · Class Diagram · Arsitektur tiga lapisan</text>
+
+  <line x1="320" y1="192" x2="320" y2="208" stroke="#546e7a" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="320" y1="192" x2="370" y2="192" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="370" y1="192" x2="370" y2="210" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- Phase 3: Implementasi -->
+  <rect x="82"  y="212" width="476" height="56" rx="6" fill="#2E7D32"/>
+  <text x="102" y="237" font-size="12" font-weight="bold" fill="white">3. Implementasi</text>
+  <text x="102" y="255" font-size="10" fill="#C8E6C9">ColorProcessor · ColorNames · CameraX · ColorMatrix GPU · Jetpack Compose UI</text>
+
+  <line x1="320" y1="268" x2="320" y2="284" stroke="#546e7a" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="320" y1="268" x2="384" y2="268" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="384" y1="268" x2="384" y2="286" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- Phase 4: Pengujian -->
+  <rect x="108" y="288" width="424" height="56" rx="6" fill="#BF360C"/>
+  <text x="128" y="313" font-size="12" font-weight="bold" fill="white">4. Pengujian</text>
+  <text x="128" y="331" font-size="10" fill="#FFCCBC">Black Box Testing · Akurasi HSV · Performa Profiler · System Usability Scale (SUS)</text>
+
+  <line x1="320" y1="344" x2="320" y2="360" stroke="#546e7a" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="320" y1="344" x2="398" y2="344" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="398" y1="344" x2="398" y2="362" stroke="#546e7a" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+
+  <!-- Phase 5: Pemeliharaan -->
+  <rect x="134" y="364" width="372" height="56" rx="6" fill="#37474F"/>
+  <text x="154" y="389" font-size="12" font-weight="bold" fill="white">5. Pemeliharaan</text>
+  <text x="154" y="407" font-size="10" fill="#CFD8DC">Saran ML klasifikasi warna · Anomalous trichromacy · Fitur text-to-speech</text>
+
+</svg>

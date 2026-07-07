@@ -424,8 +424,9 @@ Karena tujuannya berbeda, cara penerapan \textit{severity} dibedakan antara mode
 
 \subsection{Keparahan pada Mode Simulasi}
 
-Pada mode simulasi, \textit{severity} berfungsi untuk meniru tingkat keparahan kondisi buta warna, termasuk kondisi \textit{Anomalous Trichromacy} (buta warna parsial)~\parencite{physiologically_visualization}.
-Perhitungan dilakukan langsung di ruang warna LMS menggunakan interpolasi linear antara nilai LMS penglihatan normal dan nilai LMS defisiensi penuh:
+Pada mode simulasi, \textit{severity} berfungsi untuk mengatur intensitas efek simulasi buta warna yang ditampilkan, dari kondisi penglihatan normal hingga dikromasi penuh.
+Perhitungan dilakukan langsung di ruang warna LMS menggunakan interpolasi linear antara nilai LMS penglihatan normal dan nilai LMS defisiensi penuh, yang secara konseptual terinspirasi dari pendekatan interpolasi bertahap pada penelitian~\textcite{physiologically_visualization}.
+Dalam penelitian ini, interpolasi ini merupakan pendekatan sederhana (\textit{approximation}) untuk mengatur intensitas filter dan belum merepresentasikan model \textit{Anomalous Trichromacy} secara khusus, karena kondisi tersebut melibatkan perubahan kurva sensitivitas sel kerucut, bukan sekadar interpolasi linear menuju dikromasi penuh.
 
 \begin{equation}
   L_{\text{final}} = L_{\text{normal}} + (L_{\text{sim}} - L_{\text{normal}}) \times S
@@ -671,9 +672,122 @@ Penurunan akurasi pada kondisi redup terjadi karena nilai \textit{Value} (V) pad
 
 \subsection{Pengujian Performa \textit{Real-Time}}
 
-Skenario ini memvalidasi efisiensi komputasi yang didorong akselerasi GPU.
-Performa diukur secara kuantitatif dengan menghitung rata-rata nilai \textit{Frame Per Second} (FPS) dan latensi pemrosesan saat sistem menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan.
+Skenario ini memvalidasi efisiensi komputasi yang dioptimalkan oleh akselerasi GPU.
+Performa diukur berdasarkan hasil pengukuran dengan menghitung rata-rata nilai \textit{Frame Per Second} (FPS) dan latensi pemrosesan saat sistem menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan.
 Selain itu, penggunaan memori (RAM) dan utilisasi CPU juga dipantau menggunakan \textit{Android Studio Profiler} untuk memastikan tidak ada \textit{lag} atau \textit{memory leak} selama aplikasi berjalan.
+
+\subsubsection{Pengujian FPS dan Latensi Pemrosesan}
+
+Pengujian FPS dan latensi dilakukan dengan menjalankan aplikasi pada mode Daltonisasi dengan fitur identifikasi nama warna aktif secara bersamaan, merepresentasikan kondisi beban komputasi tertinggi (\textit{worst-case scenario}) yang mungkin terjadi pada aplikasi.
+Data statistik \textit{rendering frame} diambil menggunakan perintah \texttt{adb shell dumpsys gfxinfo} pada setiap iterasi pengujian, yang menghasilkan distribusi (histogram) waktu \textit{render} setiap \textit{frame}.
+Nilai rata-rata latensi per iterasi dihitung dari rata-rata terbobot (\textit{weighted average}) histogram tersebut, sedangkan nilai FPS diperoleh melalui konversi:
+
+\begin{equation}
+  \text{FPS} = \frac{1000}{\text{Latensi Rata-rata (ms)}}
+  \label{eq:fps}
+\end{equation}
+
+Pengujian dilakukan sebanyak tiga kali iterasi, masing-masing berjalan kurang lebih satu menit, untuk memperoleh gambaran konsistensi performa aplikasi selama digunakan secara terus-menerus.
+Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-fps}.
+
+\begin{table}[H]
+  \centering
+  \caption{Hasil Pengujian FPS dan Latensi Pemrosesan}
+  \label{tab:performa-fps}
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{Uji Coba} & \textbf{Total \textit{Frame}} & \textbf{FPS} & \textbf{Latensi Rata-rata (ms)} & \textbf{\textit{Janky Frames} (\%)} \\
+    \hline
+    Iterasi ke-1 & 2.389 & 55,0 & 18,2 & 28,59\% \\
+    \hline
+    Iterasi ke-2 & 2.808 & 65,3 & 15,3 & 9,62\% \\
+    \hline
+    Iterasi ke-3 & 1.134 & 46,8 & 21,4 & 23,10\% \\
+    \hline
+    \textbf{Rata-rata} & \textbf{6.331} & \textbf{57,2} & \textbf{17,5} & \textbf{19,19\%} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Berdasarkan Tabel~\ref{tab:performa-fps}, aplikasi Dalsilens memperoleh rata-rata performa sebesar 57,2 FPS dengan latensi pemrosesan rata-rata 17,5 ms per \textit{frame} saat transformasi \textit{color matrix} dan klasifikasi warna berjalan bersamaan.
+Nilai ini menunjukkan bahwa aplikasi mampu mempertahankan \textit{frame rate} yang mendekati kondisi \textit{real-time} yang mulus (60 FPS) meskipun kedua proses komputasi berjalan secara bersamaan.
+Persentase \textit{Janky Frames} rata-rata sebesar 19,19\% menunjukkan bahwa sebagian kecil \textit{frame} masih melewati batas waktu \textit{render} ideal (16,67 ms), namun tidak sampai menyebabkan penurunan performa yang signifikan atau terasa oleh pengguna.
+
+Data tambahan dari \textit{GPU Rendering Profile} menunjukkan bahwa median waktu pemrosesan pada GPU berada pada kisaran 5--7 ms, jauh lebih rendah dibandingkan total waktu \textit{render} per \textit{frame}.
+Hal ini mengindikasikan bahwa beban komputasi transformasi warna melalui \textit{ColorMatrix} yang diakselerasi GPU bukan merupakan titik hambat (\textit{bottleneck}) utama, sehingga selaras dengan tujuan penelitian untuk memindahkan beban komputasi berat dari CPU ke GPU.
+
+\subsubsection{Pengujian Penggunaan Memori (RAM)}
+
+Pengujian penggunaan memori dilakukan pada skenario yang sama dengan pengujian FPS, yaitu saat mode Daltonisasi dan fitur identifikasi nama warna berjalan secara bersamaan.
+Data memori diambil menggunakan perintah \texttt{adb shell dumpsys meminfo} pada tiga iterasi pengujian, dengan mencatat nilai \textit{Total Proportional Set Size} (PSS) sebagai representasi total pemakaian RAM aplikasi.
+\textit{Proportional Set Size} (PSS) merupakan metode perhitungan memori pada Android yang membagi memori bersama (\textit{shared memory}), seperti \textit{library} sistem, secara proporsional ke setiap proses yang menggunakannya, sehingga nilai yang dihasilkan lebih akurat dan tidak tumpang tindih (\textit{double-counting}) dibandingkan metode \textit{Resident Set Size} (RSS) biasa.
+Pengujian ini bertujuan untuk memastikan tidak terjadi \textit{memory leak}, yaitu kondisi di mana penggunaan memori terus meningkat secara konsisten tanpa pernah menurun akibat objek yang seharusnya dibersihkan (\textit{garbage collected}) namun masih tertahan di memori.
+Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-ram}.
+
+\begin{table}[H]
+  \centering
+  \caption{Hasil Pengujian Penggunaan Memori (RAM)}
+  \label{tab:performa-ram}
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Uji Coba} & \textbf{Total PSS (KB)} & \textbf{Total PSS (MB)} \\
+    \hline
+    Iterasi ke-1 & 223.147 & 217,92 \\
+    \hline
+    Iterasi ke-2 & 227.867 & 222,53 \\
+    \hline
+    Iterasi ke-3 & 220.339 & 215,18 \\
+    \hline
+    \textbf{Rata-rata} & \textbf{223.784} & \textbf{218,54} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Berdasarkan Tabel~\ref{tab:performa-ram}, aplikasi Dalsilens menggunakan rata-rata memori sebesar 218,54 MB selama pengujian.
+Nilai PSS pada ketiga pengujian berada dalam rentang yang sempit ($\pm$3,5 MB dari rata-rata) dan tidak menunjukkan tren kenaikan yang konsisten dari iterasi pertama hingga ketiga.
+Apabila terjadi \textit{memory leak}, nilai PSS semestinya terus meningkat secara bertahap pada setiap iterasi karena adanya objek yang seharusnya dibersihkan (\textit{garbage collected}) namun masih tertahan di memori.
+Karena pola tersebut tidak ditemukan, dapat disimpulkan bahwa tidak ada indikasi \textit{memory leak} pada aplikasi Dalsilens selama pengujian berlangsung.
+
+\subsubsection{Pengujian Utilisasi CPU}
+
+Pengujian utilisasi CPU dilakukan pada skenario yang sama dengan pengujian FPS dan RAM, yaitu saat mode Daltonisasi dan fitur identifikasi nama warna berjalan secara bersamaan.
+Data diambil menggunakan perintah \texttt{adb shell top -n 2 -d 1}, yang mengambil dua sampel dengan jeda satu detik agar persentase CPU dihitung berdasarkan selisih (\textit{delta}) penggunaan yang valid, bukan hanya berdasarkan satu sampel pengukuran.
+Nilai yang dicatat pada setiap iterasi adalah sampel kedua dari setiap pasangan pengukuran.
+Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-cpu}.
+
+\begin{table}[H]
+  \centering
+  \caption{Hasil Pengujian Utilisasi CPU}
+  \label{tab:performa-cpu}
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Uji Coba} & \textbf{Utilisasi CPU (\%)} \\
+    \hline
+    Iterasi ke-1 & 147\% \\
+    \hline
+    Iterasi ke-2 & 148\% \\
+    \hline
+    Iterasi ke-3 & 166\% \\
+    \hline
+    \textbf{Rata-rata} & \textbf{153,67\%} \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Nilai utilisasi CPU pada Tabel~\ref{tab:performa-cpu} melebihi 100\%.
+Hal ini bukan merupakan kesalahan pengukuran, melainkan konvensi umum pada utilitas sistem pemantauan berbasis Linux/Android seperti \texttt{top}, yang menghitung persentase CPU sebagai akumulasi penggunaan pada seluruh \textit{core} yang dipakai oleh proses, bukan relatif terhadap satu \textit{core} saja.
+Dengan demikian, nilai maksimum yang dapat dicapai suatu proses adalah $100\% \times N$, dengan $N$ merupakan jumlah \textit{core} CPU yang dimiliki perangkat.
+Berdasarkan informasi sistem pada perangkat uji, kapasitas total CPU tercatat sebesar 800\%, yang menunjukkan bahwa perangkat memiliki 8 \textit{core} ($N = 8$).
+
+Apabila nilai rata-rata utilisasi CPU sebesar 153,67\% dikonversi menjadi persentase terhadap kapasitas total perangkat, diperoleh:
+
+\begin{equation}
+  \text{Utilisasi CPU Relatif} = \frac{153{,}67\%}{8 \times 100\%} \times 100\% \approx 19{,}21\%
+  \label{eq:cpu-relatif}
+\end{equation}
+
+Nilai ini menunjukkan bahwa aplikasi Dalsilens hanya menggunakan sekitar 19,21\% dari total kapasitas komputasi CPU perangkat meskipun menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan, sehingga proses tersebut tidak membebani CPU secara signifikan.
+Hal ini turut membuktikan efektivitas pemindahan beban komputasi berat dari CPU ke GPU melalui \textit{Color Matrix} yang diakselerasi \textit{hardware}, sebagaimana dijelaskan pada Subbab~\ref{subsec:colormatrix-gpu}.
 
 \subsection{Pengujian Fungsionalitas (\textit{Black Box Testing})}
 
@@ -823,7 +937,7 @@ Interpretasi skor SUS mengacu pada klasifikasi yang ditunjukkan pada Tabel~\ref{
   \end{tabular}
 \end{table}
 
-Pengujian dilakukan terhadap \textit{[N]} responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
+Pengujian dilakukan terhadap 15 responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
 Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
 
 \begin{table}[H]
@@ -834,16 +948,21 @@ Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
     \hline
     \textbf{No.} & \textbf{Nama} & \textbf{Usia} & \textbf{Jenis Kelamin} \\
     \hline
-    1  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    2  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    3  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    4  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    5  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    6  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    7  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    8  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    9  & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
-    10 & \textit{[NAMA]} & \textit{[USIA]} & \textit{[L/P]} \\ \hline
+    1  & Arja Hudaya             & 20 & Laki-laki \\ \hline
+    2  & Ihsan Fadhila           & 31 & Laki-laki \\ \hline
+    3  & Muhamad Adha Ismail     & 21 & Laki-laki \\ \hline
+    4  & Zahra                   & 20 & Perempuan \\ \hline
+    5  & Pina                    & 21 & Perempuan \\ \hline
+    6  & Mochamad Ariva Alvitto  & 21 & Laki-laki \\ \hline
+    7  & Asep                    & 28 & Laki-laki \\ \hline
+    8  & Reza                    & 22 & Laki-laki \\ \hline
+    9  & Dina Sartika            & 20 & Perempuan \\ \hline
+    10 & Keiza Aurel             & 20 & Perempuan \\ \hline
+    11 & Syafiq Widyawan Putra   & 20 & Laki-laki \\ \hline
+    12 & Mahez                   & 19 & Laki-laki \\ \hline
+    13 & Ghania                  & 19 & Perempuan \\ \hline
+    14 & Nur Aulia Rahman        & 21 & Laki-laki \\ \hline
+    15 & Muhammad Arvin Pamungkas & 15 & Laki-laki \\ \hline
   \end{tabular}
 \end{table}
 
@@ -860,20 +979,25 @@ Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS disajikan pada
     \textbf{P5} & \textbf{P6} & \textbf{P7} & \textbf{P8} & \textbf{P9} &
     \textbf{P10} & \textbf{Skor SUS} \\
     \hline
-    1  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    2  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    3  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    4  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    5  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    6  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    7  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    8  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    9  & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    10 & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[.]} & \textit{[..]} \\ \hline
-    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{\textit{[..]}} \\
+    1  & 2 & 2 & 4 & 1 & 4 & 3 & 5 & 1 & 4 & 2 & 75,0 \\ \hline
+    2  & 4 & 3 & 4 & 2 & 4 & 3 & 4 & 1 & 3 & 2 & 70,0 \\ \hline
+    3  & 4 & 2 & 5 & 3 & 3 & 1 & 5 & 1 & 5 & 2 & 82,5 \\ \hline
+    4  & 4 & 4 & 5 & 2 & 5 & 3 & 5 & 3 & 4 & 3 & 70,0 \\ \hline
+    5  & 4 & 4 & 4 & 4 & 4 & 3 & 4 & 3 & 4 & 4 & 55,0 \\ \hline
+    6  & 1 & 1 & 5 & 1 & 5 & 1 & 5 & 1 & 5 & 1 & 90,0 \\ \hline
+    7  & 4 & 3 & 5 & 3 & 5 & 2 & 5 & 3 & 4 & 4 & 70,0 \\ \hline
+    8  & 3 & 2 & 4 & 1 & 4 & 3 & 4 & 2 & 3 & 2 & 70,0 \\ \hline
+    9  & 4 & 3 & 4 & 2 & 4 & 3 & 4 & 4 & 4 & 2 & 65,0 \\ \hline
+    10 & 3 & 2 & 2 & 3 & 3 & 4 & 2 & 3 & 3 & 2 & 47,5 \\ \hline
+    11 & 5 & 4 & 5 & 4 & 4 & 3 & 5 & 3 & 5 & 4 & 65,0 \\ \hline
+    12 & 4 & 3 & 3 & 4 & 4 & 3 & 3 & 4 & 4 & 4 & 50,0 \\ \hline
+    13 & 2 & 2 & 4 & 1 & 4 & 3 & 5 & 2 & 3 & 2 & 70,0 \\ \hline
+    14 & 2 & 1 & 5 & 2 & 3 & 3 & 4 & 1 & 3 & 2 & 70,0 \\ \hline
+    15 & 4 & 3 & 4 & 4 & 3 & 3 & 3 & 2 & 3 & 2 & 57,5 \\ \hline
+    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{67,17} \\
     \hline
   \end{tabular}}
 \end{table}
 
-Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar \textit{[SKOR]}.
-Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori \textit{[KATEGORI]}, yang berarti aplikasi Dalsilens dinilai \textit{[KATEGORI]} oleh responden dari sisi kebergunaan.
+Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar 67,17.
+Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori C (\textit{OK}), yang berarti aplikasi Dalsilens dinilai cukup baik dan dapat diterima oleh responden dari sisi kebergunaan, meskipun masih terdapat ruang untuk perbaikan.
