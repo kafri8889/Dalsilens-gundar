@@ -14,7 +14,7 @@
 
 Dalsilens adalah aplikasi Android yang dirancang sebagai alat bantu visual bagi penderita dikromasi.
 Aplikasi ini menggabungkan dua fitur utama dalam satu antarmuka berbasis kamera secara \textit{real-time}, yaitu koreksi dan simulasi warna menggunakan algoritma \textit{LMS Daltonization}, serta identifikasi nama warna berbasis ruang warna HSV.
-Secara garis besar, alur kerja sistem dimulai dari pengambilan citra oleh kamera, pemrosesan piksel, transformasi warna, hingga tampilan hasil kepada pengguna, semua berjalan dalam satu siklus per \textit{frame} yang berulang terus-menerus selama aplikasi aktif.
+Secara umum, alur kerja sistem dimulai dari pengambilan citra oleh kamera, pemrosesan piksel, transformasi warna, hingga tampilan hasil kepada pengguna, semua berjalan dalam satu siklus per \textit{frame} yang berulang terus-menerus selama aplikasi aktif.
 
 Gambar~\ref{fig:arsitektur-umum} menggambarkan hubungan antar komponen utama sistem Dalsilens.
 
@@ -26,9 +26,9 @@ Gambar~\ref{fig:arsitektur-umum} menggambarkan hubungan antar komponen utama sis
 \end{figure}
 
 Sistem terbagi menjadi tiga lapisan utama.
-Lapisan pertama adalah \textbf{lapisan akuisisi}, di mana \textit{library} CameraX menangkap \textit{frame} dari kamera secara berkelanjutan dan mengonversinya menjadi objek \textit{Bitmap}.
-Lapisan kedua adalah \textbf{lapisan pemrosesan}, di mana \texttt{ColorProcessor} menghitung matriks transformasi warna berdasarkan jenis defisiensi dan mode yang dipilih pengguna, sementara \texttt{ColorNames} mengekstrak nilai rata-rata piksel dan mengklasifikasikan nama warna melalui \textit{rule-based thresholding} pada ruang warna HSV.
-Lapisan ketiga adalah \textbf{lapisan tampilan}, di mana hasil transformasi diaplikasikan ke \textit{frame} menggunakan \texttt{ColorMatrix} yang diakselerasi GPU, dan nama warna ditampilkan secara \textit{overlay} di layar.
+Lapisan pertama adalah lapisan akuisisi, di mana \textit{library} CameraX menangkap \textit{frame} dari kamera secara berkelanjutan dan mengonversinya menjadi objek \textit{Bitmap}.
+Lapisan kedua adalah lapisan pemrosesan, di mana \texttt{ColorProcessor} menghitung matriks transformasi warna berdasarkan jenis defisiensi dan mode yang dipilih pengguna, sementara \texttt{ColorNames} mengekstrak nilai rata-rata piksel dan mengklasifikasikan nama warna melalui \textit{rule-based thresholding} pada ruang warna HSV.
+Lapisan ketiga adalah lapisan tampilan, di mana hasil transformasi diaplikasikan ke \textit{frame} menggunakan \texttt{ColorMatrix} yang diakselerasi GPU, dan nama warna ditampilkan secara \textit{overlay} di layar.
 
 \subsection{Metode Pengembangan Perangkat Lunak}
 
@@ -58,7 +58,7 @@ Berikut adalah penerapan setiap fase \textit{Waterfall} pada pengembangan aplika
 
   \item \textbf{Implementasi (\textit{Implementation})} \\
   Pada fase ini seluruh komponen sistem dikodekan menggunakan bahasa Kotlin di lingkungan Android Studio.
-  Implementasi mencakup modul \texttt{ColorProcessor} untuk konversi ruang warna dan pembangkitan matriks transformasi, modul \texttt{ColorNames} untuk klasifikasi nama warna berbasis HSV, serta integrasi \textit{library} CameraX untuk akuisisi citra dan \texttt{ColorMatrix} untuk penerapan transformasi berbasis GPU.
+  Implementasi mencakup modul \texttt{ColorProcessor} untuk konversi ruang warna dan pembuatan matriks transformasi, modul \texttt{ColorNames} untuk klasifikasi nama warna berbasis HSV, serta integrasi \textit{library} CameraX untuk akuisisi citra dan \texttt{ColorMatrix} untuk penerapan transformasi berbasis GPU.
 
   \item \textbf{Pengujian (\textit{Testing})} \\
   Fase pengujian dilakukan untuk memverifikasi bahwa seluruh fitur berjalan sesuai dengan kebutuhan yang telah ditentukan.
@@ -937,7 +937,7 @@ Interpretasi skor SUS mengacu pada klasifikasi yang ditunjukkan pada Tabel~\ref{
   \end{tabular}
 \end{table}
 
-Pengujian dilakukan terhadap 15 responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
+Pengujian dilakukan terhadap 18 responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
 Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
 
 \begin{table}[H]
@@ -963,6 +963,9 @@ Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
     13 & Ghania                  & 19 & Perempuan \\ \hline
     14 & Nur Aulia Rahman        & 21 & Laki-laki \\ \hline
     15 & Muhammad Arvin Pamungkas & 15 & Laki-laki \\ \hline
+    16 & Dina Rizkina            & 20 & Perempuan \\ \hline
+    17 & Muhammad Rafi Danendra Putra & 21 & Laki-laki \\ \hline
+    18 & Saputra                 & 20 & Laki-laki \\ \hline
   \end{tabular}
 \end{table}
 
@@ -994,10 +997,13 @@ Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS disajikan pada
     13 & 2 & 2 & 4 & 1 & 4 & 3 & 5 & 2 & 3 & 2 & 70,0 \\ \hline
     14 & 2 & 1 & 5 & 2 & 3 & 3 & 4 & 1 & 3 & 2 & 70,0 \\ \hline
     15 & 4 & 3 & 4 & 4 & 3 & 3 & 3 & 2 & 3 & 2 & 57,5 \\ \hline
-    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{67,17} \\
+    16 & 2 & 3 & 4 & 2 & 4 & 3 & 5 & 1 & 3 & 4 & 62,5 \\ \hline
+    17 & 3 & 2 & 4 & 2 & 4 & 2 & 5 & 1 & 4 & 3 & 75,0 \\ \hline
+    18 & 4 & 2 & 4 & 1 & 5 & 1 & 5 & 1 & 5 & 4 & 85,0 \\ \hline
+    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{68,33} \\
     \hline
   \end{tabular}}
 \end{table}
 
-Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar 67,17.
-Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori C (\textit{OK}), yang berarti aplikasi Dalsilens dinilai cukup baik dan dapat diterima oleh responden dari sisi kebergunaan, meskipun masih terdapat ruang untuk perbaikan.
+Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar 68,33.
+Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori B (\textit{Good}), yang berarti aplikasi Dalsilens dinilai baik oleh responden dari sisi kebergunaan.
