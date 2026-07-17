@@ -38,7 +38,7 @@ Ruang warna ini membagi elemen visual menjadi tipe jenis warna (H), intensitas w
 
 \subsection{Pemrosesan Citra \textit{Real-Time}}
 Pengolahan citra digital merupakan teknik untuk memproses dan memodifikasi gambar digital dengan mengubah nilai piksel melalui proses komputasi.
-Pengolahan citra digital secara \textit{real-time} mengharuskan sistem untuk terus menerus mengambil sample bingkai (\textit{frame}) dari perangkat keras kamera.
+Pengolahan citra digital secara \textit{real-time} mengharuskan sistem untuk terus menerus mengambil sampel bingkai (\textit{frame}) dari perangkat keras kamera.
 Nilai piksel dari bingkai yang ditangkap tersebut kemudian diekstrak untuk diproses dan dianalisis sebelum ditampilkan kembali kepada pengguna secara \textit{real-time} \parencite{samyan2015}.
 
 \subsection{Algoritma LMS Daltonization}
@@ -60,7 +60,7 @@ Android juga dipilih karena memiliki ekosistem pengembangan yang matang serta di
 Selain itu dominasi Android di pasar global juga sangat besar, di mana data \textit{StatCounter} mencatat bahwa platform ini menguasai pangsa pasar perangkat seluler sebesar 71,68\% secara global pada tahun 2025~\parencite{statcounter2025mobile}.
 
 
-Dalam konteks pengembangan aplikasi alat bantu visual \textit{real-time}, platform Android menawarkan berbagai keuntungan, terutama melalui ketersediaan \textit{Application Programming Interface} (API) yang luas untuk mengakses komponen perangkat keras seperti kamera menggunakan pustaka \textit{CameraX}.
+Dalam konteks pengembangan aplikasi alat bantu visual \textit{real-time}, platform Android menawarkan berbagai keuntungan, terutama melalui ketersediaan \textit{Application Programming Interface} (API) yang luas untuk mengakses komponen perangkat keras seperti kamera menggunakan pustaka \textit{CameraX}~\parencite{camerax_architecture}.
 Dukungan ini sangat penting dalam membangun sistem bantu visual yang memerlukan proses tangkapan citra secara terus-menerus.
 
 
@@ -131,7 +131,7 @@ Aplikasi dinyatakan berhasil apabila setiap fitur dapat memberikan keluaran yang
 
 \subsection{Pengujian Akurasi Klasifikasi Warna}
 Pengujian akurasi dilakukan untuk mengevaluasi kemampuan fitur identifikasi nama warna dalam mengenali warna objek nyata secara \textit{real-time}.
-Pengujian dilakukan dengan mengarahkan kamera ke berbagai objek berwarna dalam dua kondisi pencahayaan: normal dan redup.
+Pengujian dilakukan dengan mengarahkan kamera ke berbagai objek berwarna dalam dua kondisi pencahayaan, yaitu normal dan redup.
 Hasil deteksi nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya untuk menghitung persentase akurasi.
 
 \subsection{Pengujian Performa \textit{Real-Time}}
@@ -143,7 +143,7 @@ Parameter yang diukur meliputi nilai \textit{Frame Per Second} (FPS), penggunaan
 Metode ini dikembangkan oleh John Brooke pada tahun 1995 dan telah banyak digunakan untuk mengevaluasi kemudahan penggunaan berbagai jenis perangkat lunak~\parencite{sus_original}.
 Melalui metode SUS, peneliti dapat mengetahui apakah suatu aplikasi mudah dipahami, mudah digunakan, dan dapat diterima oleh pengguna.
 
-Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 10 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
+Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 18 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
 Setelah selesai menggunakan aplikasi, responden mengisi kuesioner SUS yang terdiri dari 10 pernyataan dengan skala penilaian 1 sampai 5.
 Nilai yang diperoleh kemudian dihitung menggunakan metode perhitungan SUS untuk mendapatkan skor akhir yang menunjukkan tingkat kebergunaan dan penerimaan pengguna terhadap aplikasi yang dikembangkan~\parencite{guntur2024simamurat}.
 

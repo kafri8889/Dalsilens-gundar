@@ -5,6 +5,8 @@
 % ============================================================
 \documentclass[12pt, a4paper]{report}
 
+\setcounter{secnumdepth}{3}
+
 
 % ----- Package -----
 \PassOptionsToPackage{hyphens}{url}
@@ -100,6 +102,7 @@
   urlfrom = {Diakses dari},
   urlseen = {Diakses tanggal},
 }
+
 
 % ---- Spasi antar entri ----
 \renewcommand{\bibfont}{\singlespacing}
@@ -218,6 +221,14 @@
 % ----- Spasi 1.5 (isi utama) -----
 \setstretch{1.5}
 
+% ----- Cegah teks (mis. \texttt{...} kode panjang) tembus margin kanan -----
+% Default \tolerance=200 TeX terlalu ketat untuk token panjang yang tidak bisa
+% dipenggal (mis. nama fungsi kode), sehingga TeX memilih baris overfull alih-alih
+% memindahkan token itu ke baris baru. Menaikkan tolerance & emergencystretch
+% memberi TeX ruang lebih untuk meregangkan spasi antar kata sebagai alternatif.
+\tolerance=1000
+\emergencystretch=3em
+
 % ============================================================
 %  DATA MAHASISWA – ubah bagian ini saja
 % ============================================================
@@ -231,8 +242,8 @@
 \newcommand{\TanggalACC}{01 Januari 2026}
 \newcommand{\BulanTahun}{Januari 2026}
 \newcommand{\Tahun}{2026}
-\newcommand{\KataKunci}{Defisiensi Penglihatan Warna, Dikromasi, Daltonisasi, Ruang Warna LMS, Pemrosesan Citra Real-Time, Android}
-\newcommand{\Keywords}{Color Vision Deficiency, Dichromacy, Daltonization, LMS Color Space, Real-Time Image Processing, Android}
+\newcommand{\KataKunci}{Android, Daltonisasi, Dikromasi, Pemrosesan Citra Real-Time, Ruang Warna LMS}
+\newcommand{\Keywords}{Android, Daltonization, Dichromacy, LMS Color Space, Real-Time Image Processing}
 
 % ============================================================
 %  FORMAT JUDUL BAB & SUBBAB

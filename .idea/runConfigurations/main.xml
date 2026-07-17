@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="main" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
     <texify>
-      <compiler>PDFLATEX</compiler>
+      <compiler>LATEXMK</compiler>
       <compiler-path />
-      <pdf-viewer>BUILT-IN-PDF-VIEWER</pdf-viewer>
+      <pdf-viewer>system-default</pdf-viewer>
       <require-focus>true</require-focus>
       <viewer-command />
       <compiler-arguments />
@@ -13,6 +13,7 @@
       <main-file>$PROJECT_DIR$/main.tex</main-file>
       <output-path>$PROJECT_DIR$/out</output-path>
       <auxil-path>{projectDir}/auxil</auxil-path>
+      <working-directory>{mainFileParent}</working-directory>
       <compile-twice>false</compile-twice>
       <output-format>PDF</output-format>
       <latex-distribution>MODULE_SDK</latex-distribution>

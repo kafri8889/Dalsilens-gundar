@@ -15,10 +15,9 @@
 Dalsilens adalah aplikasi Android yang dirancang sebagai alat bantu visual bagi penderita dikromasi.
 Aplikasi ini menggabungkan dua fitur utama dalam satu antarmuka berbasis kamera secara \textit{real-time}, yaitu koreksi dan simulasi warna menggunakan algoritma \textit{LMS Daltonization}, serta identifikasi nama warna berbasis ruang warna HSV.
 Secara umum, alur kerja sistem dimulai dari pengambilan citra oleh kamera, pemrosesan piksel, transformasi warna, hingga tampilan hasil kepada pengguna, semua berjalan dalam satu siklus per \textit{frame} yang berulang terus-menerus selama aplikasi aktif.
-
 Gambar~\ref{fig:arsitektur-umum} menggambarkan hubungan antar komponen utama sistem Dalsilens.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{gambar/arsitektur-umum}
   \caption{Gambaran Umum Arsitektur Sistem Dalsilens}
@@ -62,7 +61,7 @@ Berikut adalah penerapan setiap fase \textit{Waterfall} pada pengembangan aplika
 
   \item \textbf{Pengujian (\textit{Testing})} \\
   Fase pengujian dilakukan untuk memverifikasi bahwa seluruh fitur berjalan sesuai dengan kebutuhan yang telah ditentukan.
-  Pengujian mencakup empat aspek: pengujian fungsionalitas menggunakan metode \textit{Black Box Testing}, pengujian akurasi klasifikasi nama warna, pengujian performa \textit{real-time} menggunakan \textit{Android Studio Profiler}, dan pengujian kebergunaan menggunakan metode \textit{System Usability Scale} (SUS).
+  Pengujian mencakup empat aspek yaitu pengujian fungsionalitas menggunakan metode \textit{Black Box Testing}, pengujian akurasi klasifikasi nama warna, pengujian performa \textit{real-time} menggunakan \textit{Android Studio Profiler}, dan pengujian kebergunaan menggunakan metode \textit{System Usability Scale} (SUS).
 
   \item \textbf{Pemeliharaan (\textit{Maintenance})} \\
   Meskipun aplikasi Dalsilens dikembangkan dalam konteks penelitian, fase pemeliharaan tetap diidentifikasi dalam bentuk saran pengembangan lanjutan.
@@ -82,7 +81,7 @@ Supaya proses berjalan efisien, komputasi dibagi menjadi dua tahap utama, yaitu 
 \textit{Use case diagram} pada Gambar~\ref{fig:use-case} menggambarkan interaksi antara pengguna dengan fitur-fitur yang tersedia pada aplikasi Dalsilens.
 Terdapat satu aktor dalam sistem ini, yaitu pengguna (penderita buta warna) yang berinteraksi langsung dengan aplikasi.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{gambar/use-case-diagram}
   \caption{\textit{Use Case Diagram} Aplikasi Dalsilens}
@@ -145,8 +144,8 @@ Gambar~\ref{fig:activity-daltonisasi} menunjukkan alur aktivitas proses daltonis
 Setiap kali \textit{bitmap} diperbarui, sistem mengecek apakah filter diaktifkan oleh pengguna.
 Jika tidak aktif, gambar ditampilkan apa adanya.
 Jika aktif, sistem mengecek apakah mode daltonisasi dinyalakan.
-Jika ya, \texttt{ColorProcessor.getDaltonizationMatrix()} dipanggil untuk menghasilkan matriks koreksi.
-Jika tidak, \texttt{ColorProcessor.getDeficiencyMatrix()} dipanggil untuk menghasilkan matriks simulasi.
+Jika ya, \texttt{ColorProcessor.\allowbreak{}getDaltonizationMatrix()} dipanggil untuk menghasilkan matriks koreksi.
+Jika tidak, \texttt{ColorProcessor.\allowbreak{}getDeficiencyMatrix()} dipanggil untuk menghasilkan matriks simulasi.
 Kedua fungsi ini mempertimbangkan jenis defisiensi yang dipilih dan nilai \textit{severity}.
 Matriks yang dihasilkan kemudian diterapkan ke gambar melalui \textit{Color Matrix Filter} yang dirender oleh GPU.
 
@@ -391,7 +390,7 @@ Terakhir, nilai \textit{shift} ditambahkan ke warna piksel asli untuk menghasilk
 
 Agar proses daltonisasi tidak perlu menghitung ulang setiap piksel satu per satu, seluruh transformasi pada persamaan~\ref{eq:dalton-result} diringkas menjadi sebuah matriks konstan berukuran $4 \times 5$.
 
-Caranya adalah dengan mengevaluasi fungsi transformasi $T$ terhadap tiga warna dasar: merah murni $(1, 0, 0)$, hijau murni $(0, 1, 0)$, dan biru murni $(0, 0, 1)$:
+Caranya adalah dengan mengevaluasi fungsi transformasi $T$ terhadap tiga warna dasar, yaitu merah murni $(1, 0, 0)$, hijau murni $(0, 1, 0)$, dan biru murni $(0, 0, 1)$:
 
 \begin{equation}
   T(1, 0, 0) = (r_R,\, r_G,\, r_B), \quad
@@ -521,10 +520,10 @@ Nilai rata-rata RGB dari seluruh piksel dalam area sampling kemudian dihitung:
 \subsection{Klasifikasi Nama Warna}
 
 Nilai rata-rata RGB tersebut kemudian dikonversi ke ruang warna HSV menggunakan fungsi bawaan Android \texttt{RGBToHSV()}.
-Hasilnya adalah tiga komponen: \textit{Hue} (H) sebagai jenis warna ($0°$–$360°$), \textit{Saturation} (S) sebagai intensitas warna (0–1), dan \textit{Value} (V) sebagai kecerahan (0–1).
+Hasilnya adalah tiga komponen, yaitu \textit{Hue} (H) sebagai jenis warna ($0°$–$360°$), \textit{Saturation} (S) sebagai intensitas warna (0–1), dan \textit{Value} (V) sebagai kecerahan (0–1).
 
 Nama warna ditentukan berdasarkan rentang nilai H, S, dan V menggunakan pendekatan \textit{threshold}.
-Nilai \textit{threshold} ini ditentukan melalui pengujian empiris pada dua kondisi pencahayaan: normal dan redup.
+Nilai \textit{threshold} ini ditentukan melalui pengujian empiris pada dua kondisi pencahayaan yaitu normal dan redup.
 Sebagai contoh, untuk warna merah, rata-rata Hue pada kondisi normal adalah $3{,}3°$ dan pada kondisi redup adalah $8{,}1°$.
 Standar deviasi dihitung menggunakan:
 
@@ -549,7 +548,7 @@ Proses yang sama diterapkan untuk semua warna lainnya, menghasilkan tabel \texti
   \label{tab:hue-threshold}
   \begin{tabular}{|c|c|}
     \hline
-    \textbf{Rentang \textit{Hue} (°)} & \textbf{Nama Warna} \\
+    Rentang \textit{Hue} (°) & Nama Warna \\
     \hline
     $H < 9{,}85$                       & Merah   \\
     $9{,}85  \leq H < 26{,}98$         & Oranye  \\
@@ -571,7 +570,7 @@ Apabila nilai \textit{Saturation} rendah (warna tidak jenuh), klasifikasi tidak 
   \label{tab:grayscale-threshold}
   \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Kondisi}  & \textbf{Rentang \textit{Value}} & \textbf{Nama Warna} \\
+    Kondisi  & Rentang \textit{Value} & Nama Warna \\
     \hline
     $S < 0{,}10$ & $V < 0{,}15$              & Hitam     \\
     $S < 0{,}10$ & $0{,}15 \leq V < 0{,}40$  & Abu Gelap \\
@@ -600,7 +599,7 @@ Ada tiga skenario pengujian yang digunakan.
 
 Pengujian akurasi dilakukan untuk mengevaluasi kemampuan fitur identifikasi nama warna dalam mengenali warna objek nyata secara \textit{real-time}.
 Pengujian menggunakan objek fisik berwarna yang mewakili setiap kategori warna yang didukung aplikasi, yaitu merah, oranye, kuning, hijau, cyan, biru, ungu, putih, hitam, dan abu-abu.
-Setiap objek diuji dalam dua kondisi pencahayaan: \textbf{normal} (cahaya ruangan standar) dan \textbf{redup} (cahaya dikurangi menggunakan tirai).
+Setiap objek diuji dalam dua kondisi pencahayaan yaitu \textbf{normal} (cahaya ruangan standar) dan \textbf{redup} (cahaya dikurangi menggunakan tirai).
 Hasil deteksi nama warna yang ditampilkan aplikasi kemudian dibandingkan dengan warna objek yang sebenarnya.
 Deteksi dinyatakan \textbf{Benar} apabila nama warna yang ditampilkan sesuai dengan kategori warna objek uji, dan \textbf{Salah} apabila tidak sesuai.
 Akurasi dihitung menggunakan persamaan berikut:
@@ -616,12 +615,12 @@ Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:ak
   \caption{Hasil Pengujian Klasifikasi Warna pada Pencahayaan Normal}
   \label{tab:akurasi-normal} \\
   \hline
-  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  No. & Objek Uji & Warna Sebenarnya & Hasil Deteksi & Ket. \\
   \hline
   \endfirsthead
   \multicolumn{5}{r}{\textit{(lanjutan)}} \\
   \hline
-  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  No. & Objek Uji & Warna Sebenarnya & Hasil Deteksi & Ket. \\
   \hline
   \endhead
   \hline
@@ -642,12 +641,12 @@ Hasil pengujian pada setiap kondisi pencahayaan disajikan pada Tabel~\ref{tab:ak
   \caption{Hasil Pengujian Klasifikasi Warna pada Pencahayaan Redup}
   \label{tab:akurasi-redup} \\
   \hline
-  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  No. & Objek Uji & Warna Sebenarnya & Hasil Deteksi & Ket. \\
   \hline
   \endfirsthead
   \multicolumn{5}{r}{\textit{(lanjutan)}} \\
   \hline
-  \textbf{No.} & \textbf{Objek Uji} & \textbf{Warna Sebenarnya} & \textbf{Hasil Deteksi} & \textbf{Ket.} \\
+  No. & Objek Uji & Warna Sebenarnya & Hasil Deteksi & Ket. \\
   \hline
   \endhead
   \hline
@@ -696,7 +695,7 @@ Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-fps
   \label{tab:performa-fps}
   \begin{tabular}{|c|c|c|c|c|}
     \hline
-    \textbf{Uji Coba} & \textbf{Total \textit{Frame}} & \textbf{FPS} & \textbf{Latensi Rata-rata (ms)} & \textbf{\textit{Janky Frames} (\%)} \\
+    Uji Coba & Total \textit{Frame} & FPS & Latensi Rata-rata (ms) & \textit{Janky Frames} (\%) \\
     \hline
     Iterasi ke-1 & 2.389 & 55,0 & 18,2 & 28,59\% \\
     \hline
@@ -730,7 +729,7 @@ Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-ram
   \label{tab:performa-ram}
   \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Uji Coba} & \textbf{Total PSS (KB)} & \textbf{Total PSS (MB)} \\
+    Uji Coba & Total PSS (KB) & Total PSS (MB) \\
     \hline
     Iterasi ke-1 & 223.147 & 217,92 \\
     \hline
@@ -761,7 +760,7 @@ Hasil pengujian pada setiap iterasi ditunjukkan pada Tabel~\ref{tab:performa-cpu
   \label{tab:performa-cpu}
   \begin{tabular}{|c|c|}
     \hline
-    \textbf{Uji Coba} & \textbf{Utilisasi CPU (\%)} \\
+    Uji Coba & Utilisasi CPU (\%) \\
     \hline
     Iterasi ke-1 & 147\% \\
     \hline
@@ -799,12 +798,12 @@ Hasil pengujian dicatat sebagai \textbf{Berhasil} jika keluaran sesuai ekspektas
   \caption{Hasil Pengujian \textit{Black Box Testing} Aplikasi Dalsilens}
   \label{tab:blackbox} \\
   \hline
-  \textbf{No.} & \textbf{Skenario} & \textbf{Masukan} & \textbf{Ekspektasi} & \textbf{Hasil} \\
+  No. & Skenario & Masukan & Ekspektasi & Hasil \\
   \hline
   \endfirsthead
   \multicolumn{5}{r}{\textit{(lanjutan)}} \\
   \hline
-  \textbf{No.} & \textbf{Skenario} & \textbf{Masukan} & \textbf{Ekspektasi} & \textbf{Hasil} \\
+  No. & Skenario & Masukan & Ekspektasi & Hasil \\
   \hline
   \endhead
   \hline
@@ -924,7 +923,7 @@ Interpretasi skor SUS mengacu pada klasifikasi yang ditunjukkan pada Tabel~\ref{
   \label{tab:sus-interpretasi}
   \begin{tabular}{|c|c|c|}
     \hline
-    \textbf{Rentang Skor} & \textbf{Nilai} & \textbf{Kategori} \\
+    Rentang Skor & Nilai & Kategori \\
     \hline
     $> 80{,}3$ & A & \textit{Excellent} \\
     \hline
@@ -946,7 +945,7 @@ Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
   \label{tab:sus-responden}
   \begin{tabular}{|c|l|c|c|}
     \hline
-    \textbf{No.} & \textbf{Nama} & \textbf{Usia} & \textbf{Jenis Kelamin} \\
+    No. & Nama & Usia & Jenis Kelamin \\
     \hline
     1  & Arja Hudaya             & 20 & Laki-laki \\ \hline
     2  & Ihsan Fadhila           & 31 & Laki-laki \\ \hline
@@ -978,9 +977,9 @@ Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS disajikan pada
   \resizebox{\linewidth}{!}{%
   \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
     \hline
-    \textbf{No.} & \textbf{P1} & \textbf{P2} & \textbf{P3} & \textbf{P4} &
-    \textbf{P5} & \textbf{P6} & \textbf{P7} & \textbf{P8} & \textbf{P9} &
-    \textbf{P10} & \textbf{Skor SUS} \\
+    No. & P1 & P2 & P3 & P4 &
+    P5 & P6 & P7 & P8 & P9 &
+    P10 & Skor SUS \\
     \hline
     1  & 2 & 2 & 4 & 1 & 4 & 3 & 5 & 1 & 4 & 2 & 75,0 \\ \hline
     2  & 4 & 3 & 4 & 2 & 4 & 3 & 4 & 1 & 3 & 2 & 70,0 \\ \hline

@@ -1,5 +1,17 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'main.blg'
-[196] biber-MSWIN64:342> INFO - === 
-[808] Utils.pm:479> ERROR - Cannot find 'main.bcf'!
-[808] Biber.pm:137> INFO - ERRORS: 1
+[34] biber:342> INFO - === Tue Jul 14, 2026, 16:37:41
+[41] Biber.pm:421> INFO - Reading 'main.bcf'
+[73] Biber.pm:1002> INFO - Found 26 citekeys in bib section 0
+[79] Biber.pm:4487> INFO - Processing section 0
+[83] Biber.pm:4678> INFO - Looking for bibtex file 'bib/main.bib' for section 0
+[84] bibtex.pm:1713> INFO - LaTeX decoding ...
+[94] bibtex.pm:1519> INFO - Found BibTeX data source 'bib/main.bib'
+[208] UCollate.pm:68> INFO - Overriding locale 'id-ID' defaults 'variable = shifted' with 'variable = non-ignorable'
+[208] UCollate.pm:68> INFO - Overriding locale 'id-ID' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[208] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'id-ID'
+[208] Biber.pm:4313> INFO - No sort tailoring available for locale 'id-ID'
+[221] bbl.pm:676> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[229] bbl.pm:779> INFO - Output to main.bbl
+[229] Biber.pm:132> WARN - legacy month field 'March' in entry 'muhammad2020analysis' is not an integer - this will probably not sort properly.
+[229] Biber.pm:134> INFO - WARNINGS: 1
