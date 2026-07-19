@@ -252,10 +252,12 @@
 % ============================================================
 
 % -- Judul Bab (BAGIAN) --
-\titleformat{\chapter}[display]
+% Pedoman 3.3.d: nomor & judul bagian di tengah, huruf besar, font 14, tebal
+% Contoh: "1.   PENDAHULUAN" (satu baris, tanpa kata "BAB")
+\titleformat{\chapter}
 {\centering\bfseries\fontsize{14}{16}\selectfont}
-{BAB \thechapter}
-{1ex}
+{\thechapter.}
+{0.5em}
 {\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{-2cm}{3\baselineskip}
 
@@ -304,14 +306,37 @@
 % ============================================================
 %  HEADER & FOOTER
 % ============================================================
+% Catatan penting: hindari menukar \pagestyle persisten antara dua gaya
+% fancyhdr yang berbeda (mis. \pagestyle{chapterpage} lalu \pagestyle{fancy}
+% belakangan) -- kombinasi paket di dokumen ini membuat pertukaran semacam
+% itu merusak dispatch \thispagestyle{plain} otomatis milik \chapter untuk
+% SISA dokumen (semua halaman ikut memakai gaya lama). \pagestyle{fancy}
+% karena itu HANYA dipanggil sekali (di sini) dan tidak pernah ditukar lagi;
+% perbedaan tampilan bagian awal/akhir vs bagian isi diatur lewat saklar
+% boolean \ifchapterpage di bawah, bukan lewat pertukaran gaya.
+\newif\ifchapterpage
+\chapterpagefalse
 \pagestyle{fancy}
 \fancyhf{}
-% Halaman biasa (bukan awal bab): nomor di pojok kanan atas
-\fancyhead[R]{\thepage}
+% Halaman biasa (bukan awal bab / bukan bagian awal-akhir): pojok kanan atas
+% Halaman bagian awal, bagian akhir, dan awal bab: tengah bawah
+\fancyhead[R]{\ifchapterpage\else\thepage\fi}
+\fancyfoot[C]{\ifchapterpage\thepage\fi}
 \renewcommand{\headrulewidth}{0pt}
 
-% Awal bab: nomor di tengah bawah
+% Alias "chapterpage" (dipakai eksplisit oleh beberapa halaman via
+% \thispagestyle) supaya tetap tersedia -- aman dipakai lewat \thispagestyle
+% (berlaku 1 halaman saja), berbeda dengan \pagestyle yang harus dihindari.
 \fancypagestyle{chapterpage}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+% \chapter (tak berbintang maupun berbintang) otomatis memanggil
+% \thispagestyle{plain} untuk halaman pertamanya sendiri -- definisikan
+% ulang lewat \fancypagestyle (bukan \ps@plain bawaan kernel) agar bagian
+% tengah-bawah konsisten dengan gaya lainnya.
+\fancypagestyle{plain}{
   \fancyhf{}
   \fancyfoot[C]{\thepage}
   \renewcommand{\headrulewidth}{0pt}
@@ -365,6 +390,7 @@
 % ============================================================
 \pagenumbering{roman}
 \setcounter{page}{1}
+\chapterpagetrue % seluruh bagian awal: nomor halaman di tengah bawah
 \include{halaman/judul}       % di dalam: \thispagestyle{empty} saja, tanpa addcontentsline
 \include{halaman/orisinalitas} % di dalam: \phantomsection lalu \addcontentsline lalu konten
 \include{halaman/pengesahan}
@@ -409,7 +435,7 @@
 % ============================================================
 \pagenumbering{arabic}
 \setcounter{page}{1}
-\pagestyle{fancy}
+\chapterpagefalse % bagian isi: awal bab di tengah bawah (otomatis via "plain"), halaman lain di pojok kanan atas
 
 \include{bagian/bab1-pendahuluan}
 \include{bagian/bab2-tinjauanpustaka}
@@ -419,6 +445,7 @@
 % ============================================================
 %  BAGIAN AKHIR
 % ============================================================
+\chapterpagetrue % daftar pustaka & lampiran: nomor halaman di tengah bawah (semua halaman)
 \include{halaman/daftarpustaka}
 \include{halaman/lampiran}
 

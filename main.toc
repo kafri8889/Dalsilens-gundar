@@ -1,0 +1,71 @@
+\babel@toc {bahasa}{}\relax 
+\contentsline {chapter}{PERNYATAAN ORISINALITAS DAN PUBLIKASI}{ii}{section*.2}%
+\contentsline {chapter}{LEMBAR PENGESAHAN}{iii}{section*.3}%
+\contentsline {chapter}{ABSTRAK}{iv}{section*.4}%
+\contentsline {chapter}{KATA PENGANTAR}{v}{section*.5}%
+\contentsline {chapter}{DAFTAR ISI}{vii}{section*.13}%
+\contentsline {chapter}{DAFTAR TABEL}{ix}{section*.14}%
+\contentsline {chapter}{DAFTAR GAMBAR}{x}{section*.15}%
+\contentsline {chapter}{DAFTAR LAMPIRAN}{xi}{section*.16}%
+\contentsline {chapter}{\numberline {1}PENDAHULUAN}{1}{chapter*.17}%
+\contentsline {section}{\numberline {1.1}Latar Belakang}{1}{section*.18}%
+\contentsline {section}{\numberline {1.2}Rumusan Masalah}{3}{section*.19}%
+\contentsline {section}{\numberline {1.3}Ruang Lingkup}{3}{section*.23}%
+\contentsline {section}{\numberline {1.4}Tujuan Penelitian}{4}{section*.29}%
+\contentsline {section}{\numberline {1.5}Metode Penelitian}{4}{section*.33}%
+\contentsline {section}{\numberline {1.6}Sistematika Penulisan Ilmiah}{5}{section*.38}%
+\contentsline {chapter}{\numberline {2}TINJAUAN PUSTAKA}{7}{chapter*.43}%
+\contentsline {section}{\numberline {2.1}Penelitian Terkait}{7}{section*.44}%
+\contentsline {section}{\numberline {2.2}Konsep Dasar Penglihatan dan Warna}{8}{section*.45}%
+\contentsline {subsection}{\numberline {2.2.1}\textit {Color Vision Deficiency} (CVD) dan Dikromasi}{8}{subsection*.46}%
+\contentsline {subsection}{\numberline {2.2.2}Ruang Warna Visual (RGB, LMS, dan HSV)}{8}{subsection*.47}%
+\contentsline {section}{\numberline {2.3}Pengolahan Citra Digital (\textit {Digital Image Processing})}{8}{section*.48}%
+\contentsline {subsection}{\numberline {2.3.1}Pemrosesan Citra \textit {Real-Time}}{8}{subsection*.49}%
+\contentsline {subsection}{\numberline {2.3.2}Algoritma LMS Daltonization}{9}{subsection*.50}%
+\contentsline {section}{\numberline {2.4}Teknologi dan Perangkat Pengembang}{9}{section*.51}%
+\contentsline {subsection}{\numberline {2.4.1}Sistem Operasi Android}{9}{subsection*.52}%
+\contentsline {subsection}{\numberline {2.4.2}Pustaka Grafis \textit {Color Matrix} dan Akselerasi Perangkat Keras}{10}{subsection*.53}%
+\contentsline {subsection}{\numberline {2.4.3}Bahasa Pemrograman}{11}{subsection*.54}%
+\contentsline {subsection}{\numberline {2.4.4}Metode Pengembangan Perangkat Lunak (SDLC)}{11}{subsection*.55}%
+\contentsline {subsection}{\numberline {2.4.5}Unified Modeling Language (UML)}{12}{subsection*.56}%
+\contentsline {section}{\numberline {2.5}Metode Pengujian Sistem}{13}{section*.57}%
+\contentsline {subsection}{\numberline {2.5.1}Pengujian Fungsionalitas (\textit {Black Box Testing})}{13}{subsection*.58}%
+\contentsline {subsection}{\numberline {2.5.2}Pengujian Akurasi Klasifikasi Warna}{13}{subsection*.59}%
+\contentsline {subsection}{\numberline {2.5.3}Pengujian Performa \textit {Real-Time}}{14}{subsection*.60}%
+\contentsline {subsection}{\numberline {2.5.4}Pengujian Kebergunaan (\textit {System Usability Scale})}{14}{subsection*.61}%
+\contentsline {chapter}{\numberline {3}PERANCANGAN DAN IMPLEMENTASI}{15}{chapter*.62}%
+\contentsline {section}{\numberline {3.1}Gambaran Umum Sistem}{15}{section*.63}%
+\contentsline {subsection}{\numberline {3.1.1}Metode Pengembangan Perangkat Lunak}{15}{subsection*.65}%
+\contentsline {section}{\numberline {3.2}Arsitektur Sistem}{18}{section*.72}%
+\contentsline {subsection}{\numberline {3.2.1}Perancangan UML}{19}{subsection*.73}%
+\contentsline {subsubsection}{\numberline {3.2.1.1}\textit {Use Case Diagram}}{19}{subsubsection*.74}%
+\contentsline {subsubsection}{\numberline {3.2.1.2}\textit {Activity Diagram}}{21}{subsubsection*.85}%
+\contentsline {subsubsection}{\numberline {3.2.1.3}\textit {Class Diagram}}{23}{subsubsection*.88}%
+\contentsline {subsection}{\numberline {3.2.2}Pengambilan Gambar dan Identifikasi Warna}{26}{subsection*.97}%
+\contentsline {subsection}{\numberline {3.2.3}Proses Daltonisasi}{27}{subsection*.99}%
+\contentsline {section}{\numberline {3.3}Implementasi Algoritma \textit {LMS Daltonization}}{29}{section*.101}%
+\contentsline {subsection}{\numberline {3.3.1}Konversi Ruang Warna RGB ke LMS}{29}{subsection*.102}%
+\contentsline {subsection}{\numberline {3.3.2}Simulasi Buta Warna}{29}{subsection*.104}%
+\contentsline {subsection}{\numberline {3.3.3}Proses Daltonisasi}{30}{subsection*.108}%
+\contentsline {subsection}{\numberline {3.3.4}Konstruksi Matriks Transformasi 4×5}{32}{subsection*.115}%
+\contentsline {section}{\numberline {3.4}Implementasi Tingkat Keparahan (\textit {Severity Level})}{33}{section*.118}%
+\contentsline {subsection}{\numberline {3.4.1}Keparahan pada Mode Simulasi}{33}{subsection*.119}%
+\contentsline {subsection}{\numberline {3.4.2}Keparahan pada Mode Daltonisasi}{34}{subsection*.123}%
+\contentsline {section}{\numberline {3.5}Ekstraksi Warna Dominan Berbasis HSV}{34}{section*.127}%
+\contentsline {subsection}{\numberline {3.5.1}Pengambilan \textit {Bitmap} dari Kamera}{36}{subsection*.129}%
+\contentsline {subsection}{\numberline {3.5.2}Pengambilan Sampel Piksel}{36}{subsection*.130}%
+\contentsline {subsection}{\numberline {3.5.3}Klasifikasi Nama Warna}{37}{subsection*.135}%
+\contentsline {section}{\numberline {3.6}Skenario Pengujian}{39}{section*.140}%
+\contentsline {subsection}{\numberline {3.6.1}Pengujian Akurasi Klasifikasi Nama Warna}{39}{subsection*.141}%
+\contentsline {subsection}{\numberline {3.6.2}Pengujian Performa \textit {Real-Time}}{41}{subsection*.143}%
+\contentsline {subsubsection}{\numberline {3.6.2.1}Pengujian FPS dan Latensi Pemrosesan}{42}{subsubsection*.144}%
+\contentsline {subsubsection}{\numberline {3.6.2.2}Pengujian Penggunaan Memori (RAM)}{43}{subsubsection*.147}%
+\contentsline {subsubsection}{\numberline {3.6.2.3}Pengujian Utilisasi CPU}{44}{subsubsection*.149}%
+\contentsline {subsection}{\numberline {3.6.3}Pengujian Fungsionalitas (\textit {Black Box Testing})}{46}{subsection*.152}%
+\contentsline {subsection}{\numberline {3.6.4}Pengujian Kebergunaan (\textit {System Usability Scale})}{48}{subsection*.153}%
+\contentsline {chapter}{\numberline {4}PENUTUP}{52}{chapter*.158}%
+\contentsline {section}{\numberline {4.1}Kesimpulan}{52}{section*.159}%
+\contentsline {section}{\numberline {4.2}Saran}{53}{section*.165}%
+\contentsline {chapter}{DAFTAR PUSTAKA}{55}{chapter*.170}%
+\contentsline {chapter}{LAMPIRAN}{L-1}{chapter*.172}%
+\contentsfinish 

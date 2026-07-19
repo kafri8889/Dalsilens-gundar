@@ -1,0 +1,17 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'auxil/main.blg'
+[30] biber:342> INFO - === Sat Jul 18, 2026, 18:37:59
+[38] Biber.pm:421> INFO - Reading 'auxil/main.bcf'
+[72] Biber.pm:1002> INFO - Found 26 citekeys in bib section 0
+[79] Biber.pm:4487> INFO - Processing section 0
+[83] Biber.pm:4678> INFO - Looking for bibtex file 'bib/main.bib' for section 0
+[84] bibtex.pm:1713> INFO - LaTeX decoding ...
+[95] bibtex.pm:1519> INFO - Found BibTeX data source 'bib/main.bib'
+[178] UCollate.pm:68> INFO - Overriding locale 'id-ID' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[178] UCollate.pm:68> INFO - Overriding locale 'id-ID' defaults 'variable = shifted' with 'variable = non-ignorable'
+[178] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'id-ID'
+[178] Biber.pm:4313> INFO - No sort tailoring available for locale 'id-ID'
+[191] bbl.pm:676> INFO - Writing 'auxil/main.bbl' with encoding 'UTF-8'
+[198] bbl.pm:779> INFO - Output to auxil/main.bbl
+[198] Biber.pm:132> WARN - legacy month field 'March' in entry 'muhammad2020analysis' is not an integer - this will probably not sort properly.
+[198] Biber.pm:134> INFO - WARNINGS: 1
