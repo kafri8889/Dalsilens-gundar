@@ -1,5 +1,5 @@
 # LaTeX build artifacts
-/out/
+out/
 auxil/
 *.aux
 *.bbl
