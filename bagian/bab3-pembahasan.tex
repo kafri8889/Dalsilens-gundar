@@ -590,7 +590,17 @@ Setelah warna teridentifikasi sebagai akromatik, komponen \textit{Value} digunak
 \section{Skenario Pengujian}
 
 Pengujian dilakukan untuk memastikan aplikasi Dalsilens berjalan sesuai tujuan penelitian.
-Ada tiga skenario pengujian yang digunakan.
+Ada empat skenario pengujian yang digunakan.
+
+\subsection{Responden Uji Coba}
+
+Pengujian aplikasi Dalsilens melibatkan 23 responden yang terdiri atas 18 orang dengan penglihatan warna normal dan 5 orang penderita \textit{Color Vision Deficiency} (CVD) tipe dikromasi.
+Responden penderita CVD tersebut memenuhi kriteria utama pengguna aplikasi Dalsilens, yaitu penderita buta warna.
+Seluruh responden diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing, menggunakan fitur daltonisasi dan identifikasi warna, kemudian mengisi kuesioner \textit{System Usability Scale} (SUS).
+Adapun pengujian akurasi klasifikasi warna dilakukan oleh peneliti menggunakan objek fisik berwarna, sedangkan pengujian performa dilakukan pada perangkat uji yang digunakan peneliti.
+
+Keterlibatan responden penderita CVD pada pengujian ini masih terbatas pada lima orang, sehingga evaluasi manfaat fitur daltonisasi bagi penderita CVD masih bersifat awal.
+Penelitian lanjutan disarankan untuk melibatkan lebih banyak responden penderita CVD agar hasil pengujian dapat lebih representatif.
 
 \subsection{Pengujian Akurasi Klasifikasi Nama Warna}
 
@@ -933,7 +943,7 @@ Interpretasi skor SUS mengacu pada klasifikasi yang ditunjukkan pada Tabel~\ref{
   \end{tabular}
 \end{table}
 
-Pengujian dilakukan terhadap 18 responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
+Pengujian dilakukan terhadap 23 responden yang diminta mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS.
 Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
 
 \begin{table}[H]
@@ -962,6 +972,11 @@ Data responden disajikan pada Tabel~\ref{tab:sus-responden}.
     16 & Dina Rizkina            & 20 & Perempuan \\ \hline
     17 & Muhammad Rafi Danendra Putra & 21 & Laki-laki \\ \hline
     18 & Saputra                 & 20 & Laki-laki \\ \hline
+    19 & Dwi                     & 22 & Perempuan \\ \hline
+    20 & Fadhil                  & 23 & Laki-laki \\ \hline
+    21 & Yoga                    & 22 & Laki-laki \\ \hline
+    22 & Dafa                    & 24 & Laki-laki \\ \hline
+    23 & Naufal                  & 21 & Laki-laki \\ \hline
   \end{tabular}
 \end{table}
 
@@ -995,11 +1010,19 @@ Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS disajikan pada
     15 & 4 & 3 & 4 & 4 & 3 & 3 & 3 & 2 & 3 & 2 & 57,5 \\ \hline
     16 & 2 & 3 & 4 & 2 & 4 & 3 & 5 & 1 & 3 & 4 & 62,5 \\ \hline
     17 & 3 & 2 & 4 & 2 & 4 & 2 & 5 & 1 & 4 & 3 & 75,0 \\ \hline
-    18 & 4 & 2 & 4 & 1 & 5 & 1 & 5 & 1 & 5 & 4 & 85,0 \\ \hline
-    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{68,33} \\
+    18  & 4 & 2 & 4 & 1 & 5 & 1 & 5 & 1 & 5 & 4 & 85,0 \\ \hline
+    19  & 5 & 3 & 4 & 1 & 4 & 2 & 5 & 2 & 4 & 2 & 80,0 \\ \hline
+    20  & 5 & 1 & 5 & 5 & 5 & 2 & 2 & 2 & 5 & 3 & 72,5 \\ \hline
+    21  & 3 & 1 & 5 & 1 & 4 & 2 & 5 & 2 & 5 & 1 & 87,5 \\ \hline
+    22  & 4 & 1 & 4 & 4 & 3 & 1 & 2 & 3 & 4 & 2 & 65,0 \\ \hline
+    23  & 3 & 1 & 5 & 1 & 5 & 2 & 3 & 5 & 5 & 1 & 77,5 \\ \hline
+    \multicolumn{11}{|r|}{\textbf{Rata-rata Skor SUS}} & \textbf{70,11} \\
     \hline
   \end{tabular}}
 \end{table}
 
-Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar 68,33.
+Berdasarkan hasil perhitungan menggunakan Persamaan~\ref{eq:sus}, diperoleh rata-rata skor SUS sebesar 70,11.
 Mengacu pada Tabel~\ref{tab:sus-interpretasi}, skor tersebut termasuk dalam kategori B (\textit{Good}), yang berarti aplikasi Dalsilens dinilai baik oleh responden dari sisi kebergunaan.
+Dari 23 responden yang mengisi kuesioner, 5 orang di antaranya merupakan penderita buta warna (CVD) tipe dikromasi, sedangkan 18 responden lainnya memiliki penglihatan warna normal.
+Kelima responden penderita CVD memberikan rata-rata skor SUS sebesar 76,5, lebih tinggi dibandingkan rata-rata skor 18 responden dengan penglihatan warna normal yang mencapai 68,33.
+Hal ini menunjukkan bahwa fitur daltonisasi dan identifikasi warna pada aplikasi Dalsilens memberikan manfaat yang lebih besar bagi pengguna penderita buta warna, sehingga aplikasi dinilai lebih berguna oleh kelompok responden tersebut.

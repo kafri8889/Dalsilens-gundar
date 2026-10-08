@@ -114,6 +114,61 @@ Diagram ini membantu dalam memahami bagaimana suatu fitur atau proses berjalan d
 Diagram ini memberikan gambaran tentang bagaimana komponen-komponen dalam sistem saling berhubungan.
 Dalam pengembangan perangkat lunak berorientasi objek, \textit{Class Diagram} sering digunakan sebagai referensi dalam proses implementasi kode program.
 
+Setiap diagram UML tersusun atas simbol-simbol baku yang memiliki makna tertentu.
+Simbol-simbol yang umum digunakan pada ketiga diagram di atas dijelaskan pada Tabel~\ref{tab:simbol-uml}.
+
+\begin{table}[H]
+  \centering
+  \caption{Simbol-Simbol Umum pada Diagram UML}
+  \label{tab:simbol-uml}
+  \begin{tabularx}{\textwidth}{|c|l|X|}
+    \hline
+    \textbf{Simbol} & \textbf{Nama} & \textbf{Fungsi} \\
+    \hline
+    \includegraphics[height=0.9cm]{gambar/simbol-aktor} & \textit{Actor} & Menunjukkan pengguna atau sistem lain yang berinteraksi dengan sistem \\
+    \hline
+    \includegraphics[height=0.7cm]{gambar/simbol-use-case} & \textit{Use Case} & Menunjukkan fungsionalitas atau layanan yang disediakan sistem kepada aktor \\
+    \hline
+    \includegraphics[height=0.7cm]{gambar/simbol-class} & \textit{Class} & Menunjukkan struktur kelas dengan atribut dan metode \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-relation} & \textit{Association} & Menunjukkan hubungan antar elemen (garis penghubung) \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-include} & \textit{Include} & Menunjukkan bahwa suatu \textit{use case} selalu memicu \textit{use case} lain \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-start} & \textit{Initial Node} & Menunjukkan titik awal alur aktivitas \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-activity} & \textit{Action} & Menunjukkan aktivitas atau langkah yang dilakukan \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-decision} & \textit{Decision} & Menunjukkan percabangan keputusan \\
+    \hline
+    \includegraphics[height=0.6cm]{gambar/simbol-end} & \textit{Final Node} & Menunjukkan titik akhir alur aktivitas \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+Gambar~\ref{fig:contoh-use-case}, Gambar~\ref{fig:contoh-activity}, dan Gambar~\ref{fig:contoh-class} menunjukkan contoh penerapan ketiga diagram UML tersebut pada aplikasi Dalsilens.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{gambar/contoh-use-case}
+  \caption{Contoh \textit{Use Case Diagram}}
+  \label{fig:contoh-use-case}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{gambar/contoh-activity}
+  \caption{Contoh \textit{Activity Diagram}}
+  \label{fig:contoh-activity}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{gambar/contoh-class}
+  \caption{Contoh \textit{Class Diagram}}
+  \label{fig:contoh-class}
+\end{figure}
+
 % ============================================================
 \section{Metode Pengujian Sistem}
 
@@ -140,7 +195,7 @@ Parameter yang diukur meliputi nilai \textit{Frame Per Second} (FPS), penggunaan
 Metode ini dikembangkan oleh John Brooke pada tahun 1995 dan telah banyak digunakan untuk mengevaluasi kemudahan penggunaan berbagai jenis perangkat lunak~\parencite{sus_original}.
 Melalui metode SUS, peneliti dapat mengetahui apakah suatu aplikasi mudah dipahami, mudah digunakan, dan dapat diterima oleh pengguna.
 
-Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 18 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
+Pada penelitian ini, pengujian SUS dilakukan dengan melibatkan 23 responden yang diminta untuk mencoba aplikasi Dalsilens dan menggunakan fitur-fitur yang tersedia.
 Setelah selesai menggunakan aplikasi, responden mengisi kuesioner SUS yang terdiri dari 10 pernyataan dengan skala penilaian 1 sampai 5.
 Nilai yang diperoleh kemudian dihitung menggunakan metode perhitungan SUS untuk mendapatkan skor akhir yang menunjukkan tingkat kebergunaan dan penerimaan pengguna terhadap aplikasi yang dikembangkan~\parencite{guntur2024simamurat}.
 

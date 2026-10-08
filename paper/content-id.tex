@@ -1,0 +1,589 @@
+% ============================================================
+%  DALSILENS -- Indonesian content
+%  This file holds the Indonesian body of the paper (title, abstract
+%  through references). Included from paper.tex when the ID toggle
+%  is on.
+% ============================================================
+
+\renewcommand{\figurename}{Gambar}
+\renewcommand{\tablename}{Tabel}
+
+\begin{center}
+  {\bfseries\fontsize{14}{14}\selectfont
+  \parbox{1\textwidth}{%
+    \centering
+    \linespread{1.4}\selectfont
+    DALSILENS: ALAT BANTU MOBILE REAL-TIME UNTUK PENDERITA DIKROMASI\\
+    MENGGUNAKAN DALTONISASI LMS DAN IDENTIFIKASI WARNA BERBASIS HSV
+  }}
+
+  \vspace{0.8em}
+  {\fontsize{12}{14}\selectfont\bfseries Anaf Naufalian$^{1}$, Bonang Waspadadi Ligar$^{2}$}
+
+  \vspace{0.5em}
+  {\fontsize{11}{13}\selectfont\bfseries Informatika$^{1,2}$}
+
+  \vspace{0.3em}
+  {\fontsize{11}{13}\selectfont\bfseries Universitas Gunadarma}
+
+  \vspace{0.3em}
+  {\fontsize{10}{12}\selectfont anaf@dalsicore.com$^{1}$, bonangligar@staff.gunadarma.ac.id$^{2}$}
+\end{center}
+
+\vspace{0.6em}
+\hrule
+\vspace{0.8em}
+
+\begin{center}
+  {\itshape\fontsize{12}{14}\selectfont Abstrak}
+\end{center}
+
+\noindent\fontsize{10}{12}\selectfont
+Penyandang \textit{Color Vision Deficiency} (CVD) tipe Dikromasi (\textit{Protanopia}, \textit{Deuteranopia}, dan \textit{Tritanopia}) mengalami kesulitan membedakan warna tertentu, sementara solusi yang tersedia seperti kacamata kromatik relatif mahal dan sulit dijangkau, sedangkan sebagian aplikasi \textit{smartphone} yang ada masih memproses gambar secara statis (bukan \textit{real-time}) atau membebani CPU akibat kalkulasi matriks warna secara manual. Penelitian ini merancang dan mengimplementasikan aplikasi Android bernama Dalsilens yang memanfaatkan kamera \textit{smartphone} secara \textit{real-time} untuk membantu penyandang dikromasi. Aplikasi menerapkan algoritma \textit{LMS Daltonization} untuk mensimulasikan dan mengoreksi warna yang hilang, serta fitur identifikasi nama warna berbasis ruang warna HSV dengan pendekatan \textit{rule-based thresholding}. Transformasi warna dieksekusi melalui \textit{ColorMatrix} yang diakselerasi GPU agar tidak membebani CPU. Hasil pengujian \textit{Black Box Testing} terhadap 15 skenario fungsional menunjukkan seluruhnya \textbf{Berhasil}. Pengujian akurasi klasifikasi nama warna mencapai 90\% pada pencahayaan normal dan 50\% pada pencahayaan redup. Pengujian performa \textit{real-time} menunjukkan rata-rata 57,2 FPS dengan latensi 17,5 ms per \textit{frame}, penggunaan RAM rata-rata 218,54 MB tanpa indikasi \textit{memory leak}, serta utilisasi CPU relatif hanya 19,21\% dari kapasitas total perangkat. Pengujian kebergunaan menggunakan \textit{System Usability Scale} (SUS) terhadap 18 responden menghasilkan skor rata-rata 68,33 (Kategori B/\textit{Good}). Hasil ini menunjukkan bahwa Dalsilens berpotensi menjadi alat bantu visual yang ringan, mandiri (\textit{on-device}), dan mudah diakses bagi penyandang dikromasi.
+
+\vspace{0.6em}
+\noindent{\bfseries\fontsize{10}{12}\selectfont Kata Kunci:} \textit{\fontsize{10}{12}\selectfont Color Vision Deficiency, Dikromasi, LMS Daltonization, Ruang Warna HSV, Android, Real-Time.}
+
+\vspace{0.8em}
+\begin{center}
+  {\itshape\fontsize{12}{14}\selectfont Abstract}
+\end{center}
+
+\noindent\fontsize{10}{12}\selectfont
+Individuals with Color Vision Deficiency (CVD) of the Dichromacy type (Protanopia, Deuteranopia, and Tritanopia) have difficulty distinguishing certain colors, while available solutions such as chromatic glasses are relatively expensive and hard to access, and many existing smartphone applications still process images statically (not in real-time) or burden the CPU due to manual color matrix calculations. This research designs and implements an Android application called Dalsilens that utilizes the smartphone camera in real-time to assist individuals with dichromacy. The application applies the LMS Daltonization algorithm to simulate and correct missing colors, along with an HSV-based color name identification feature using a rule-based thresholding approach. Color transformation is executed through a GPU-accelerated ColorMatrix to avoid burdening the CPU. Black Box Testing results on 15 functional scenarios show that all scenarios were \textbf{Successful}. Color classification accuracy testing reached 90\% under normal lighting and 50\% under dim lighting. Real-time performance testing shows an average of 57.2 FPS with a latency of 17.5 ms per frame, an average RAM usage of 218.54 MB with no indication of memory leaks, and a relative CPU utilization of only 19.21\% of the device's total capacity. Usability testing using the System Usability Scale (SUS) on 18 respondents produced an average score of 68.33 (Category B/Good). These results indicate that Dalsilens has the potential to become a lightweight, on-device, and accessible visual aid for individuals with dichromacy.
+
+\vspace{0.6em}
+\noindent{\bfseries\fontsize{10}{12}\selectfont Keywords:} \textit{\fontsize{10}{12}\selectfont Color Vision Deficiency, Dichromacy, LMS Daltonization, HSV Color Space, Android, Real-Time.}
+
+\vspace{1em}
+
+\twocolumn
+
+% ============================================================
+% 1. PENDAHULUAN
+% ============================================================
+\section{Pendahuluan}
+
+Penglihatan merupakan indra utama pada manusia yang berperan dalam memproses informasi dari lingkungan sekitar. Beberapa penelitian menyebutkan bahwa sekitar 80\% informasi yang diterima dan diproses oleh otak manusia berasal dari sistem visual [1], yang menunjukkan bahwa indra penglihatan berperan sangat penting untuk memahami lingkungan sekitar [2]. Namun, tidak semua orang memiliki kemampuan ini karena adanya \textit{Color Vision Deficiency} (CVD) atau buta warna. Penyandang buta warna, khususnya \textit{Protanopia} dan \textit{Deuteranopia}, sering kali mengalami kesulitan membedakan warna tertentu seperti merah (\textit{Protanopia}) dan hijau (\textit{Deuteranopia}) [3]. Kesulitan ini dapat memengaruhi kemampuan individu dalam membedakan warna, seperti lampu lalu lintas, kode warna pada perangkat elektronik, hingga cairan.
+
+Berbagai solusi untuk permasalahan ini sebenarnya sudah tersedia, salah satunya kacamata kromatik yang dirancang secara khusus untuk menyaring panjang gelombang cahaya tertentu yang tumpang tindih antara warna merah dan hijau [4]. Namun, penggunaan kacamata kromatik masih memiliki beberapa keterbatasan, seperti harganya yang relatif tinggi dan ketersediaannya yang terbatas.
+
+Seiring berkembangnya teknologi \textit{mobile}, \textit{smartphone} kini memiliki kemampuan komputasi yang tinggi untuk melakukan pemrosesan citra digital (\textit{Digital Image Processing}) secara \textit{real-time}. Berdasarkan data \textit{StatCounter}, salah satu platform yang paling banyak digunakan di seluruh dunia adalah Android. Sistem operasi Android mendominasi pasar perangkat \textit{mobile} secara global dengan persentase sebesar 71,68\% pada tahun 2025 [7]. Platform Android juga menyediakan pustaka bawaan untuk memanipulasi matriks warna, yaitu \textit{Color Matrix}, yang memungkinkan modifikasi piksel pada citra secara efisien tanpa memengaruhi performa perangkat [8].
+
+Berdasarkan permasalahan tersebut, penelitian ini bertujuan merancang dan mengimplementasikan sebuah aplikasi alat bantu visual berjudul Dalsilens, yaitu Alat Bantu \textit{Mobile Real-Time} untuk Penderita Dikromasi Menggunakan Daltonisasi LMS dan Identifikasi Warna Berbasis HSV. Aplikasi ini dirancang untuk membantu penyandang buta warna membedakan warna pada suatu objek menggunakan kamera \textit{smartphone} secara \textit{real-time}. Salah satu pendekatan algoritma yang diterapkan dalam penelitian ini adalah metode \textit{LMS Daltonization}. Metode ini bekerja dengan mengonversi matriks warna RGB ke ruang warna LMS, yang merepresentasikan respons sel kerucut pada mata manusia. Selanjutnya, sistem menghitung informasi warna yang hilang pada penyandang dikromasi dan menggeser informasi tersebut ke spektrum warna lain yang masih dapat dilihat, sehingga meningkatkan kontras visual tanpa mengubah struktur atau bentuk objek asli. Solusi ini diharapkan dapat menjadi alternatif alat bantu berbasis perangkat lunak yang bersifat \textit{on-device}, praktis, dan lebih mudah dijangkau dibandingkan solusi optik konvensional.
+
+% ============================================================
+% 2. TINJAUAN PUSTAKA
+% ============================================================
+\section{Tinjauan Pustaka}
+
+Berbagai pendekatan dan solusi teknologi telah dikembangkan untuk membantu penyandang \textit{Color Vision Deficiency} (CVD) meningkatkan kemampuan diskriminasi warnanya. Sebagai contoh, penelitian [5] melakukan perbandingan berbasis \textit{smartphone} terhadap empat algoritma berbeda, yaitu \textit{LMS Daltonization}, \textit{Color Blind Filter Service} (CBFS), \textit{LAB color corrector}, dan \textit{shifting color}. Setiap algoritma diuji menggunakan sekumpulan citra uji untuk setiap jenis Dikromasi. Proses evaluasi dilakukan menggunakan perangkat lunak simulator buta warna, yaitu \textit{Vischeck} dan \textit{Coblis}, untuk membandingkan perbedaan persepsi warna sebelum dan sesudah proses koreksi, serta menganalisis waktu pemrosesan yang dibutuhkan oleh setiap algoritma. Namun, pengujian pada penelitian tersebut masih berbasis pemrosesan citra statis yang diunggah secara manual sehingga aplikasi yang dikembangkan tidak memproses citra secara \textit{real-time}. Peneliti menjelaskan bahwa pengguna harus mengarahkan kamera, mengambil gambar, kemudian menekan tombol ``OK'', setelah itu aplikasi baru memproses gambar tersebut dan menampilkannya di layar \textit{smartphone}.
+
+Selain itu, pada penelitian [6], peneliti mengembangkan aplikasi \textit{mobile} yang berfungsi sebagai alat bantu peningkatan penglihatan warna bagi penyandang CVD. Aplikasi tersebut juga memanfaatkan algoritma \textit{LMS Daltonization} untuk mentransformasikan warna citra secara \textit{real-time} menggunakan kamera, serta menerapkan \textit{Farnsworth D-15 Color Arrangement Test} untuk mendiagnosis jenis buta warna yang dialami pengguna secara langsung di dalam aplikasi. Meskipun berhasil menampilkan simulasi secara \textit{real-time}, pemrosesan matriks pada penelitian tersebut masih mengandalkan kalkulasi nilai warna secara manual, sehingga pendekatan komputasi sekuensial ini berpotensi membebani kinerja CPU, terutama pada perangkat dengan resolusi kamera tinggi.
+
+Oleh karena itu, penelitian ini berfokus pada optimalisasi efisiensi komputasi visual \textit{real-time} dengan memindahkan beban operasional dari CPU ke GPU, guna menghindari komputasi sekuensial yang berat. Dengan memanfaatkan pustaka \textit{CameraX} dan manipulasi \textit{ColorMatrix}, Dalsilens diharapkan mampu mencapai koreksi warna \textit{real-time} yang stabil, sehingga dapat mengatasi masalah \textit{frame-drop} dan latensi yang sering terjadi pada pemrosesan citra \textit{real-time} konvensional.
+
+% ============================================================
+% 3. METODE PENELITIAN
+% ============================================================
+\section{Metode Penelitian}
+
+\subsection{Arsitektur Sistem}
+
+Secara umum, arsitektur sistem Dalsilens dirancang untuk memproses citra secara \textit{real-time} dengan latensi rendah. Komputasi pada sistem ini dibagi menjadi dua tahap utama, yaitu akuisisi citra untuk deteksi warna, dan manipulasi warna pada tingkat \textit{bitmap} menggunakan \textit{color matrix} serta \textit{filtering} yang dipercepat GPU, sebagaimana ditunjukkan pada Gambar 1.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{arsitektur-umum}\\[0.3em]
+  {\footnotesize\textit{Gambar 1. Arsitektur Umum Sistem Dalsilens}}
+\end{figure}
+
+\subsubsection{Akuisisi Citra dan Identifikasi Warna}
+
+\textit{Flowchart} pada Gambar 2 menggambarkan proses awal pengolahan citra yang ditangkap oleh perangkat keras kamera. Pertama, ketika pengguna mengakses antarmuka utama aplikasi, sistem secara otomatis menginisialisasi modul kamera. Selanjutnya, kamera secara terus-menerus menangkap setiap \textit{frame} dan meneruskannya ke komponen \textit{ImageAnalysis}. Citra yang diterima komponen ini kemudian dikonversi menjadi representasi \textit{bitmap} mentah untuk diproses lebih lanjut oleh memori sistem. Setelah proses konversi selesai, sistem menentukan area atau \textit{Region of Interest} (ROI) tertentu yang berada tepat di tengah \textit{bitmap}, merepresentasikan objek yang menjadi target \textit{crosshair}. Sistem mengekstrak sekumpulan piksel dalam ROI tersebut untuk dianalisis. Piksel yang diekstrak kemudian dirata-ratakan untuk memperoleh nilai RGB representatif, yang selanjutnya dikonversi ke ruang warna HSV. Nilai HSV yang dihasilkan kemudian diklasifikasikan menggunakan pendekatan \textit{rule-based thresholding} untuk menentukan warna dominan pada area target. Pada tahap akhir, \textit{bitmap} mentah dan label warna dominan yang dihasilkan disimpan dalam variabel \textit{state}. Perubahan pada \textit{state} ini selanjutnya memicu pembaruan antarmuka secara reaktif, sehingga memungkinkan \textit{rendering} visual yang dinamis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{flowchart-akuisisi}\\[0.3em]
+  {\footnotesize\textit{Gambar 2. Flowchart Akuisisi Citra dan Identifikasi Warna}}
+\end{figure}
+
+\subsubsection{Proses Daltonisasi}
+
+Berdasarkan \textit{flowchart} pada Gambar 3, setelah \textit{bitmap} dan label warna diperoleh dan disimpan, sistem memicu mekanisme pembaruan reaktif untuk memperbarui antarmuka pengguna. Perubahan pada label warna yang terdeteksi langsung tercermin pada antarmuka, sementara \textit{bitmap} menjalani tahap verifikasi untuk menentukan apakah filter telah diaktifkan. Jika filter tidak diaktifkan, sistem menerapkan matriks warna identitas untuk mempertahankan representasi warna asli citra. Sebaliknya, jika filter diaktifkan, transformasi matriks warna diterapkan sesuai dengan model simulasi buta warna yang dipilih. Selanjutnya, ketika fitur daltonisasi diaktifkan, citra diproses lebih lanjut menggunakan algoritma daltonisasi berbasis LMS untuk meningkatkan persepsi warna. \textit{Bitmap} dan matriks warna yang telah ditentukan kemudian diteruskan ke komponen \textit{Image}. Pada tahap ini, manipulasi warna dilakukan menggunakan \textit{Color Matrix Filter} yang dieksekusi melalui akselerasi GPU, sehingga proses \textit{rendering} dapat dilakukan secara efisien.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{flowchart-daltonisasi}\\[0.3em]
+  {\footnotesize\textit{Gambar 3. Flowchart Simulasi Defisiensi Penglihatan Warna dan Proses Daltonisasi}}
+\end{figure}
+
+\subsection{Implementasi Algoritma LMS Daltonization}
+
+Pada bagian ini akan dibahas implementasi algoritma \textit{LMS Daltonization}, dimulai dari konversi RGB ke LMS yang merupakan ruang warna yang digunakan mata manusia untuk mempersepsikan warna, dilanjutkan dengan simulasi kondisi buta warna, hingga proses implementasi algoritma daltonisasi.
+
+\subsubsection{Konversi Ruang Warna RGB ke LMS}
+
+Tahap pertama dalam proses implementasi algoritma ini adalah mengonversi ruang warna citra dari RGB (\textit{Red, Green, Blue}) ke LMS (\textit{Long, Medium, Short}). Konversi ini dilakukan menggunakan transformasi linear berbasis matriks, yang merepresentasikan tiga jenis sel kerucut pada sistem penglihatan manusia. Secara matematis, transformasi ini dilakukan dengan mengalikan vektor warna RGB dengan matriks konversi tertentu, sehingga menghasilkan representasi warna pada ruang LMS. Nilai L, M, dan S dalam penelitian ini dinyatakan sebagai berikut, dengan koefisien dari [9]:
+
+\begin{equation}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix} =
+\begin{bmatrix} 17{,}8824 & 43{,}5161 & 4{,}11935 \\ 3{,}4565 & 27{,}1554 & 3{,}86714 \\ 0{,}02996 & 0{,}18431 & 1{,}46709 \end{bmatrix}
+\begin{bmatrix} R \\ G \\ B \end{bmatrix}
+\end{equation}
+
+Koefisien pada persamaan tersebut diperoleh dari [9], yang digunakan sebagai acuan dalam proses konversi warna dari ruang RGB ke LMS. Nilai-nilai ini menunjukkan hubungan antara elemen RGB dan respons setiap kanal pada ruang LMS, sehingga hasil konversi dapat diterapkan secara akurat pada tahap pemrosesan selanjutnya. Ruang warna LMS ini digunakan sebagai dasar untuk mensimulasikan defisiensi penglihatan warna dan menerapkan algoritma daltonisasi pada tahap berikutnya.
+
+\subsubsection{Simulasi Defisiensi Penglihatan Warna}
+
+Tahap kedua berfokus pada pemodelan matematis untuk mensimulasikan penurunan kemampuan persepsi warna berdasarkan jenis defisiensi, yaitu \textit{Protanopia}, \textit{Deuteranopia}, dan \textit{Tritanopia}. Proses ini dilakukan dengan memodifikasi nilai komponen pada ruang LMS yang diperoleh dari tahap sebelumnya. Pada kondisi ini, salah satu komponen (L, M, atau S) kehilangan sensitivitasnya dan tidak digunakan secara langsung, melainkan dihitung ulang berdasarkan kombinasi dua komponen lainnya, dengan koefisien transformasi dari [10]:
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Prot} =
+\begin{bmatrix} 0 & 2{,}02344 & -2{,}52581 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Deut} =
+\begin{bmatrix} 1 & 0 & 0 \\ 0{,}49421 & 0 & 1{,}24827 \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Trit} =
+\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -0{,}39591 & 0{,}80111 & 0 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+Koefisien pada ketiga persamaan tersebut diperoleh dari [10], [16], yang digunakan untuk menyesuaikan perubahan komponen warna sesuai jenis defisiensi yang disimulasikan. Dengan cara ini, hasil simulasi dapat menunjukkan bagaimana warna tampak bagi pengguna dengan defisiensi penglihatan warna tertentu.
+
+Hasil dari tahap ini berupa nilai LMS yang telah dimodifikasi untuk mensimulasikan kondisi penglihatan pada defisiensi warna. Nilai tersebut kemudian dikonversi kembali ke ruang RGB menggunakan matriks kebalikan (\textit{inverse}) dari Persamaan (1), untuk merepresentasikan bagaimana warna terlihat oleh penyandang buta warna, sekaligus mengamati perubahan hasil setelah penerapan algoritma daltonisasi:
+
+\begin{equation}
+\resizebox{0.95\linewidth}{!}{$\displaystyle
+\begin{bmatrix} R_{sim} \\ G_{sim} \\ B_{sim} \end{bmatrix} =
+\begin{bmatrix} 0{,}08094 & -0{,}13050 & 0{,}11672 \\ -0{,}01025 & 0{,}05402 & -0{,}11362 \\ -0{,}00037 & -0{,}00412 & 0{,}69351 \end{bmatrix}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}$}
+\end{equation}
+
+\subsubsection{Proses Daltonisasi}
+
+Pada tahap ini, proses daltonisasi dilakukan dengan menghitung selisih antara warna asli dan warna hasil simulasi defisiensi warna. Perhitungan dimulai dengan mengonversi nilai warna dari ruang RGB ke LMS, mensimulasikan defisiensi warna pada ruang LMS, kemudian mengonversinya kembali ke ruang RGB. Selisih warna asli terhadap warna hasil simulasi kemudian dihitung sebagai nilai galat (\textit{error}):
+
+\begin{equation}
+E_R = R - R_{sim}, \quad E_G = G - G_{sim}, \quad E_B = B - B_{sim}
+\end{equation}
+
+Setelah nilai galat diperoleh, langkah berikutnya adalah mendistribusikan ulang nilai tersebut ke komponen warna lain melalui proses \textit{error shifting}. Proses ini dilakukan karena komponen warna yang terpengaruh oleh defisiensi tidak dapat dipersepsikan secara optimal oleh pengguna, sehingga informasi warna yang hilang perlu dialihkan ke komponen warna lain yang masih dapat dibedakan. Redistribusi ini dilakukan menggunakan matriks transformasi yang berbeda untuk setiap jenis defisiensi, guna menyesuaikan arah distribusi galat ke komponen warna yang masih dapat dipersepsikan secara optimal.
+
+Pada kondisi \textit{Protanopia}, komponen merah mengalami penurunan sensitivitas sehingga tidak menerima distribusi galat, dan seluruh galat dialihkan ke komponen hijau dan biru. Pada \textit{Deuteranopia}, komponen hijau merupakan komponen yang paling terpengaruh sehingga tidak digunakan dalam redistribusi, dan galat dialihkan ke komponen merah dan biru. Sedangkan pada \textit{Tritanopia}, komponen biru mengalami penurunan sensitivitas, sehingga galat dialihkan ke komponen merah dan hijau. Koefisien ketiga matriks berikut diperoleh dari [8], [10], [16]:
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Prot} =
+\begin{bmatrix} 0 & 0 & 0 \\ 0{,}7 & 1 & 0 \\ 0{,}7 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Deut} =
+\begin{bmatrix} 1 & 0{,}7 & 0 \\ 0 & 0 & 0 \\ 0 & 0{,}7 & 1 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Trit} =
+\begin{bmatrix} 1 & 0 & 0{,}7 \\ 0 & 1 & 0{,}7 \\ 0 & 0 & 0 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+Nilai galat yang telah digeser kemudian dijumlahkan kembali dengan warna asli untuk menghasilkan warna hasil koreksi (daltonisasi):
+
+\begin{equation}
+R_{d} = R + R_{shift}, \; G_{d} = G + G_{shift}, \; B_{d} = B + B_{shift}
+\end{equation}
+
+\subsubsection{Konstruksi Matriks Transformasi 4$\times$5}
+
+Pada tahap ini, seluruh proses transformasi warna yang telah dijelaskan sebelumnya direpresentasikan sebagai fungsi transformasi $T(R,G,B)$. Untuk mengoptimalkan beban komputasi dan menghindari kalkulasi piksel yang berulang, fungsi transformasi ini disederhanakan menjadi sebuah matriks konstan berukuran 4$\times$5. Penyederhanaan dilakukan dengan mengevaluasi fungsi $T$ terhadap tiga vektor warna primer, yaitu merah murni $(1,0,0)$, hijau murni $(0,1,0)$, dan biru murni $(0,0,1)$:
+
+\begin{equation}
+\begin{aligned}
+T(1,0,0) &= (r_R, r_G, r_B) \\
+T(0,1,0) &= (g_R, g_G, g_B) \\
+T(0,0,1) &= (b_R, b_G, b_B)
+\end{aligned}
+\end{equation}
+
+Nilai hasil transformasi ketiga vektor basis tersebut kemudian disusun ke dalam kolom-kolom koefisien matriks $M_{dalton}$, sehingga matriks ini dapat langsung memetakan profil warna asli menjadi warna hasil koreksi, sekaligus mempertahankan parameter \textit{alpha} (transparansi) pada baris keempat:
+
+\begin{equation}
+M_{dalton} =
+\begin{bmatrix}
+r_R & g_R & b_R & 0 & 0 \\
+r_G & g_G & b_G & 0 & 0 \\
+r_B & g_B & b_B & 0 & 0 \\
+0 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\end{equation}
+
+Matriks $M_{dalton}$ inilah yang langsung diterapkan pada \textit{ColorMatrix} Android dan dieksekusi melalui akselerasi GPU, sehingga tidak diperlukan kalkulasi ulang Persamaan (1) hingga (10) pada setiap piksel citra secara \textit{real-time}.
+
+\subsection{Implementasi Tingkat Keparahan (Severity Level)}
+
+Bagian ini menjelaskan bagaimana penyesuaian tingkat keparahan defisiensi warna diimplementasikan secara dinamis. Parameter \textit{severity} direpresentasikan dalam rentang desimal 0,0 hingga 1,0. Untuk menjaga akurasi representasi visual, sistem membedakan metode penerapan \textit{severity} berdasarkan tujuannya, yaitu antara proses simulasi penglihatan dan proses daltonisasi.
+
+\subsubsection{Pemodelan Severity pada Simulasi Defisiensi}
+
+Pada mode simulasi, parameter \textit{severity} berfungsi untuk meniru tingkat kerusakan atau pergeseran sensitivitas pada sel kerucut mata pengguna. Proses ini mendekati suatu kondisi medis yang dikenal sebagai \textit{Anomalous Trichromacy} [11]. Oleh karena itu, perhitungan dilakukan secara langsung pada ruang warna LMS menggunakan metode interpolasi linear. Sistem menghitung selisih antara nilai LMS pada kondisi penglihatan normal dan nilai LMS pada kondisi defisiensi penuh, kemudian selisih tersebut dikalikan dengan parameter \textit{severity} dan dijumlahkan kembali ke nilai normal:
+
+\begin{equation}
+L_{f} = L_{n} + (L_{sim} - L_{n}) \times S
+\end{equation}
+
+\subsubsection{Pemodelan Severity pada Koreksi Penglihatan Warna}
+
+Berbeda dari tahap simulasi, parameter \textit{severity} pada proses daltonisasi berfungsi untuk menentukan intensitas atau kekuatan bantuan warna yang diberikan kepada pengguna. Perhitungan ini dilakukan pada ruang warna RGB, tepatnya pada tahap akhir komputasi ketika nilai galat yang telah digeser ditambahkan ke piksel asli. Intensitas kompensasi warna disesuaikan dengan mengalikan hasil galat yang telah digeser dari setiap kanal warna dengan nilai \textit{severity}, sebelum digabungkan dengan warna asli, sehingga pengguna dapat menyesuaikan kontras warna secara proporsional sesuai kenyamanan visualnya:
+
+\begin{equation}
+R_{d} = R + (R_{shift} \times S)
+\end{equation}
+
+\subsection{Ekstraksi Warna Dominan Berbasis Ruang Warna HSV}
+
+Pada bagian ini akan dibahas proses ekstraksi warna dominan berdasarkan ruang warna HSV. Tahap ini bertujuan mengekstrak warna dari objek yang berada pada titik tengah yang menjadi target \textit{crosshair} secara \textit{real-time}. Proses ini dimulai dengan memperoleh citra dalam bentuk \textit{bitmap}, dilanjutkan dengan pemrosesan area piksel di sekitar titik tengah, dan diakhiri dengan klasifikasi nama warna menggunakan ruang warna HSV.
+
+\subsubsection{Akuisisi dan Pemrosesan Bitmap}
+
+\textit{Frame} dari kamera diperoleh melalui \textit{ImageAnalysis} pada \textit{CameraX}, yang secara terus-menerus menangkap citra. \textit{Frame} tersebut kemudian diteruskan ke fungsi \textit{analyzer}, yang menghasilkan \textit{ImageProxy}, sebelum akhirnya dikonversi menjadi \textit{Bitmap}. Mengingat orientasi sensor kamera bervariasi antar perangkat Android, nilai \texttt{rotationDegrees} pada metadata \textit{frame} diperiksa. Apabila nilai rotasi tidak sama dengan nol, \textit{bitmap} akan dirotasi menggunakan matriks transformasi.
+
+\subsubsection{Pengambilan Sampel Piksel}
+
+Pengambilan sampel warna tidak hanya dilakukan pada satu titik piksel di tengah layar, karena sampel satu piksel cenderung kurang efektif akibat warna pada suatu area dapat dipengaruhi oleh gangguan (\textit{noise}), pencahayaan, atau kondisi lainnya. Oleh karena itu, digunakan pendekatan \textit{sampling} dengan mengambil beberapa piksel di sekitar titik tengah, sehingga warna yang diperoleh menjadi lebih stabil dan dapat merepresentasikan warna dominan pada area yang diamati dengan lebih baik.
+
+Langkah pertama adalah menentukan radius area \textit{sampling}, dengan nilai radius \textit{default} sebesar $r=5$. Dengan radius tersebut, area sampel yang diambil mencakup 121 piksel (11 x 11). Jumlah piksel yang digunakan dapat dihitung menggunakan persamaan berikut:
+
+\begin{equation}
+N = (2r+1) \times (2r+1)
+\end{equation}
+
+Diberikan citra $I$ berukuran $W \times H$ dan titik tengah $(x_c, y_c)$ dengan radius $r$, sebuah fungsi pembatas (\textit{bounding function}) didefinisikan agar koordinat piksel yang diproses tidak melampaui batas citra:
+
+\begin{equation}
+f(x) = \min(\max(x, 0), W-1)
+\end{equation}
+\begin{equation}
+g(y) = \min(\max(y, 0), H-1)
+\end{equation}
+
+Setiap piksel pada koordinat $(x,y)$ disimpan sebagai bilangan bulat 32-bit berformat ARGB. Struktur bit dari komponen biru (B) berada pada posisi paling akhir, sehingga tidak diperlukan pergeseran bit, cukup dilakukan \textit{masking} untuk menghilangkan bit lainnya menggunakan nilai \textit{mask} 255 (0xFF). Sementara itu, komponen hijau (G) berada pada posisi tengah sehingga perlu digeser ke kanan sebanyak delapan bit terlebih dahulu, dan komponen merah (R) berada pada posisi paling kiri sehingga perlu digeser ke kanan sebanyak 16 bit. Ketiga komponen warna tersebut diekstrak melalui operasi pergeseran bit (\textit{bit shift}) dan \textit{masking} terhadap nilai piksel:
+
+\begin{equation}
+B_{(x,y)} = \text{pixel} \mathbin{\&} 255
+\end{equation}
+\begin{equation}
+G_{(x,y)} = (\text{pixel} \gg 8) \mathbin{\&} 255
+\end{equation}
+\begin{equation}
+R_{(x,y)} = (\text{pixel} \gg 16) \mathbin{\&} 255
+\end{equation}
+
+Nilai RGB rata-rata dari seluruh $N$ piksel dalam area sampel kemudian dihitung sebagai representasi warna dominan:
+
+\begin{equation}
+\bar{R} = \frac{1}{N}\sum_{i=1}^{N} R_i, \quad
+\bar{G} = \frac{1}{N}\sum_{i=1}^{N} G_i, \quad
+\bar{B} = \frac{1}{N}\sum_{i=1}^{N} B_i
+\end{equation}
+
+\subsubsection{Klasifikasi Nama Warna}
+
+Tahap akhir adalah klasifikasi warna, yang dilakukan dengan mengonversi nilai RGB rata-rata yang diperoleh ke ruang warna HSV menggunakan fungsi bawaan Android pada kelas \texttt{android.graphics.Color}, yaitu \texttt{RGBToHSV(r, g, b, hsv)}. Hasil konversi terdiri dari tiga komponen, yaitu \textit{Hue} (H) sebagai jenis warna pada rentang $0^\circ$--$360^\circ$, \textit{Saturation} (S) sebagai tingkat intensitas warna pada rentang 0 hingga 1, dan \textit{Value} (V) sebagai tingkat kecerahan pada rentang 0 hingga 1. Ketiga komponen ini kemudian digunakan untuk menentukan nama warna menggunakan pendekatan \textit{threshold} berdasarkan rentang nilai H, S, dan V. Nilai \textit{threshold} ditentukan melalui pengujian sampel warna pada kondisi pencahayaan normal dan redup, dengan mempertimbangkan nilai rata-rata, simpangan baku, dan rentang toleransi.
+
+Sebagai contoh, berikut perhitungan untuk menentukan rentang nilai H bagi warna merah. Data uji diperoleh dari 10 sampel pada kondisi pencahayaan normal dan 10 sampel pada kondisi pencahayaan redup, yang kemudian digunakan untuk menghitung nilai rata-rata dan rentang variasi komponen \textit{Hue}. Hasil perhitungan menunjukkan bahwa nilai rata-rata komponen \textit{Hue} pada kondisi pencahayaan normal adalah $3,3^\circ$, sedangkan pada kondisi pencahayaan redup adalah $8,1^\circ$. Selanjutnya, dihitung simpangan baku untuk mengetahui sebaran data pada masing-masing kondisi, dan diperoleh nilai simpangan baku sebesar $0,48^\circ$ pada kondisi normal dan $0,88^\circ$ pada kondisi redup.
+
+Nilai toleransi (batas atas dan bawah) kemudian ditentukan dengan menjumlahkan dan mengurangkan nilai rata-rata dengan simpangan baku, menggunakan persamaan $\bar{H} \pm 2\sigma$. Batas bawah untuk kondisi pencahayaan normal diperoleh dari $3,3 - 2(0,48^\circ) = 2,34^\circ$, sedangkan batas atas diperoleh dari $3,3 + 2(0,48^\circ) = 4,26^\circ$, sehingga rentang toleransi pada kondisi normal berada di antara $2,34^\circ$ dan $4,26^\circ$. Metode yang sama diterapkan pada kondisi redup, dengan batas bawah $8,1 - 2(0,88^\circ) = 6,34^\circ$ dan batas atas $8,1 + 2(0,88^\circ) = 9,86^\circ$, sehingga rentang toleransi pada kondisi redup berada di antara $6,34^\circ$ dan $9,86^\circ$.
+
+Apabila dibandingkan, rentang nilai \textit{Hue} dari kondisi normal dan redup tidak menunjukkan tumpang tindih (\textit{overlap}). Berdasarkan hasil ini, penentuan nilai \textit{threshold} dilakukan dengan menetapkan batas atas dari kondisi dengan variasi terbesar, yaitu $9,86^\circ$, sehingga nilai \textit{threshold} untuk warna merah dinyatakan sebagai H $< 9,86^\circ$. Metode yang sama diterapkan pada warna lainnya, sehingga menghasilkan tabel \textit{threshold} yang dapat langsung digunakan pada proses klasifikasi warna, sebagaimana ditunjukkan pada Tabel 1.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Rentang Hue ($^\circ$)} & \textbf{Kategori Warna} \\
+    \hline
+    H $<$ 9,85 & Merah \\ \hline
+    9,85 $\leq$ H $<$ 26,98 & Oranye \\ \hline
+    26,98 $\leq$ H $<$ 50,42 & Kuning \\ \hline
+    50,42 $\leq$ H $<$ 122,50 & Hijau \\ \hline
+    122,50 $\leq$ H $<$ 204,85 & Cyan \\ \hline
+    204,85 $\leq$ H $<$ 224,57 & Biru \\ \hline
+    224,57 $\leq$ H $<$ 319,37 & Ungu \\ \hline
+    H $\geq$ 319,37 & Merah \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 1. Klasifikasi Warna Berdasarkan Rentang Hue}}
+\end{table}
+
+Warna dengan nilai \textit{Saturation} yang rendah tidak diklasifikasikan menggunakan \textit{Hue} karena cenderung bersifat akromatik (\textit{grayscale}), sehingga klasifikasinya beralih menggunakan nilai \textit{Value} untuk membedakan kategori Hitam, Abu-abu Gelap, Abu-abu, dan Putih, sebagaimana ditunjukkan pada Tabel 2.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Saturation} & \textbf{Value} & \textbf{Kategori} \\
+    \hline
+    S $<$ 0,10 & V $<$ 0,15 & Hitam \\ \hline
+    S $<$ 0,10 & 0,15 $\leq$ V $<$ 0,40 & Abu-abu Gelap \\ \hline
+    S $<$ 0,10 & 0,40 $\leq$ V $<$ 0,78 & Abu-abu \\ \hline
+    S $<$ 0,10 & V $\geq$ 0,78 & Putih \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 2. Klasifikasi Warna Akromatik Berdasarkan Saturation dan Value}}
+\end{table}
+
+Dengan menggabungkan klasifikasi berbasis \textit{Hue}, \textit{Saturation}, dan \textit{Value}, sistem mampu mengenali warna kromatik maupun akromatik secara \textit{real-time}, meskipun kondisi pencahayaan lingkungan bervariasi.
+
+\subsection{Skenario Pengujian}
+
+Pengujian aplikasi mencakup empat skenario, yaitu (1) pengujian fungsionalitas menggunakan \textit{Black Box Testing} [12] terhadap 15 skenario penggunaan; (2) pengujian akurasi klasifikasi nama warna terhadap 10 kategori warna pada kondisi pencahayaan normal dan redup; (3) pengujian performa \textit{real-time} berupa FPS, latensi, penggunaan RAM, dan utilisasi CPU menggunakan \texttt{adb shell dumpsys} dan \textit{Android Studio Profiler}; serta (4) pengujian kebergunaan menggunakan kuesioner \textit{System Usability Scale} (SUS) [13] terhadap 18 responden.
+
+% ============================================================
+% 4. HASIL DAN PEMBAHASAN
+% ============================================================
+\section{Hasil dan Pembahasan}
+
+\subsection{Pengujian Fungsionalitas}
+
+Pengujian \textit{Black Box Testing} [12] dilakukan terhadap 15 skenario yang mencakup navigasi antarmuka, aktivasi/nonaktivasi filter, pemilihan jenis simulasi (\textit{Protanopia}, \textit{Deuteranopia}, \textit{Tritanopia}), pengaturan \textit{severity}, pengaturan ukuran area \textit{sampling}, serta deteksi nama warna secara \textit{real-time}. Setiap skenario diuji dengan memberikan masukan tertentu dan memverifikasi kesesuaian keluaran terhadap ekspektasi yang dirancang, mulai dari navigasi antarmuka, aktivasi dan nonaktivasi filter, pemilihan ketiga jenis simulasi buta warna, pengaturan \textit{severity} pada nilai minimum dan maksimum, hingga pengaturan ukuran area \textit{sampling}. Seluruh 15 skenario tersebut menghasilkan keluaran \textbf{Berhasil}, yang menunjukkan bahwa fitur-fitur utama aplikasi berjalan sesuai dengan ekspektasi rancangan tanpa ditemukan kegagalan fungsional.
+
+\subsection{Pengujian Akurasi Klasifikasi Warna}
+
+Pengujian dilakukan terhadap 10 objek fisik yang mewakili setiap kategori warna, pada dua kondisi pencahayaan yaitu \textbf{normal} (cahaya ruangan standar) dan \textbf{redup} (cahaya dikurangi menggunakan tirai). Hasil deteksi nama warna dibandingkan dengan warna objek yang sebenarnya, sebagaimana ditunjukkan pada Tabel 3 dan Tabel 4.
+
+\begin{table}[H]
+  \centering
+  {\scriptsize
+  \begin{tabular}{|c|l|l|l|c|}
+    \hline
+    \textbf{No.} & \textbf{Objek} & \textbf{Asli} & \textbf{Deteksi} & \textbf{Ket.} \\
+    \hline
+    1 & Tali & Merah & Merah & Benar \\ \hline
+    2 & Baju & Oranye & Oranye & Benar \\ \hline
+    3 & Baju & Kuning & Kuning & Benar \\ \hline
+    4 & Teko & Hijau & Hijau & Benar \\ \hline
+    5 & Pembersih Keyboard & Cyan & Cyan & Benar \\ \hline
+    6 & Gantungan Kunci & Biru & Biru & Benar \\ \hline
+    7 & KTM & Ungu & Magenta & Salah \\ \hline
+    8 & Tumbler & Putih & Putih & Benar \\ \hline
+    9 & Celana & Hitam & Hitam & Benar \\ \hline
+    10 & Gagang Jemuran & Abu-abu & Abu-abu & Benar \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 3. Hasil Pengujian Klasifikasi Warna pada Pencahayaan Normal}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  {\scriptsize
+  \begin{tabular}{|c|l|l|l|c|}
+    \hline
+    \textbf{No.} & \textbf{Objek} & \textbf{Asli} & \textbf{Deteksi} & \textbf{Ket.} \\
+    \hline
+    1 & Tali & Merah & Merah & Benar \\ \hline
+    2 & Baju & Oranye & Oranye & Benar \\ \hline
+    3 & Baju & Kuning & Oranye & Salah \\ \hline
+    4 & Teko & Hijau & Hijau & Benar \\ \hline
+    5 & Pembersih Keyboard & Cyan & Biru & Salah \\ \hline
+    6 & Gantungan Kunci & Biru & Biru & Benar \\ \hline
+    7 & KTM & Ungu & Merah & Salah \\ \hline
+    8 & Tumbler & Putih & Abu-abu & Salah \\ \hline
+    9 & Celana & Hitam & Hitam & Benar \\ \hline
+    10 & Gagang Jemuran & Abu-abu & Kuning & Salah \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 4. Hasil Pengujian Klasifikasi Warna pada Pencahayaan Redup}}
+\end{table}
+
+Berdasarkan Tabel 3 dan Tabel 4, akurasi deteksi pada kondisi pencahayaan normal sebesar $\frac{9}{10} \times 100\% = 90\%$, dengan satu kesalahan pada warna ungu yang terdeteksi sebagai magenta. Pada kondisi pencahayaan redup, akurasi menurun menjadi $\frac{5}{10} \times 100\% = 50\%$, sebagaimana dirangkum pada Tabel 5.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{Kondisi Pencahayaan} & \textbf{Benar} & \textbf{Akurasi} \\
+    \hline
+    Normal & 9/10 & 90\% \\ \hline
+    Redup & 5/10 & 50\% \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 5. Rekapitulasi Akurasi Klasifikasi Nama Warna}}
+\end{table}
+
+Penurunan akurasi pada kondisi redup terjadi karena nilai \textit{Value} (V) pada ruang warna HSV menurun secara signifikan, sehingga piksel yang seharusnya terklasifikasi berwarna cenderung terdeteksi sebagai abu-abu atau hitam. Temuan ini konsisten dengan penelitian [14] yang menyatakan bahwa akurasi kolorimetri berbasis \textit{smartphone} pada ruang warna HSV sensitif terhadap kondisi pencahayaan.
+
+\subsection{Pengujian Performa Real-Time}
+
+Pengujian performa dilakukan pada skenario beban komputasi tertinggi, yaitu saat mode daltonisasi dan identifikasi warna berjalan bersamaan, merepresentasikan kondisi \textit{worst-case} yang mungkin terjadi. Pengujian FPS dan latensi dilakukan menggunakan data statistik \textit{rendering frame} dari perintah \texttt{adb shell dumpsys gfxinfo}, sebanyak tiga kali iterasi, masing-masing berjalan kurang lebih satu menit, sebagaimana ditunjukkan pada Tabel 6.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \textbf{Iterasi} & \textbf{Frame} & \textbf{FPS} & \textbf{Latensi (ms)} & \textbf{Janky (\%)} \\
+    \hline
+    1 & 2.389 & 55,0 & 18,2 & 28,59 \\ \hline
+    2 & 2.808 & 65,3 & 15,3 & 9,62 \\ \hline
+    3 & 1.134 & 46,8 & 21,4 & 23,10 \\ \hline
+    \textbf{Rata-rata} & \textbf{6.331} & \textbf{57,2} & \textbf{17,5} & \textbf{19,19} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 6. Hasil Pengujian FPS dan Latensi Pemrosesan}}
+\end{table}
+
+Nilai rata-rata 57,2 FPS dengan latensi 17,5 ms menunjukkan bahwa aplikasi mendekati kondisi \textit{real-time} yang mulus (60 FPS) meskipun transformasi \textit{color matrix} dan klasifikasi warna berjalan bersamaan. Data \textit{GPU Rendering Profile} menunjukkan median waktu pemrosesan GPU berada pada kisaran 5--7 ms, jauh lebih rendah dibandingkan total waktu \textit{render} per \textit{frame}, mengindikasikan bahwa transformasi warna bukan titik hambat (\textit{bottleneck}) utama.
+
+Penggunaan memori diukur melalui \textit{Total Proportional Set Size} (PSS) menggunakan perintah \texttt{adb shell dumpsys meminfo}, sebagaimana ditunjukkan pada Tabel 7.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{Iterasi} & \textbf{PSS (KB)} & \textbf{PSS (MB)} \\
+    \hline
+    1 & 223.147 & 217,92 \\ \hline
+    2 & 227.867 & 222,53 \\ \hline
+    3 & 220.339 & 215,18 \\ \hline
+    \textbf{Rata-rata} & \textbf{223.784} & \textbf{218,54} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 7. Hasil Pengujian Penggunaan Memori (RAM)}}
+\end{table}
+
+Nilai PSS pada tiga iterasi pengujian berada dalam rentang sempit ($\pm$3,5 MB dari rata-rata) tanpa menunjukkan tren kenaikan yang konsisten antar iterasi, sehingga tidak ditemukan indikasi \textit{memory leak} pada aplikasi Dalsilens.
+
+Utilisasi CPU diukur menggunakan perintah \texttt{adb shell top -n 2 -d 1}, dengan nilai yang dicatat berupa sampel kedua dari setiap pasangan pengukuran, sebagaimana ditunjukkan pada Tabel 8.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Iterasi} & \textbf{Utilisasi CPU (\%)} \\
+    \hline
+    1 & 147 \\ \hline
+    2 & 148 \\ \hline
+    3 & 166 \\ \hline
+    \textbf{Rata-rata} & \textbf{153,67} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 8. Hasil Pengujian Utilisasi CPU}}
+\end{table}
+
+Nilai utilisasi CPU melebihi 100\% karena utilitas berbasis Linux/Android seperti \texttt{top} menghitung persentase CPU sebagai akumulasi penggunaan pada seluruh \textit{core} yang dipakai proses, bukan relatif terhadap satu \textit{core}. Perangkat uji memiliki kapasitas total CPU sebesar 800\% (8 \textit{core}), sehingga nilai rata-rata 153,67\% apabila dikonversi menjadi persentase relatif terhadap kapasitas total perangkat menghasilkan:
+
+\begin{equation}
+\text{Utilisasi CPU Relatif} = \frac{153{,}67\%}{8 \times 100\%} \times 100\% \approx 19{,}21\%
+\end{equation}
+
+Nilai ini menunjukkan bahwa aplikasi Dalsilens hanya menggunakan sekitar 19,21\% dari total kapasitas komputasi CPU perangkat meskipun menjalankan transformasi \textit{color matrix} dan klasifikasi warna secara bersamaan, membuktikan efektivitas pemindahan beban komputasi berat dari CPU ke GPU melalui \textit{ColorMatrix} [8].
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{ss_deuteranopia}\\[0.2em]
+  {\footnotesize\textit{Simulasi Deuteranopia}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{ss_daltonization}\\[0.2em]
+  {\footnotesize\textit{Simulasi + Daltonisasi}}
+\end{minipage}
+\vspace{0.3em}
+
+\begin{center}
+  {\footnotesize\textit{Gambar 4. Perbandingan Tampilan Simulasi Deuteranopia Sebelum dan Sesudah Daltonisasi}}
+\end{center}
+
+Sebagaimana ditunjukkan pada Gambar 4, penerapan daltonisasi menggeser warna objek ke rona yang berbeda dari hasil simulasi murni, sehingga membantu penyandang \textit{Deuteranopia} membedakan objek yang sebelumnya tampak serupa.
+
+\subsection{Pengujian Kebergunaan (SUS)}
+
+\textit{System Usability Scale} (SUS) adalah kuesioner standar yang dikembangkan oleh Brooke [13] untuk mengukur tingkat kebergunaan (\textit{usability}) suatu sistem secara cepat dan efisien, terdiri dari 10 pernyataan dengan skala \textit{Likert} 1 hingga 5, di mana pernyataan bernomor ganjil bersifat positif dan pernyataan bernomor genap bersifat negatif [15]. Skor SUS dihitung menggunakan persamaan berikut [13]:
+
+\begin{equation}
+\text{Skor SUS} = \left(\sum_{i \in \text{ganjil}}(x_i - 1) + \sum_{j \in \text{genap}}(5 - x_j)\right) \times 2{,}5
+\end{equation}
+
+dengan $x_i$ adalah nilai jawaban responden untuk pernyataan ke-$i$, dan hasil skor berada pada rentang 0 hingga 100. Interpretasi skor SUS mengacu pada klasifikasi pada Tabel 9.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Rentang Skor} & \textbf{Nilai} & \textbf{Kategori} \\
+    \hline
+    $>$ 80,3 & A & \textit{Excellent} \\ \hline
+    68 -- 80,3 & B & \textit{Good} \\ \hline
+    57 -- 68 & C & \textit{OK} \\ \hline
+    $<$ 57 & D & \textit{Poor} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 9. Klasifikasi Skor System Usability Scale}}
+\end{table}
+
+Pengujian dilakukan terhadap 18 responden yang mencoba aplikasi Dalsilens secara langsung pada perangkat Android masing-masing selama kurang lebih lima menit, kemudian mengisi kuesioner SUS. Data demografi responden (dianonimkan sebagai R1--R18) disajikan pada Tabel 10.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c||c|c|c|}
+    \hline
+    \textbf{Resp.} & \textbf{Usia} & \textbf{JK} & \textbf{Resp.} & \textbf{Usia} & \textbf{JK} \\
+    \hline
+    R1  & 20 & L & R10 & 20 & P \\ \hline
+    R2  & 31 & L & R11 & 20 & L \\ \hline
+    R3  & 21 & L & R12 & 19 & L \\ \hline
+    R4  & 20 & P & R13 & 19 & P \\ \hline
+    R5  & 21 & P & R14 & 21 & L \\ \hline
+    R6  & 21 & L & R15 & 15 & L \\ \hline
+    R7  & 28 & L & R16 & 20 & P \\ \hline
+    R8  & 22 & L & R17 & 21 & L \\ \hline
+    R9  & 20 & P & R18 & 20 & L \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Tabel 10. Data Demografi Responden Pengujian SUS (JK: Jenis Kelamin, L: Laki-laki, P: Perempuan)}}
+\end{table}
+
+Rekapitulasi jawaban seluruh responden terhadap 10 pernyataan SUS (P1--P10) menghasilkan skor SUS yang bervariasi antara 47,5 hingga 90,0, dengan rata-rata skor sebesar 68,33. Nilai rata-rata tersebut termasuk dalam kategori B (\textit{Good}) menurut Tabel 9. Hasil ini menunjukkan bahwa aplikasi Dalsilens dinilai baik dan dapat diterima oleh pengguna dari sisi kemudahan dan kenyamanan penggunaan, meskipun masih terdapat ruang perbaikan pada aspek antarmuka untuk mencapai kategori \textit{Excellent}.
+
+Secara keseluruhan, hasil pengujian menunjukkan bahwa pendekatan berbasis \textit{ColorMatrix} yang diakselerasi GPU berhasil menjawab tantangan performa yang dihadapi oleh pendekatan kalkulasi manual pada penelitian terdahulu [6], sementara integrasi langsung ke kamera \textit{real-time} mengatasi keterbatasan pemrosesan statis pada [5]. Tingkat \textit{precision} yang tinggi pada sebagian besar kategori warna (Tabel 3) menandakan tingkat kesalahan \textit{false positive} yang minim dalam konteks identifikasi warna, sementara akurasi klasifikasi warna yang menurun pada kondisi redup (Tabel 4) menjadi keterbatasan utama yang perlu diperhatikan pada pengembangan selanjutnya, misalnya melalui pendekatan berbasis \textit{machine learning} yang lebih adaptif terhadap variasi pencahayaan. Kesenjangan antara penelitian akademis dan penerapan praktis juga turut dijembatani melalui antarmuka yang intuitif, sehingga pengguna dapat memperoleh umpan balik visual maupun tekstual secara seketika tanpa memerlukan pemrosesan tambahan di luar perangkat.
+
+% ============================================================
+% 5. KESIMPULAN
+% ============================================================
+\section{Kesimpulan}
+
+Aplikasi Dalsilens berhasil dikembangkan sebagai alat bantu visual \textit{real-time} berbasis Android bagi penyandang dikromasi, dengan mengintegrasikan algoritma \textit{LMS Daltonization} dan fitur identifikasi nama warna berbasis ruang warna HSV. Seluruh 15 skenario \textit{Black Box Testing} berjalan \textbf{Berhasil}, akurasi klasifikasi warna mencapai 90\% pada pencahayaan normal namun menurun pada pencahayaan redup, performa \textit{real-time} rata-rata mencapai 57,2 FPS dengan latensi 17,5 ms tanpa indikasi \textit{memory leak}, serta utilisasi CPU relatif hanya 19,21\% berkat pemindahan beban komputasi ke GPU melalui \textit{ColorMatrix}. Skor SUS sebesar 68,33 (Kategori B/\textit{Good}) menunjukkan tingkat kebergunaan yang baik. Penelitian selanjutnya disarankan untuk menerapkan pendekatan berbasis \textit{machine learning} guna meningkatkan akurasi klasifikasi warna pada kondisi pencahayaan yang bervariasi, serta memperluas dukungan ke tipe \textit{Anomalous Trichromacy}.
+
+% ============================================================
+% DAFTAR PUSTAKA
+% ============================================================
+\section*{\fontsize{11}{13}\selectfont\bfseries DAFTAR PUSTAKA}
+
+{\footnotesize
+\begin{enumerate}[leftmargin=1.4em, itemsep=0.3em, label={[\arabic*]}]
+  \item D. Man and R. Olchawa, `The Possibilities of Using BCI Technology in Biomedical Engineering', \textit{Advances in Intelligent Systems and Computing}, pp. 30--37, 2018.
+  \item S. Chung and J.-W. Son, `Visual Perception in Autism Spectrum Disorder: A Review of Neuroimaging Studies', \textit{Soa Chongsonyon Chongsin Uihak}, pp. 105--120, 2020.
+  \item H.-Y. Lin, L.-Q. Chen, and M.-L. Wang, `Improving Discrimination in Color Vision Deficiency by Image Re-Coloring', \textit{Sensors}, vol. 19, no. 10, 2019.
+  \item E. Patterson \textit{et al.}, `Effects of color-enhancing glasses on color vision in congenital red-green color deficiencies', \textit{Optics Express}, pp. 31182--31194, 2022.
+  \item L. A. Elrefaei, `Smartphone Based Image Color Correction for Color Blindness', \textit{International Journal of Interactive Mobile Technologies (iJIM)}, vol. 12, no. 3, pp. 104--119, Jul. 2018, doi: 10.3991/ijim.v12i3.8160.
+  \item G. Tecson, F. Calanda, G. Cayabyab, and F. Reyes Jr, `Covisance: A Real Time Mobile Recolorization Tool for Aiding Color Vision Deficient Users Utilizing D-15 Color Arrangement Test', in \textit{Proceedings of the 2017 ACM International Conference}, 2017, pp. 95--99.
+  \item StatCounter, `Mobile Operating System Market Share Worldwide', 2025. [Online]. Available: \url{https://gs.statcounter.com/os-market-share/mobile/worldwide/2025}.
+  \item Android Developers, `Hardware Acceleration'. [Online]. Available: \url{https://developer.android.com/develop/ui/views/graphics/hardware-accel}.
+  \item F. Vi\'enot, H. Brettel, and J. D. Mollon, `Digital video colourmaps for checking the legibility of displays by dichromats', \textit{Color Research and Application}, vol. 24, pp. 243--252, 1999.
+  \item A. B. Muhammad, J. Z. Maitama, A. Bature, and Z. Yunusa, `Analysis of LMS Daltonization Algorithm for Adjusting Image Color for Deuteranopia', \textit{Zaria Journal of Electrical Engineering Technology}, vol. 9, no. 1, pp. 128--135, Mar. 2020.
+  \item G. M. Machado, M. M. Oliveira, and L. A. F. Fernandes, `A Physiologically-based Model for Simulation of Color Vision Deficiency', \textit{IEEE Transactions on Visualization and Computer Graphics}, vol. 15, no. 6, pp. 1291--1298, 2009.
+  \item Dicoding Indonesia, `Black Box Testing: Pengertian, Manfaat, dan Cara Kerjanya', 2024. [Online]. Available: \url{https://www.dicoding.com/blog/black-box-testing/}.
+  \item J. Brooke, `SUS: A quick and dirty usability scale', \textit{Usability Eval. Ind.}, vol. 189, 1995.
+  \item Y. Sirisathitkul, N. Dinmeung, W. Noonsuk, and C. Sirisathitkul, `Accuracy and precision of smartphone colorimetry: a comparative analysis in RGB, HSV, and CIELAB color spaces for archaeological research', \textit{STAR: Science \& Technology of Archaeological Research}, vol. 11, no. 1, 2025, doi: \url{10.1080/20548923.2024.2444168}.
+  \item J. R. Lewis and J. Sauro, `Can I Leave This One Out? The Effect of Dropping an Item From the SUS', \textit{Journal of Usability Studies}, vol. 13, pp. 38--46, 2017.
+  \item A. Tasnim and M. S. Hasan, `An improved dynamic daltonization for color-blinds', in \textit{2017 IEEE Region 10 Humanitarian Technology Conference (R10-HTC)}, 2017, pp. 798--801, doi: 10.1109/R10-HTC.2017.8289076.
+\end{enumerate}}

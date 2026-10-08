@@ -1,0 +1,578 @@
+% ============================================================
+%  DALSILENS -- English content
+%  This file holds the English body of the paper (title, abstract
+%  through references). Included from paper.tex when the EN toggle
+%  is on. Math, tables, figures, and references are identical
+%  across languages; only the prose differs.
+% ============================================================
+
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+
+\begin{center}
+  {\bfseries\fontsize{14}{14}\selectfont
+  \parbox{1\textwidth}{%
+    \centering
+    \linespread{1.4}\selectfont
+    DALSILENS: A MOBILE REAL-TIME ASSISTIVE TOOL FOR INDIVIDUALS WITH\\
+    DICHROMACY USING LMS DALTONIZATION AND HSV-BASED COLOR IDENTIFICATION
+  }}
+
+  \vspace{0.8em}
+  {\fontsize{12}{14}\selectfont\bfseries Anaf Naufalian$^{1}$, Bonang Waspadadi Ligar$^{2}$}
+
+  \vspace{0.5em}
+  {\fontsize{11}{13}\selectfont\bfseries Informatics$^{1,2}$}
+
+  \vspace{0.3em}
+  {\fontsize{11}{13}\selectfont\bfseries Universitas Gunadarma}
+
+  \vspace{0.3em}
+  {\fontsize{10}{12}\selectfont anaf@dalsicore.com$^{1}$, bonangligar@staff.gunadarma.ac.id$^{2}$}
+\end{center}
+
+\vspace{0.6em}
+\hrule
+\vspace{0.8em}
+
+\begin{center}
+  {\itshape\fontsize{12}{14}\selectfont Abstract}
+\end{center}
+
+\noindent\fontsize{10}{12}\selectfont
+Individuals with Color Vision Deficiency (CVD) of the Dichromacy type (Protanopia, Deuteranopia, and Tritanopia) have difficulty distinguishing certain colors, while available solutions such as chromatic glasses are relatively expensive and hard to access, and many existing smartphone applications still process images statically (not in real-time) or burden the CPU due to manual color matrix calculations. This research designs and implements an Android application called Dalsilens that uses the smartphone camera in real-time to help people with dichromacy. The application applies the LMS Daltonization algorithm to simulate and correct missing colors, together with a color name identification feature based on the HSV color space using a rule-based thresholding approach. Color transformation is executed through a GPU-accelerated ColorMatrix so that the CPU is not burdened. Black Box Testing results on 15 functional scenarios show that all scenarios were \textbf{Successful}. Color classification accuracy reached 90\% under normal lighting and 50\% under dim lighting. Real-time performance testing shows an average of 57.2 FPS with a latency of 17.5 ms per frame, an average RAM usage of 218.54 MB with no sign of memory leaks, and a relative CPU utilization of only 19.21\% of the device's total capacity. Usability testing using the System Usability Scale (SUS) on 18 respondents produced an average score of 68.33 (Category B/Good). These results indicate that Dalsilens has the potential to become a lightweight, on-device, and accessible visual aid for people with dichromacy.
+
+\vspace{0.6em}
+\noindent{\bfseries\fontsize{10}{12}\selectfont Keywords:} \textit{\fontsize{10}{12}\selectfont Color Vision Deficiency, Dichromacy, LMS Daltonization, HSV Color Space, Android, Real-Time.}
+
+\vspace{1em}
+
+\twocolumn
+
+% ============================================================
+% 1. INTRODUCTION
+% ============================================================
+\section{Introduction}
+
+Vision is the main human sense for processing information from the surrounding environment. Several studies mention that around 80\% of the information received and processed by the human brain comes from the visual system [1], which shows that the sense of sight plays a very important role in understanding the surrounding environment [2]. However, not everyone has this ability because of Color Vision Deficiency (CVD), or color blindness. People with color blindness, especially Protanopia and Deuteranopia, often have difficulty telling apart certain colors such as red (Protanopia) and green (Deuteranopia) [3]. This difficulty can affect a person's ability to tell apart colors, such as traffic lights, color codes on electronic devices, and even liquids.
+
+Various solutions to this problem already exist, one of them being chromatic glasses specially designed to filter out certain light wavelengths that overlap between red and green [4]. However, using chromatic glasses still has some limitations, such as a relatively high price and limited availability.
+
+Along with the growth of mobile technology, smartphones now have high computing power to perform digital image processing in real-time. Based on data from StatCounter, one of the most widely used platforms in the world is Android. The Android operating system dominates the global mobile device market with a share of 71.68\% in 2025 [7]. The Android platform also provides a built-in library for manipulating color matrices, namely the ColorMatrix, which allows efficient pixel modification of images without affecting device performance [8].
+
+Based on this problem, this research aims to design and implement a visual aid application called Dalsilens, a mobile real-time aid for people with dichromacy using LMS Daltonization and HSV-based color identification. This application is designed to help people with color blindness distinguish colors of an object using the smartphone camera in real-time. One algorithmic approach applied in this research is the LMS Daltonization method. This method works by converting the RGB color matrix to the LMS color space, which represents the response of the cone cells of the human eye. Then, the system calculates the color information that is missing for people with dichromacy and shifts that information to other color spectra that can still be seen, thereby increasing visual contrast without changing the structure or shape of the original object. This solution is expected to become an alternative software-based aid that is on-device, practical, and easier to reach than conventional optical solutions.
+
+% ============================================================
+% 2. LITERATURE REVIEW
+% ============================================================
+\section{Literature Review}
+
+Various approaches and technology solutions have been developed to help people with Color Vision Deficiency (CVD) improve their ability to tell colors apart. For example, research [5] carried out a smartphone-based comparison of four different algorithms: LMS Daltonization, Color Blind Filter Service (CBFS), LAB color corrector, and shifting color. Each algorithm was tested using a set of test images for each type of Dichromacy. The evaluation process used color blindness simulator software, namely Vischeck and Coblis, to compare the difference in color perception before and after the correction process, and to analyze the processing time required by each algorithm. However, the testing in that research was still based on static image processing that was uploaded manually, so the developed application does not process images in real-time. The researcher explained that the user must aim the camera, take a picture, then press the ``OK'' button, after which the application processes the image and shows it on the smartphone screen.
+
+In addition, in research [6], the researchers developed a mobile application that works as a tool to improve color vision for people with CVD. This application also uses the LMS Daltonization algorithm to transform image colors in real-time using the camera, and applies the Farnsworth D-15 Color Arrangement Test to diagnose the type of color blindness experienced by the user directly inside the application. Although it successfully shows a real-time simulation, the matrix processing in that research still relies on manually calculating color values, so this sequential computing approach has the potential to burden CPU performance, especially on devices with high camera resolution.
+
+Therefore, this research focuses on optimizing real-time visual computing efficiency by moving the operational load from the CPU to the GPU, in order to avoid heavy sequential computing. By using the CameraX library and ColorMatrix manipulation, Dalsilens is expected to achieve stable real-time color correction, so it can overcome the frame-drop and latency problems that often occur in conventional real-time image processing.
+
+% ============================================================
+% 3. RESEARCH METHOD
+% ============================================================
+\section{Research Method}
+
+\subsection{System Architecture}
+
+In general, the Dalsilens system architecture is designed to process images in real-time with low latency. Computing in this system is divided into two main stages: image acquisition for color detection, and color manipulation at the bitmap level using a color matrix plus GPU-accelerated filtering, as shown in Figure 1.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{arsitektur-umum}\\[0.3em]
+  {\footnotesize\textit{Figure 1. General Architecture of the Dalsilens System}}
+\end{figure}
+
+\subsubsection{Image Acquisition and Color Identification}
+
+The flowchart in Figure 2 describes the early process of processing the image captured by the camera hardware. First, when the user accesses the main interface of the application, the system automatically initializes the camera module. Next, the camera continuously captures each frame and forwards it to the ImageAnalysis component. The image received by this component is then converted into a raw bitmap representation for further processing by system memory. After the conversion process is complete, the system determines a certain Region of Interest (ROI) located exactly in the middle of the bitmap, representing the object that is the target of the crosshair. The system extracts a set of pixels within that ROI for analysis. The extracted pixels are then averaged to obtain a representative RGB value, which is then converted to the HSV color space. The resulting HSV value is then classified using a rule-based thresholding approach to determine the dominant color in the target area. In the final stage, the raw bitmap and the resulting dominant color label are stored in a state variable. Changes to this state then trigger a reactive update of the interface, allowing dynamic visual rendering.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{flowchart-akuisisi}\\[0.3em]
+  {\footnotesize\textit{Figure 2. Flowchart of Image Acquisition and Color Identification}}
+\end{figure}
+
+\subsubsection{Daltonization Process}
+
+Based on the flowchart in Figure 3, after the bitmap and color label are obtained and stored, the system triggers a reactive update mechanism to update the user interface. Changes to the detected color label are reflected directly on the interface, while the bitmap goes through a verification stage to determine whether the filter has been activated. If the filter is not activated, the system applies an identity color matrix to keep the original color representation of the image. On the other hand, if the filter is activated, the color matrix transformation is applied according to the selected color blindness simulation model. Then, when the daltonization feature is activated, the image is processed further using the LMS-based daltonization algorithm to improve color perception. The bitmap and color matrix that have been determined are then forwarded to the Image component. At this stage, color manipulation is done using a Color Matrix Filter executed through GPU acceleration, so the rendering process can be done efficiently.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{flowchart-daltonisasi}\\[0.3em]
+  {\footnotesize\textit{Figure 3. Flowchart of Color Vision Deficiency Simulation and the Daltonization Process}}
+\end{figure}
+
+\subsection{LMS Daltonization Algorithm Implementation}
+
+This section discusses the implementation of the LMS Daltonization algorithm, starting from the RGB-to-LMS conversion, which is the color space the human eye uses to perceive colors, followed by simulation of the color blindness condition, up to the implementation process of the daltonization algorithm.
+
+\subsubsection{RGB to LMS Color Space Conversion}
+
+The first step in implementing this algorithm is converting the image color space from RGB (Red, Green, Blue) to LMS (Long, Medium, Short). This conversion is done using a linear matrix-based transformation, which represents the three types of cone cells in the human visual system. Mathematically, this transformation is done by multiplying the RGB color vector by a certain conversion matrix, so that it produces a color representation in the LMS space. The L, M, and S values in this research are expressed as follows, with the coefficients from [9]:
+
+\begin{equation}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix} =
+\begin{bmatrix} 17{,}8824 & 43{,}5161 & 4{,}11935 \\ 3{,}4565 & 27{,}1554 & 3{,}86714 \\ 0{,}02996 & 0{,}18431 & 1{,}46709 \end{bmatrix}
+\begin{bmatrix} R \\ G \\ B \end{bmatrix}
+\end{equation}
+
+The coefficients in this equation are taken from [9], which are used as a reference in the color conversion process from the RGB to the LMS space. These values show the relationship between the RGB elements and the response of each channel in the LMS space, so the conversion result can be applied accurately in the next processing stage. This LMS color space is used as the basis for simulating color vision deficiency and applying the daltonization algorithm in the following stage.
+
+\subsubsection{Color Vision Deficiency Simulation}
+
+The second stage focuses on mathematical modeling to simulate the decrease in color perception ability based on the type of deficiency: Protanopia, Deuteranopia, and Tritanopia. This process is done by modifying the component values in the LMS space obtained from the previous stage. In this condition, one of the components (L, M, or S) loses its sensitivity and is not used directly, but is recalculated based on a combination of the other two components, with transformation coefficients from [10]:
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Prot} =
+\begin{bmatrix} 0 & 2{,}02344 & -2{,}52581 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Deut} =
+\begin{bmatrix} 1 & 0 & 0 \\ 0{,}49421 & 0 & 1{,}24827 \\ 0 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}_{Trit} =
+\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -0{,}39591 & 0{,}80111 & 0 \end{bmatrix}
+\begin{bmatrix} L \\ M \\ S \end{bmatrix}
+\end{equation}
+
+The coefficients in these three equations are taken from [10], [16], which are used to adjust the changes in color components according to the type of deficiency being simulated. In this way, the simulation result can show how colors appear to users with a certain color vision deficiency.
+
+The result of this stage is LMS values that have been modified to simulate the vision condition in color deficiency. These values are then converted back to the RGB space using the inverse matrix of Equation (1), to represent how colors appear to people with color blindness, while also observing the changes in results after applying the daltonization algorithm:
+
+\begin{equation}
+\resizebox{0.95\linewidth}{!}{$\displaystyle
+\begin{bmatrix} R_{sim} \\ G_{sim} \\ B_{sim} \end{bmatrix} =
+\begin{bmatrix} 0{,}08094 & -0{,}13050 & 0{,}11672 \\ -0{,}01025 & 0{,}05402 & -0{,}11362 \\ -0{,}00037 & -0{,}00412 & 0{,}69351 \end{bmatrix}
+\begin{bmatrix} L_{sim} \\ M_{sim} \\ S_{sim} \end{bmatrix}$}
+\end{equation}
+
+\subsubsection{Daltonization Process}
+
+At this stage, the daltonization process is done by calculating the difference between the original color and the color from the color deficiency simulation. The calculation starts by converting the color value from the RGB to the LMS space, simulating the color deficiency in the LMS space, then converting it back to the RGB space. The difference between the original color and the simulated color is then calculated as the error value:
+
+\begin{equation}
+E_R = R - R_{sim}, \quad E_G = G - G_{sim}, \quad E_B = B - B_{sim}
+\end{equation}
+
+After the error value is obtained, the next step is redistributing the value to other color components through an error shifting process. This process is done because the color components affected by the deficiency cannot be perceived optimally by the user, so the missing color information needs to be moved to other color components that can still be told apart. This redistribution is done using a different transformation matrix for each type of deficiency, in order to adjust the direction of the error distribution to the color components that can still be perceived optimally.
+
+In the Protanopia condition, the red component has reduced sensitivity so it does not receive error distribution, and all of the error is moved to the green and blue components. In Deuteranopia, the green component is the most affected so it is not used in redistribution, and the error is moved to the red and blue components. Meanwhile, in Tritanopia, the blue component has reduced sensitivity, so the error is moved to the red and green components. The coefficients of the following three matrices are taken from [8], [10], [16]:
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Prot} =
+\begin{bmatrix} 0 & 0 & 0 \\ 0{,}7 & 1 & 0 \\ 0{,}7 & 0 & 1 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Deut} =
+\begin{bmatrix} 1 & 0{,}7 & 0 \\ 0 & 0 & 0 \\ 0 & 0{,}7 & 1 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix} R_{shift} \\ G_{shift} \\ B_{shift} \end{bmatrix}_{Trit} =
+\begin{bmatrix} 1 & 0 & 0{,}7 \\ 0 & 1 & 0{,}7 \\ 0 & 0 & 0 \end{bmatrix}
+\begin{bmatrix} E_R \\ E_G \\ E_B \end{bmatrix}
+\end{equation}
+
+The shifted error value is then added back to the original color to produce the corrected (daltonized) color:
+
+\begin{equation}
+R_{d} = R + R_{shift}, \; G_{d} = G + G_{shift}, \; B_{d} = B + B_{shift}
+\end{equation}
+
+\subsubsection{Construction of the 4$\times$5 Transformation Matrix}
+
+At this stage, all of the color transformation processes described previously are represented as a transformation function $T(R,G,B)$. To optimize the computing load and avoid repeated pixel calculation, this transformation function is simplified into a constant matrix of size 4$\times$5. The simplification is done by evaluating the function $T$ against three primary color vectors: pure red $(1,0,0)$, pure green $(0,1,0)$, and pure blue $(0,0,1)$:
+
+\begin{equation}
+\begin{aligned}
+T(1,0,0) &= (r_R, r_G, r_B) \\
+T(0,1,0) &= (g_R, g_G, g_B) \\
+T(0,0,1) &= (b_R, b_G, b_B)
+\end{aligned}
+\end{equation}
+
+The transformation results of these three basis vectors are then arranged into the coefficient columns of the matrix $M_{dalton}$, so that this matrix can directly map the original color profile into the corrected color, while also keeping the alpha (transparency) parameter on the fourth row:
+
+\begin{equation}
+M_{dalton} =
+\begin{bmatrix}
+r_R & g_R & b_R & 0 & 0 \\
+r_G & g_G & b_G & 0 & 0 \\
+r_B & g_B & b_B & 0 & 0 \\
+0 & 0 & 0 & 1 & 0
+\end{bmatrix}
+\end{equation}
+
+This $M_{dalton}$ matrix is the one directly applied to the Android ColorMatrix and executed through GPU acceleration, so there is no need to recalculate Equations (1) to (10) for each image pixel in real-time.
+
+\subsection{Severity Level Implementation}
+
+This section explains how the adjustment of the color deficiency severity level is implemented dynamically. The severity parameter is represented in the decimal range 0.0 to 1.0. To keep the accuracy of the visual representation, the system distinguishes the method of applying severity based on its purpose, namely between the vision simulation process and the daltonization process.
+
+\subsubsection{Severity Modeling in the Deficiency Simulation}
+
+In simulation mode, the severity parameter works to imitate the level of damage or shift in sensitivity of the user's cone cells. This process approaches a medical condition known as Anomalous Trichromacy [11]. Therefore, the calculation is done directly in the LMS color space using a linear interpolation method. The system calculates the difference between the LMS value in normal vision conditions and the LMS value in full deficiency conditions, then multiplies this difference by the severity parameter and adds it back to the normal value:
+
+\begin{equation}
+L_{f} = L_{n} + (L_{sim} - L_{n}) \times S
+\end{equation}
+
+\subsubsection{Severity Modeling in Color Vision Correction}
+
+Different from the simulation stage, the severity parameter in the daltonization process works to determine the intensity or strength of the color aid given to the user. This calculation is done in the RGB color space, specifically at the final computing stage when the shifted error value is added to the original pixel. The compensation intensity is adjusted by multiplying the shifted error result of each color channel by the severity value, before it is combined with the original color, so the user can adjust the color contrast proportionally according to their visual comfort:
+
+\begin{equation}
+R_{d} = R + (R_{shift} \times S)
+\end{equation}
+
+\subsection{Dominant Color Extraction Based on the HSV Color Space}
+
+This section discusses the process of extracting the dominant color based on the HSV color space. This stage aims to extract the color of the object at the center point that is the target of the crosshair in real-time. This process starts by obtaining the image in bitmap form, continues with processing the pixel area around the center point, and ends with classifying the color name using the HSV color space.
+
+\subsubsection{Bitmap Acquisition and Processing}
+
+The frame from the camera is obtained through the ImageAnalysis component in CameraX, which continuously captures images. The frame is then forwarded to the analyzer function, which produces an ImageProxy, before it is finally converted into a Bitmap. Because the camera sensor orientation varies between Android devices, the rotationDegrees value in the frame metadata is checked. If the rotation value is not zero, the bitmap is rotated using a transformation matrix.
+
+\subsubsection{Pixel Sampling}
+
+Color sampling is not only done on one pixel at the center of the screen, because a single pixel sample tends to be less effective since the color of an area can be affected by noise, lighting, or other conditions. Therefore, a sampling approach is used by taking several pixels around the center point, so the resulting color becomes more stable and can represent the dominant color in the observed area better.
+
+The first step is determining the sampling area radius, with a default radius value of $r=5$. With this radius, the sample area taken covers 121 pixels (11 x 11). The number of pixels used can be calculated using the following equation:
+
+\begin{equation}
+N = (2r+1) \times (2r+1)
+\end{equation}
+
+Given an image $I$ of size $W \times H$ and a center point $(x_c, y_c)$ with radius $r$, a bounding function is defined so that the processed pixel coordinates do not exceed the image boundaries:
+
+\begin{equation}
+f(x) = \min(\max(x, 0), W-1)
+\end{equation}
+\begin{equation}
+g(y) = \min(\max(y, 0), H-1)
+\end{equation}
+
+Each pixel at coordinates $(x,y)$ is stored as a 32-bit integer in ARGB format. The bit structure of the blue component (B) is at the very last position, so no bit shift is needed, only masking to remove the other bits using a mask value of 255 (0xFF). Meanwhile, the green component (G) is in the middle position so it needs to be shifted to the right by eight bits first, and the red component (R) is at the very left position so it needs to be shifted to the right by 16 bits. The three color components are extracted through bit shift and masking operations against the pixel value:
+
+\begin{equation}
+B_{(x,y)} = \text{pixel} \mathbin{\&} 255
+\end{equation}
+\begin{equation}
+G_{(x,y)} = (\text{pixel} \gg 8) \mathbin{\&} 255
+\end{equation}
+\begin{equation}
+R_{(x,y)} = (\text{pixel} \gg 16) \mathbin{\&} 255
+\end{equation}
+
+The average RGB value of all $N$ pixels in the sample area is then calculated as the representation of the dominant color:
+
+\begin{equation}
+\bar{R} = \frac{1}{N}\sum_{i=1}^{N} R_i, \quad
+\bar{G} = \frac{1}{N}\sum_{i=1}^{N} G_i, \quad
+\bar{B} = \frac{1}{N}\sum_{i=1}^{N} B_i
+\end{equation}
+
+\subsubsection{Color Name Classification}
+
+The final stage is color classification, which is done by converting the obtained average RGB value to the HSV color space using the built-in Android function in the android.graphics.Color class, namely RGBToHSV(r, g, b, hsv). The conversion result consists of three components: Hue (H) as the type of color in the range $0^\circ$--$360^\circ$, Saturation (S) as the intensity level of the color in the range 0 to 1, and Value (V) as the brightness level in the range 0 to 1. These three components are then used to determine the color name using a threshold approach based on the range of H, S, and V values. The threshold values are determined by testing color samples under normal and dim lighting conditions, by considering the average, standard deviation, and tolerance range.
+
+As an example, the following calculation determines the range of H values for the color red. The test data is obtained from 10 samples under normal lighting and 10 samples under dim lighting, which is then used to calculate the average value and the variation range of the Hue component. The calculation results show that the average Hue value under normal lighting is $3.3^\circ$, while under dim lighting it is $8.1^\circ$. Then, the standard deviation is calculated to find the data spread in each condition, and a standard deviation of $0.48^\circ$ is obtained in normal conditions and $0.88^\circ$ in dim conditions.
+
+The tolerance value (upper and lower limits) is then determined by adding and subtracting the average with the standard deviation, using the equation $\bar{H} \pm 2\sigma$. The lower limit for normal lighting is obtained from $3.3 - 2(0.48^\circ) = 2.34^\circ$, while the upper limit is obtained from $3.3 + 2(0.48^\circ) = 4.26^\circ$, so the tolerance range in normal conditions is between $2.34^\circ$ and $4.26^\circ$. The same method is applied in dim conditions, with the lower limit $8.1 - 2(0.88^\circ) = 6.34^\circ$ and the upper limit $8.1 + 2(0.88^\circ) = 9.86^\circ$, so the tolerance range in dim conditions is between $6.34^\circ$ and $9.86^\circ$.
+
+When compared, the Hue value ranges of normal and dim conditions do not overlap. Based on this result, the threshold value is determined by setting the upper limit of the condition with the largest variation, which is $9.86^\circ$, so the threshold value for the color red is stated as H $< 9.86^\circ$. The same method is applied to the other colors, producing a threshold table that can be used directly in the color classification process, as shown in Table 1.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Hue Range ($^\circ$)} & \textbf{Color Category} \\
+    \hline
+    H $<$ 9.85 & Red \\ \hline
+    9.85 $\leq$ H $<$ 26.98 & Orange \\ \hline
+    26.98 $\leq$ H $<$ 50.42 & Yellow \\ \hline
+    50.42 $\leq$ H $<$ 122.50 & Green \\ \hline
+    122.50 $\leq$ H $<$ 204.85 & Cyan \\ \hline
+    204.85 $\leq$ H $<$ 224.57 & Blue \\ \hline
+    224.57 $\leq$ H $<$ 319.37 & Purple \\ \hline
+    H $\geq$ 319.37 & Red \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 1. Color Classification Based on the Hue Range}}
+\end{table}
+
+Colors with a low Saturation value are not classified using Hue because they tend to be achromatic (grayscale), so their classification instead uses the Value to tell apart the categories Black, Dark Gray, Gray, and White, as shown in Table 2.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Saturation} & \textbf{Value} & \textbf{Category} \\
+    \hline
+    S $<$ 0.10 & V $<$ 0.15 & Black \\ \hline
+    S $<$ 0.10 & 0.15 $\leq$ V $<$ 0.40 & Dark Gray \\ \hline
+    S $<$ 0.10 & 0.40 $\leq$ V $<$ 0.78 & Gray \\ \hline
+    S $<$ 0.10 & V $\geq$ 0.78 & White \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 2. Achromatic Color Classification Based on Saturation and Value}}
+\end{table}
+
+By combining the classification based on Hue, Saturation, and Value, the system can recognize both chromatic and achromatic colors in real-time, even when the surrounding lighting conditions vary.
+
+\subsection{Test Scenarios}
+
+Application testing covers four scenarios: (1) functionality testing using Black Box Testing [12] against 15 usage scenarios; (2) color name classification accuracy testing against 10 color categories under normal and dim lighting conditions; (3) real-time performance testing in the form of FPS, latency, RAM usage, and CPU utilization using adb shell dumpsys and the Android Studio Profiler; and (4) usability testing using the System Usability Scale (SUS) questionnaire [13] against 18 respondents, consisting of both people with color vision deficiency and people with normal color vision.
+
+% ============================================================
+% 4. RESULTS AND DISCUSSION
+% ============================================================
+\section{Results and Discussion}
+
+\subsection{Functionality Testing}
+
+Black Box Testing [12] was carried out against 15 scenarios covering interface navigation, filter activation/deactivation, selection of the simulation type (Protanopia, Deuteranopia, Tritanopia), severity setting, sampling area size setting, and real-time color name detection. Each scenario was tested by giving certain input and verifying that the output matches the designed expectation, starting from interface navigation, filter activation and deactivation, selection of the three types of color blindness simulation, severity setting at minimum and maximum values, up to the sampling area size setting. All 15 scenarios produced \textbf{Successful} output, showing that the main features of the application run according to the design expectation without any functional failure found.
+
+\subsection{Color Classification Accuracy Testing}
+
+The testing was carried out against 10 physical objects representing each color category, under two lighting conditions: \textbf{normal} (standard room lighting) and \textbf{dim} (light reduced using curtains). The detected color name was compared with the actual color of the object, as shown in Table 3 and Table 4.
+
+\begin{table}[H]
+  \centering
+  {\scriptsize
+  \begin{tabular}{|c|l|l|l|c|}
+    \hline
+    \textbf{No.} & \textbf{Object} & \textbf{Actual} & \textbf{Detected} & \textbf{Result} \\
+    \hline
+    1 & Rope & Red & Red & Correct \\ \hline
+    2 & Shirt & Orange & Orange & Correct \\ \hline
+    3 & Shirt & Yellow & Yellow & Correct \\ \hline
+    4 & Teapot & Green & Green & Correct \\ \hline
+    5 & Keyboard cleaner & Cyan & Cyan & Correct \\ \hline
+    6 & Keychain & Blue & Blue & Correct \\ \hline
+    7 & Student ID card & Purple & Magenta & Wrong \\ \hline
+    8 & Tumbler & White & White & Correct \\ \hline
+    9 & Pants & Black & Black & Correct \\ \hline
+    10 & Clothesline hook & Gray & Gray & Correct \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 3. Color Classification Test Results Under Normal Lighting}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  {\scriptsize
+  \begin{tabular}{|c|l|l|l|c|}
+    \hline
+    \textbf{No.} & \textbf{Object} & \textbf{Actual} & \textbf{Detected} & \textbf{Result} \\
+    \hline
+    1 & Rope & Red & Red & Correct \\ \hline
+    2 & Shirt & Orange & Orange & Correct \\ \hline
+    3 & Shirt & Yellow & Orange & Wrong \\ \hline
+    4 & Teapot & Green & Green & Correct \\ \hline
+    5 & Keyboard cleaner & Cyan & Blue & Wrong \\ \hline
+    6 & Keychain & Blue & Blue & Correct \\ \hline
+    7 & Student ID card & Purple & Red & Wrong \\ \hline
+    8 & Tumbler & White & Gray & Wrong \\ \hline
+    9 & Pants & Black & Black & Correct \\ \hline
+    10 & Clothesline hook & Gray & Yellow & Wrong \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 4. Color Classification Test Results Under Dim Lighting}}
+\end{table}
+
+Based on Table 3 and Table 4, the detection accuracy under normal lighting conditions is $\frac{9}{10} \times 100\% = 90\%$, with one error on the color purple being detected as magenta. Under dim lighting conditions, accuracy drops to $\frac{5}{10} \times 100\% = 50\%$, as summarized in Table 5.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{Lighting Condition} & \textbf{Correct} & \textbf{Accuracy} \\
+    \hline
+    Normal & 9/10 & 90\% \\ \hline
+    Dim & 5/10 & 50\% \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 5. Summary of Color Name Classification Accuracy}}
+\end{table}
+
+The drop in accuracy in dim conditions happens because the Value (V) in the HSV color space decreases significantly, so pixels that should be classified as colored tend to be detected as gray or black. This finding is consistent with research [14] which states that smartphone-based colorimetric accuracy in the HSV color space is sensitive to lighting conditions.
+
+\subsection{Real-Time Performance Testing}
+
+Performance testing was carried out in the highest computing load scenario, namely when the daltonization mode and color identification run together, representing the worst-case condition that may occur. FPS and latency testing was done using frame rendering statistics data from the adb shell dumpsys gfxinfo command, in three iterations, each running for roughly one minute, as shown in Table 6.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    \textbf{Iteration} & \textbf{Frame} & \textbf{FPS} & \textbf{Latency (ms)} & \textbf{Janky (\%)} \\
+    \hline
+    1 & 2,389 & 55.0 & 18.2 & 28.59 \\ \hline
+    2 & 2,808 & 65.3 & 15.3 & 9.62 \\ \hline
+    3 & 1,134 & 46.8 & 21.4 & 23.10 \\ \hline
+    \textbf{Average} & \textbf{6,331} & \textbf{57.2} & \textbf{17.5} & \textbf{19.19} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 6. FPS and Processing Latency Test Results}}
+\end{table}
+
+The average value of 57.2 FPS with a latency of 17.5 ms shows that the application is close to a smooth real-time condition (60 FPS) even though the color matrix transformation and color classification run together. The GPU Rendering Profile data shows that the median GPU processing time is in the 5--7 ms range, far lower than the total render time per frame, indicating that color transformation is not the main bottleneck.
+
+Memory usage was measured through the Total Proportional Set Size (PSS) using the adb shell dumpsys meminfo command, as shown in Table 7.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{Iteration} & \textbf{PSS (KB)} & \textbf{PSS (MB)} \\
+    \hline
+    1 & 223,147 & 217.92 \\ \hline
+    2 & 227,867 & 222.53 \\ \hline
+    3 & 220,339 & 215.18 \\ \hline
+    \textbf{Average} & \textbf{223,784} & \textbf{218.54} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 7. Memory (RAM) Usage Test Results}}
+\end{table}
+
+The PSS values in the three test iterations are within a narrow range ($\pm$3.5 MB from the average) without showing a consistent upward trend between iterations, so no signs of a memory leak were found in the Dalsilens application.
+
+CPU utilization was measured using the adb shell top -n 2 -d 1 command, with the recorded value being the second sample of each measurement pair, as shown in Table 8.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Iteration} & \textbf{CPU Utilization (\%)} \\
+    \hline
+    1 & 147 \\ \hline
+    2 & 148 \\ \hline
+    3 & 166 \\ \hline
+    \textbf{Average} & \textbf{153.67} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 8. CPU Utilization Test Results}}
+\end{table}
+
+The CPU utilization value exceeds 100\% because Linux/Android-based utilities such as top calculate the CPU percentage as the accumulated usage across all cores used by the process, not relative to a single core. The test device has a total CPU capacity of 800\% (8 cores), so the average value of 153.67\% when converted into a percentage relative to the total device capacity produces:
+
+\begin{equation}
+\text{Relative CPU Utilization} = \frac{153{,}67\%}{8 \times 100\%} \times 100\% \approx 19{,}21\%
+\end{equation}
+
+This value shows that the Dalsilens application only uses around 19.21\% of the total CPU computing capacity of the device even while running the color matrix transformation and color classification at the same time, proving the effectiveness of moving the heavy computing load from the CPU to the GPU through the ColorMatrix [8].
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{ss_deuteranopia}\\[0.2em]
+  {\footnotesize\textit{Deuteranopia Simulation}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{ss_daltonization}\\[0.2em]
+  {\footnotesize\textit{Simulation + Daltonization}}
+\end{minipage}
+\vspace{0.3em}
+
+\begin{center}
+  {\footnotesize\textit{Figure 4. Comparison of the Deuteranopia Simulation View Before and After Daltonization}}
+\end{center}
+
+As shown in Figure 4, applying daltonization shifts the object colors to different hues from the pure simulation result, helping people with Deuteranopia tell apart objects that previously looked similar.
+
+\subsection{Usability Testing (SUS)}
+
+The System Usability Scale (SUS) is a standard questionnaire developed by Brooke [13] to measure the level of usability of a system quickly and efficiently, consisting of 10 statements with a Likert scale of 1 to 5, where odd-numbered statements are positive and even-numbered statements are negative [15]. The SUS score is calculated using the following equation [13]:
+
+\begin{equation}
+\text{SUS Score} = \left(\sum_{i \in \text{odd}}(x_i - 1) + \sum_{j \in \text{even}}(5 - x_j)\right) \times 2{,}5
+\end{equation}
+
+where $x_i$ is the respondent's answer value for statement $i$, and the resulting score is in the range of 0 to 100. The interpretation of the SUS score refers to the classification in Table 9.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Score Range} & \textbf{Grade} & \textbf{Category} \\
+    \hline
+    $>$ 80.3 & A & \textit{Excellent} \\ \hline
+    68 -- 80.3 & B & \textit{Good} \\ \hline
+    57 -- 68 & C & \textit{OK} \\ \hline
+    $<$ 57 & D & \textit{Poor} \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 9. System Usability Scale Score Classification}}
+\end{table}
+
+The testing was carried out against 18 respondents who tried the Dalsilens application directly on their respective Android devices for about five minutes, then filled out the SUS questionnaire. The respondents were not all affected by CVD: the group included both people with color vision deficiency and people with normal color vision, so that the usability of the application could be assessed from both perspectives. The demographic data of the respondents (anonymized as R1--R18) is presented in Table 10.
+
+\begin{table}[H]
+  \centering
+  {\footnotesize
+  \begin{tabular}{|c|c|c||c|c|c|}
+    \hline
+    \textbf{Resp.} & \textbf{Age} & \textbf{G} & \textbf{Resp.} & \textbf{Age} & \textbf{G} \\\hline
+    R1  & 20 & M & R10 & 20 & F \\ \hline
+    R2  & 31 & M & R11 & 20 & M \\ \hline
+    R3  & 21 & M & R12 & 19 & M \\ \hline
+    R4  & 20 & F & R13 & 19 & F \\ \hline
+    R5  & 21 & F & R14 & 21 & M \\ \hline
+    R6  & 21 & M & R15 & 15 & M \\ \hline
+    R7  & 28 & M & R16 & 20 & F \\ \hline
+    R8  & 22 & M & R17 & 21 & M \\ \hline
+    R9  & 20 & F & R18 & 20 & M \\ \hline
+  \end{tabular}}\\[0.3em]
+  {\footnotesize\textit{Table 10. Demographic Data of SUS Testing Respondents (G: Gender, M: Male, F: Female)}}
+\end{table}
+
+The recap of all respondents' answers to the 10 SUS statements (P1--P10) produces SUS scores that vary between 47.5 and 90.0, with an average score of 68.33. This average value falls into category B (Good) according to Table 9. This result shows that the Dalsilens application is rated well and is acceptable to users in terms of ease and comfort of use, although there is still room for improvement in the interface aspect to reach the Excellent category.
+
+Overall, the test results show that the GPU-accelerated ColorMatrix-based approach successfully answers the performance challenge faced by the manual calculation approach in previous research [6], while the direct integration into a real-time camera overcomes the static processing limitation in [5]. The high precision level in most color categories (Table 3) indicates a minimal false positive error rate in the color identification context, while the decreasing color classification accuracy in dim conditions (Table 4) is the main limitation that needs attention in further development, for example through a machine learning-based approach that is more adaptive to lighting variations. The gap between academic research and practical application is also bridged through an intuitive interface, so users can get instant visual and textual feedback without needing additional processing outside the device.
+
+% ============================================================
+% 5. CONCLUSION
+% ============================================================
+\section{Conclusion}
+
+The Dalsilens application was successfully developed as an Android-based real-time visual aid for people with dichromacy, integrating the LMS Daltonization algorithm and the HSV-based color name identification feature. All 15 Black Box Testing scenarios ran \textbf{Successfully}, color classification accuracy reached 90\% under normal lighting but dropped under dim lighting, real-time performance averaged 57.2 FPS with a latency of 17.5 ms without signs of memory leaks, and the relative CPU utilization was only 19.21\% thanks to moving the computing load to the GPU through the ColorMatrix. The SUS score of 68.33 (Category B/Good) shows a good level of usability. Further research is suggested to apply a machine learning-based approach to improve color classification accuracy under varied lighting conditions, and to expand support to the Anomalous Trichromacy type.
+
+% ============================================================
+% REFERENCES
+% ============================================================
+\section*{\fontsize{11}{13}\selectfont\bfseries REFERENCES}
+
+{\footnotesize
+\begin{enumerate}[leftmargin=1.4em, itemsep=0.3em, label={[\arabic*]}]
+  \item D. Man and R. Olchawa, `The Possibilities of Using BCI Technology in Biomedical Engineering', \textit{Advances in Intelligent Systems and Computing}, pp. 30--37, 2018.
+  \item S. Chung and J.-W. Son, `Visual Perception in Autism Spectrum Disorder: A Review of Neuroimaging Studies', \textit{Soa Chongsonyon Chongsin Uihak}, pp. 105--120, 2020.
+  \item H.-Y. Lin, L.-Q. Chen, and M.-L. Wang, `Improving Discrimination in Color Vision Deficiency by Image Re-Coloring', \textit{Sensors}, vol. 19, no. 10, 2019.
+  \item E. Patterson \textit{et al.}, `Effects of color-enhancing glasses on color vision in congenital red-green color deficiencies', \textit{Optics Express}, pp. 31182--31194, 2022.
+  \item L. A. Elrefaei, `Smartphone Based Image Color Correction for Color Blindness', \textit{International Journal of Interactive Mobile Technologies (iJIM)}, vol. 12, no. 3, pp. 104--119, Jul. 2018, doi: 10.3991/ijim.v12i3.8160.
+  \item G. Tecson, F. Calanda, G. Cayabyab, and F. Reyes Jr, `Covisance: A Real Time Mobile Recolorization Tool for Aiding Color Vision Deficient Users Utilizing D-15 Color Arrangement Test', in \textit{Proceedings of the 2017 ACM International Conference}, 2017, pp. 95--99.
+  \item StatCounter, `Mobile Operating System Market Share Worldwide', 2025. [Online]. Available: \url{https://gs.statcounter.com/os-market-share/mobile/worldwide/2025}.
+  \item Android Developers, `Hardware Acceleration'. [Online]. Available: \url{https://developer.android.com/develop/ui/views/graphics/hardware-accel}.
+  \item F. Vi\'enot, H. Brettel, and J. D. Mollon, `Digital video colourmaps for checking the legibility of displays by dichromats', \textit{Color Research and Application}, vol. 24, pp. 243--252, 1999.
+  \item A. B. Muhammad, J. Z. Maitama, A. Bature, and Z. Yunusa, `Analysis of LMS Daltonization Algorithm for Adjusting Image Color for Deuteranopia', \textit{Zaria Journal of Electrical Engineering Technology}, vol. 9, no. 1, pp. 128--135, Mar. 2020.
+  \item G. M. Machado, M. M. Oliveira, and L. A. F. Fernandes, `A Physiologically-based Model for Simulation of Color Vision Deficiency', \textit{IEEE Transactions on Visualization and Computer Graphics}, vol. 15, no. 6, pp. 1291--1298, 2009.
+  \item Dicoding Indonesia, `Black Box Testing: Pengertian, Manfaat, dan Cara Kerjanya', 2024. [Online]. Available: \url{https://www.dicoding.com/blog/black-box-testing/}.
+  \item J. Brooke, `SUS: A quick and dirty usability scale', \textit{Usability Eval. Ind.}, vol. 189, 1995.
+  \item Y. Sirisathitkul, N. Dinmeung, W. Noonsuk, and C. Sirisathitkul, `Accuracy and precision of smartphone colorimetry: a comparative analysis in RGB, HSV, and CIELAB color spaces for archaeological research', \textit{STAR: Science \& Technology of Archaeological Research}, vol. 11, no. 1, 2025, doi: \url{10.1080/20548923.2024.2444168}.
+  \item J. R. Lewis and J. Sauro, `Can I Leave This One Out? The Effect of Dropping an Item From the SUS', \textit{Journal of Usability Studies}, vol. 13, pp. 38--46, 2017.
+  \item A. Tasnim and M. S. Hasan, `An improved dynamic daltonization for color-blinds', in \textit{2017 IEEE Region 10 Humanitarian Technology Conference (R10-HTC)}, 2017, pp. 798--801, doi: 10.1109/R10-HTC.2017.8289076.
+\end{enumerate}}
