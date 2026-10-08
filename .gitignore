@@ -1,30 +1,22 @@
-# Project exclude paths
+# LaTeX build artifacts
 /out/
-manual-book/out/
-manual-book/auxil/
-manual-book/*.aux
-manual-book/*.bbl
-manual-book/*.bcf
-manual-book/*.blg
-manual-book/*.fdb_latexmk
-manual-book/*.fls
-manual-book/*.log
-manual-book/*.lof
-manual-book/*.lot
-manual-book/*.out
-manual-book/*.run.xml
-manual-book/*.toc
-paper/out/
-paper/auxil/
-paper/*.aux
-paper/*.bbl
-paper/*.bcf
-paper/*.blg
-paper/*.fdb_latexmk
-paper/*.fls
-paper/*.log
-paper/*.lof
-paper/*.lot
-paper/*.out
-paper/*.run.xml
-paper/*.toc
+auxil/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Dokumen pribadi
+/gambar/passphoto.jpeg
+
+# Cadangan revisi lokal
+/temp/
